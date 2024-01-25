@@ -24,3 +24,6 @@ People who are able to cast spells don’t fall into the category of ordinary hi
 
 Most commonly, spellcasting services are available from wizards and clerics. Some druids might (if their deity permits) be available for agricultural spellcasting assitance, and sometimes a sorcerer will rent themselves out if the job is clear, well-defined, and within their range of spells. Pale masters will almost never be interested in "selling" a spell or service, shamans may offer their services to locals but only under specific circumstances, and warlocks are generally only willing to offer their arcane services if it advances the cause of their patron.
 
+```
+# Placeholder
+```

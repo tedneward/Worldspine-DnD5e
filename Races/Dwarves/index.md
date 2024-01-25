@@ -48,11 +48,6 @@ def level0(npc):
 Dwarves have a number of genetically-differentiated offshoots (subraces):
 
 * [Hill](Hill.md) and [Mountain](Mountain.md) dwarves are the core stock of dwarvish lineage.
-* [Ember](Ember.md) dwarves are commonly found in the eastern Daws mountains, near the only active volcanic region in Azgaarnoth, but many have emigrated away to all corners of the continent(s).
-* [Stone](Stone.md) dwarves lived (and live still) for entire generations in the Underdark.
-* [Tundra](Tundra.md) dwarves are those who have embraced the endless plains of the surface as their home.
-* [Dark](Dark.md)
-* [Mark of Warding Dragonmark](Warding.md)
 
 ```
 def generate_name(npc, gender):

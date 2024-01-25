@@ -1,5 +1,5 @@
 # Martial Archetype: Champion
-The archetypal Champion focuses on the development of raw physical power honed to deadly perfection. Those who model themselves on this archetype combine rigorous training with physical excellence to deal devastating blows. Champion Martial Archetypes are frequently found in [Mercenary Companies](../../Organizations/MercCompanies/index.md). They are often not the leader of the company, but used as a rallying point during combat.
+The archetypal Champion focuses on the development of raw physical power honed to deadly perfection. Those who model themselves on this archetype combine rigorous training with physical excellence to deal devastating blows.
 
 ```
 name = 'Champion'

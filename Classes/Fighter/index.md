@@ -1,11 +1,16 @@
 # Fighter
-Fighters share an unparalleled mastery with weapons and armor, and a thorough knowledge of the skills of combat. They are well acquainted with death, both meting it out and staring it defiantly in the face.
+Questing knights, conquering overlords, royal champions, elite foot soldiers, hardened mercenaries, and bandit kings — as fighters, they all share an unparalleled mastery with weapons and armor, and a thorough knowledge of the skills of combat. And they are well acquainted with death, both meting it out and staring it defiantly in the face.
 
-*You must have a Dexterity or Strength score of 13 or higher in order to multiclass in or out of this class.*
+***Well-Rounded Specialists.*** Fighters learn the basics of all combat styles. Every fighter can swing an axe, fence with a rapier, wield a longsword or a greatsword, use a bow, and even trap foes in a net with some degree of skill. Likewise, a fighter is adept with shields and every form of armor. Beyond that basic degree of familiarity, each fighter specializes in a certain style of combat. Some concentrate on archery, some on fighting with two weapons at once, and some on augmenting their martial skills with magic. This combination of broad general ability and extensive specialization makes fighters superior combatants on battlefields and in dungeons alike.
+
+***Trained for Danger.*** Not every member of the city watch, the village militia, or the queen’s army is a fighter. Most of these troops are relatively untrained soldiers with only the most basic combat knowledge. Veteran soldiers, military officers, trained bodyguards, dedicated knights, and similar figures are fighters.
+
+Some fighters feel drawn to use their training as adventurers. The dungeon delving, monster slaying, and other dangerous work common among adventurers is second nature for a fighter, not all that different from the life he or she left behind. There are greater risks, perhaps, but also much greater rewards — few fighters in the city watch have the opportunity to discover a magic flame tongue sword, for example.
 
 ```
 name = 'Fighter'
-description = "***Class: Fighter.*** Fighters share an unparalleled mastery with weapons and armor, and a thorough knowledge of the skills of combat. They are well acquainted with death, both meting it out and staring it defiantly in the face."
+description = "***Class: Fighter.*** Questing knights, conquering overlords, royal champions, elite foot soldiers, hardened mercenaries, and bandit kings — as fighters, they all share an unparalleled mastery with weapons and armor, and a thorough knowledge of the skills of combat. And they are well acquainted with death, both meting it out and staring it defiantly in the face."
+dependencies = ['Maneuvers.md', 'Styles.md']
 ```
 
 Level|Proficiency Bonus|traits
@@ -118,30 +123,7 @@ def level2(npc):
 ## Martial Archetype
 At 3rd level, you choose an archetype that you strive to emulate in your combat styles and techniques:
 
-* [Arcane Archer](ArcaneArcher.md)
-* [Banneret](Banneret.md)
-* [Battle Master](BattleMaster.md)
-* [Blood Thrall](BloodThrall.md)
-* [Brute](Brute.md)
-* [Cavalier](Cavalier.md)
 * [Champion](Champion.md)
-* [Dervish](Dervish.md)
-* [Dwarven Defender](Defender.md)
-* [Dragon Knight](DragonKnight.md)
-* [Dragon Slayer](DragonSlayer.md)
-* [Dragoon](Dragoon.md)
-* [Dreadnought](Dreadnought.md)
-* [Duelist](Duelist.md)
-* [Eldritch Knight](EldritchKnight.md)
-* [Elemental Blade](ElementalBlade.md)
-* [Ghost Warrior](GhostWarrior.md)
-* [Monster Hunter](MonsterHunter.md)
-* [Psi Knight](PsiKnight.md)
-* [Rune Knight](RuneKnight.md)
-* [Samurai](Samurai.md)
-* [Scout](Scout.md)
-* [Stillmind Warrior](Stillmind.md)
-* [Weapon Master](WeaponMaster.md)
 
 The archetype you choose grants you traits at 3rd level and again at 7th, 10th, 15th, and 18th level.
 
@@ -149,7 +131,7 @@ The archetype you choose grants you traits at 3rd level and again at 7th, 10th, 
 def level3(npc):
     # Choose subclass
     (_, subclass) = choose("Choose a Martial Archetype:", subclasses)
-    npc.subclasses[allclasses['Fighter']] = subclass
+    npc.subclasses[root['Classes']['Fighter']] = subclass
     npc.description.append(subclass.description)
 ```
 
@@ -194,9 +176,4 @@ You can use this feature twice between long rests starting at 13th level and thr
 ```
 def level9(npc):
     npc.defer(lambda npc: npc.traits.append(f"***Indomitable ({'' if npc.levels('Fighter') < 13 else '2/' if npc.levels('Fighter') < 17 else '3/'}Recharges on long rest).*** You can reroll a saving throw that you fail. If you do so, you must use the new roll, and you can't use this feature again until you finish a long rest."))
-```
-
-```
-# Fighter subclasses use styles and maneuvers
-dependentmodules = ['Styles.md', 'Maneuvers.md']
 ```

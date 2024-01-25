@@ -9,6 +9,10 @@
 
 *Weight* describes the total weight to the armor once donned.
 
+```
+armor = {}
+```
+
 ## Light Armor
 Made from supple and thin materials, light armor favors agile adventurers since it offers some protection without sacrificing mobility. If you wear light armor, you add your Dexterity modifier to the base number from your armor type to determine your Armor Class.
 
@@ -87,3 +91,42 @@ This armor is made of narrow vertical strips of metal riveted to a backing of le
 
 #### Studded leather
 Made from tough but flexible leather, studded leather is reinforced with close-set rivets or spikes.
+
+```
+armor = {
+    'light': {
+        'Battle robe' : 11,
+        'Padded armor' : 11, 
+        'Leather armor' : 11,
+        'Leather lamellar' : 12,
+        'Studded leather armor' : 12
+    },
+    'medium': {
+        'Hide armor' : 12, 
+        'Chain shirt' : 13,
+        'Plated leather' : 13,
+        'Wood' : 13,
+        'Scale mail' : 14, 
+        'Breastplate' : 14, 
+        'Half-plate' : 15,
+        'Kozane' : 15
+    },
+    'heavy': {
+        'Ring mail' : 14,
+        'Lorica segmentata' : 15,
+        'Chain mail' : 16,
+        'Splint armor' : 17,
+        'Plate armor' : 18
+    },
+    'shields': {
+        'Buckler' : 1,
+        'Fencing cloak' : 1,
+        'Vambrace' : 1,
+        'Shield' : 2,
+        'Tower shield' : 2
+    }
+}
+
+def init():
+    parent.armor = armor
+```

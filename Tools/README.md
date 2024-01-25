@@ -48,6 +48,15 @@ Let's define per-module surface API ahead of time, to make it more consistent.
 
 Each text "block" should be a Feature type, which has the titled-text format?
 
+Feature (title + text)
++-- Trait
++-- Action
+    +--- Attack?
+    +--- Spellcasting?
++-- Reaction
++-- Bonus
++-- Lair
+
 CharacterGen should allow for 100% randomization except for specified elements, so that I can specify anything (or nothing at all) to gen up an NPC. Randomization should be something invokable at any level (racial/sub-racial, class/subclass, background, etc).
 
 ### Later

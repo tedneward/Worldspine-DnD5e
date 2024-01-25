@@ -110,3 +110,7 @@ Modest | 5 sp
 Comfortable | 8 sp
 Wealthy | 2 gp
 Aristocratic | 4 gp
+
+```
+# Placeholder
+```

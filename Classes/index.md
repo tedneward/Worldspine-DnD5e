@@ -40,3 +40,12 @@ The Wizard uses their ability to study and learn to master the casting of arcane
 ---
 
 In addition, players can have their characters [multiclass](Multiclassing.md) to gain greater flexibility at the expense of greater focus.
+
+```
+def random():
+    print("Picking a class at random from ", modules, " boss!")
+    (name, clazz) = randomfrom(modules)
+    (name, subclass) = randomfrom(clazz.subclasses)
+    print("I picked a", subrace.name, race.name, "for you, boss!")
+    return (clazz, subclass)
+```

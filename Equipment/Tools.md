@@ -72,3 +72,48 @@ Poisoner’s Kit. A poisoner’s kit includes the vials, chemicals, and other eq
 
 Thieves’ Tools. This set of tools includes a small file, a set of lock picks, a small mirror mounted on a metal handle, a set of narrow-bladed scissors, and a pair of pliers. Proficiency with these tools lets you add your proficiency bonus to any ability checks you make to disarm traps or open locks.
 
+```
+tools = {
+    'artisan': [
+        "Alchemist's supplies",
+        "Brewer's supplies",
+        "Calligrapher's supplies",
+        "Carpenter's tools",
+        "Cartographer's tools",
+        "Cobbler's tools",
+        "Cook's utensils",
+        "Glassblower's tools",
+        "Jeweler's tools",
+        "Leatherworker's tools",
+        "Mason's tools",
+        "Painter's supplies",
+        "Potter's tools",
+        "Smith's tools",
+        "Tinker's tools",
+        "Weaver's tools",
+        "Woodcarver's tools",
+    ],
+    'gaming': [
+        "Dice set",
+        "Dragonchess set",
+        "Playing card set",
+        "Three-Dragon Ante set",
+    ],
+    'musical': [
+        "Bagpipes",
+        "Chimes",
+        "Drum",
+        "Dulcimer",
+        "Flute",
+        "Lute",
+        "Lyre",
+        "Horn",
+        "Pan flute",
+        "Shawm",
+        "Viol"
+    ]
+}
+
+def init():
+    parent.tools = tools
+```

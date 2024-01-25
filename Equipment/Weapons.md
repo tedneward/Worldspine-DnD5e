@@ -1,5 +1,9 @@
 # Equipment: Weapons
 
+```
+weapons = {}
+```
+
 ## Simple Melee Weapons
 
 Name | Cost | Damage | Weight | Properties | Block
@@ -14,6 +18,21 @@ Mace | 5 gp | 1d6 bludgeoning | 4 lb. | — | ***Mace.*** *Melee Weapon Attack:*
 Quarterstaff | 2 sp | 1d6 bludgeoning | 4 lb. | Versatile (1d8) | ***Quarterstaff.*** *Melee Weapon Attack (one-handed):* +{proficiency bonus + STRbonus} to hit, 5ft., one target. Hit: 1d6 + {STRbonus} bludgeoning damage. *Melee Weapon Attack (two-handed):* +{proficiency bonus + STRbonus} to hit, 5ft., one target. Hit: 1d8 + {STRbonus} bludgeoning damage.
 Sickle | 1 gp | 1d4 slashing | 2 lb. | Light | ***Sickle.*** *Melee Weapon Attack:* +{proficiency bonus + STRbonus} to hit, 5ft., one target. Hit: 1d4 + {STRbonus} slashing damage.
 Spear | 1 gp | 1d6 piercing | 3 lb. | Thrown (20/60), versatile (1d8) | ***Spear.*** *Melee Weapon Attack (one-handed):* +{proficiency bonus + STRbonus} to hit, 5ft., one target. Hit: 1d4 + {STRbonus} piercing damage. *Melee Weapon Attack (two-handed):* +{proficiency bonus + STRbonus} to hit, 5ft., one target. Hit: 1d8 + {STRbonus} piercing damage. *Ranged Weapon Attack:* +{proficiency bonus + STRbonus} to hit, range 20/60, one target. Hit: 1d6 + {STR bonus} piercing damage.
+
+```
+weapons['simple-melee'] = {
+    'Club': MeleeAttack("Club", '1d4', 'bludgeoning', ['light']),
+    'Dagger': MeleeAttack("Dagger", '1d4', 'piercing', ['finesse','light']),
+    'Greatclub': MeleeAttack("Greatclub", '1d8', 'bludgeoning', ['two-handed']),
+    'Handaxe': MeleeAttack("Handaxe", '1d6', 'slashing', ['light', 'thrown (range 20/60)']),
+    'Javelin': ['1d6', 'piercing', ['thrown (range 30/120)']],
+    'Light hammer': ['1d4', 'bludgeoning', ['light', 'thrown (range 20/60)']],
+    'Mace': ['1d6', 'bludgeoning', []],
+    'Quarterstaff': ['1d6', 'bludgeoning', ['versatile (1d8)']],
+    'Sickle': ['1d4', 'slashing', ['light']],
+    'Spear': ['1d6', 'piercing',	['thrown (range 20/60)', 'versatile (1d8)']],
+}
+```
 
 ## Martial Melee Weapons
 
@@ -38,6 +57,29 @@ War pick | 5 gp | 1d8 piercing | 2 lb. | — |
 Warhammer | 15 gp | 1d8 bludgeoning | 2 lb. | Versatile (1d10) | 
 Whip | 2 gp | 1d4 slashing | 3 lb. | Finesse, reach | 
 
+```
+weapons['martial-melee'] = {
+    'Battleaxe': ['1d8', 'slashing', ['versatile (1d10)']],
+    'Flail': ['1d8', 'bludgeoning', []],
+    'Glaive': ['1d10', 'slashing', ['heavy', 'reach', 'two-handed']],
+    'Greataxe': ['1d12', 'slashing', ['heavy', 'two-handed']],
+    'Greatsword': ['2d6', 'slashing', ['heavy', 'two-handed']],
+    'Halberd': ['1d10', 'slashing', ['heavy', 'reach', 'two-handed']],
+    'Lance': ['1d12', 'piercing', ['reach', 'special']],
+    'Longsword': ['1d8', 'slashing', ['versatile (1d10)']],
+    'Maul': ['2d6', 'bludgeoning', ['heavy', 'two-handed']],
+    'Morningstar': ['1d8', 'piercing', []],
+    'Pike': ['1d10', 'piercing', ['heavy', 'reach', 'two-handed']],
+    'Rapier': ['1d8', 'piercing', ['finesse']],
+    'Scimitar': ['1d6', 'slashing', ['finesse', 'light']],
+    'Shortsword': ['1d6', 'piercing', ['finesse', 'light']],
+    'Trident': ['1d6', 'piercing', ['thrown (range 20/60)', 'versatile (1d8)']],
+    'War pick': ['1d8', 'piercing', []],
+    'Warhammer': ['1d8', 'bludgeoning', ['versatile (1d10)']],
+    'Whip': ['1d4', 'slashing', ['finesse', 'reach']],
+}
+```
+
 ## Simple Ranged Weapons
 
 Name | Cost | Damage | Weight | Properties | Block
@@ -46,6 +88,17 @@ Crossbow, light | 25 gp | 1d8 piercing | 5 lb. | Ammunition, range (80/320), loa
 Dart | 5 cp | 1d4 piercing | 1/4 lb. | Finesse, thrown (20/60) | 
 Shortbow | 25 gp | 1d6 piercing | 2 lb. | Ammunition, range (80/320), two-handed | 
 Sling | 1 sp | 1d4 piercing | — | Ammunition, range (30/120) | 
+
+```
+weapons['simple-ranged'] = {
+    'Light Crossbow': RangedAttack("Light Crossbow", '80/320', '1d8', 'piercing', ['ammunition', 'loading', 'two-handed']),
+    'Dagger': RangedAttack("Dagger", '20/60', '1d4', 'piercing', ['finesse','light','thrown']),
+    'Dart': RangedAttack("Dart", '20/60', '1d4', 'piercing', ['finesse', 'thrown']),
+    'Handaxe': RangedAttack("Handaxe", '20/60', '1d6', 'slashing', ['light', 'thrown']),
+    'Shortbow': ['1d6', 'piercing', ['ammunition (range 80/320)', 'two-handed']],
+    'Sling': ['1d4', 'bludgeoning',	['ammunition (range 30/120)']],
+}
+```
 
 ## Martial Ranged Weapons
 
@@ -56,6 +109,16 @@ Crossbow, hand | 75 gp | 1d6 piercing | 3 lb. | Ammunition, range (30/120), ligh
 Crossbow, heavy | 50 gp | 1d10 piercing | 18 lb. | Ammunition, range (100/400), heavy, loading, two-handed | 
 Longbow | 50 gp | 1d8 piercing | 2 lb. | Ammunition, range (150/600), heavy, two-Handed | 
 Net | 1 gp | — | 3 lb. | Special, thrown (5/15) | 
+
+```
+weapons['martial-ranged'] = {
+    'Blowgun': ['1', 'piercing', ['ammunition (range 25/100)', 'loading']],
+    'Hand Crossbow': ['1d6', 'piercing', ['ammunition (range 30/120)', 'light', 'loading']],
+    'Heavy Crossbow': ['1d10', 'piercing', ['ammunition (range 100/400)', 'heavy', 'loading', 'two-handed']],
+    'Longbow': ['1d8', 'piercing', ['ammunition (range 150/600)', 'heavy', 'two-handed']],
+    'Net': ['-', 'special', ['thrown (range 5/15)']]
+}
+```
 
 ## Ammunition
 
@@ -82,3 +145,8 @@ Special | A weapon with the special property has unusual rules governing its use
 Thrown | If a weapon has the thrown property, you can throw the weapon to make a ranged attack. If the weapon is a melee weapon, you use the same ability modifier for that attack roll and damage roll that you would use for a melee attack with the weapon. For example, if you throw a handaxe, you use your Strength, but if you throw a dagger, you can use either your Strength or your Dexterity, since the dagger has the finesse property.
 Two-Handed | This weapon requires two hands to use. This property is relevant only when you attack with the weapon, not when you simply hold it.
 Versatile | This weapon can be used with one or two hands. A damage value in parentheses appears with the property—the damage when the weapon is used with two hands to make a melee attack.
+
+```
+def init():
+    parent.weapons = weapons
+```
