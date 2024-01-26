@@ -5,6 +5,11 @@ You know what people want and you deliver, or rather, you promise to deliver. Co
 
 Needless to say, your past is checkered, and there are quite a few people who'd love to catch up to you and return their purchase.
 
+```
+name = 'Charlatan'
+description = "***Background: Charlatan.*** You know what people want and you deliver, or rather, you promise to deliver. Common sense should steer people away from things that sound too good to be true, but common sense seems to be in short supply when you're around. The bottle of pink colored liquid will surely cure that unseemly rash, this ointment – nothing more than a bit of fat with a sprinkle of silver dust - can restore youth and vigor, and there's a bridge in the city that just happens to be for sale. These marvels sound implausible, but you make them sound like the real deal."
+```
+
 ## Skill Proficiencies
 Deception, Sleight of Hand
 

@@ -33,14 +33,9 @@ languages = {
                'Sylvan', 'Undercommon' ]
 }
 
-def random():
-    #print("Picking a race at random from ", modules, " boss!")
-    (name, race) = randomfrom(modules)
-    if getattr(race, "subraces", None) != None:
-        (name, subrace) = randomfrom(race.subraces)
-        print("I picked a", subrace.name, race.name, "for you, boss!")
-        return (race, subrace)
-    else:
-        print("I picked a", race.name, "for you, boss!")
-        return race
+def random(npc):
+    race = modules['Dragonborn'] #(name, race) = randomfrom(modules)
+    print("I chose a",race.name,"for you, boss!")
+    npc.setrace(race)
+    race.random(npc) #subrace choice should come in here
 ```

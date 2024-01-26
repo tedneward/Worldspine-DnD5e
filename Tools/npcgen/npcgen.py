@@ -35,28 +35,31 @@ REPOROOT = os.path.realpath(os.path.dirname(os.path.realpath(__file__)) + '/../.
 ##########################
 # Character-related pieces
 class Feature:
-    def __init__(self, title, text, uses=None, recharges=None):
+    def __init__(self, title, text, recharges=None, uses=None):
         self.title = title
         self.text = text
         self.uses = uses
         self.recharges = recharges
+        self.npc = None # The StatBlock to which this Feature is attached
 
     def __str__(self):
         posttitletext = ""
-        if self.recharges == None and self.uses == None:
-            # It's an at-will feaure
-            posttitletext = ""
-        if self.recharges != None and self.uses == None:
-            # Recharges on short or long rest
-            posttitletext = " (Recharges on {self.recharges})"
-        elif self.recharges == None and self.uses != None:
-            # Does this actually ever happen? I think
-            # uses implies recharges, because anything
-            # without recharges implies at will, right?!?
-            posttitletext = " ({self.uses})"
-        elif self.recharges != None and self.uses != None:
-            # Use N number of times, recharges at dawn (whatever)
-            posttitletext = " ({self.uses}/Recharges on {self.recharges})"
+        if self.recharges == None:
+            if self.uses == None:
+                # At-will
+                posttitletext = ""
+            else:
+                # It's a 2/day but never recharges?
+                # Pretty sure this isn't a thing
+                warn(self.title, "has uses but no recharges text!")
+                posttitletext = f"({self.uses})"
+        else:
+            if self.recharges == "short rest": self.recharges = "short or long rest"
+
+            if self.uses == None:
+                posttitletext = f" (Recharges on {self.recharges})"
+            else:
+                posttitletext = " ({self.uses}/Recharges on {self.recharges})"
         return f"***{self.title}{posttitletext}.*** {self.text}"
 
 class Action(Feature):
@@ -85,12 +88,14 @@ class MeleeAttack(Action):
         self.dmgtype = dmgtype 
             # should be one of the recognized types: bludgeoning, piercing, slashing, etc
         self.properties = properties if properties != None else []
-            # light, two-handed, versatile, etc
+            # light, finesse, two-handed, versatile, etc
         self.tohit = 0
         self.reach = "5ft."
 
     def __str__(self):
-        text  = f"***{self.title}.*** *Melee Weapon Attack:* +{self.tohit} to hit, range {self.reach}, one target. "
+        text  = f"***{self.title}.*** *Melee Weapon Attack:* "
+        text += f"+{self.npc.STRbonus() + self.npc.proficiencybonus() + self.tohit} to hit, "
+        text += f"range {self.reach}, one target. "
         text += f"Hit: {self.dmgamt} {self.dmgtype}"
         return text
 
@@ -109,16 +114,362 @@ class RangedAttack(Action):
             # thrown, ammunition, etc
 
     def __str__(self):
-        text  = f"***{self.title}.*** *Ranged Weapon Attack:* +{self.tohit} to hit, range {self.range}, one target. "
+        text  = f"***{self.title}.*** *Ranged Weapon Attack:* "
+        text += f"+{self.npc.DEXbonus() + self.npc.proficiencybonus() + self.tohit} to hit, "
+        text += f"range {self.range}, one target. "
         text += f"Hit: {self.dmgamt} {self.dmgtype}"
         return text
 
 class StatBlock:
     def __init__(self):
-        pass
+        self.name = ""
+        self.size = 'Medium'
+        self.type = ''
+        self.gender = ''
+
+        self.race = None        # module reference
+        self.subrace = None     # optional module reference
+        self.classes = []       # list of module references
+        self.subclasses = {}    # dict of classmodule.name : subclass module references
+
+        self.hitpoints = 0      # running total of HP
+        self.hitdice = { 'd6':0, 'd8':0, 'd10':0, 'd12':0, 'd20':0 }
+        self.hpconbonus = 0     # running total of CON bonuses
+
+        self.STR = 0
+        self.DEX = 0
+        self.CON = 0
+        self.INT = 0
+        self.WIS = 0
+        self.CHA = 0
+
+        self.profbonus = 0
+
+        self.speed = { 'walking': 0 }
+        self.senses = { 'passive Perception': 0 }
+        self.armorclass = { }
+        self.damagevulnerabilities = []
+        self.damageresistances = []
+        self.damageimmunities = []
+        self.conditionimmunities = []
+
+        # Proficiencies are skills, weapons, armors, and saving throws
+        # Expertises are double-counted proficiencies (add proficiency bonus twice)
+        self.proficiencies = []
+        self.expertises = []
+        self.languages = [] # These are kinda proficiencies, but displayed separately, so....
+
+        self.traits = []
+        self.actions = []
+        self.bonusactions = []
+        self.reactions = []
+        self.lairactions = []
+
+        self.feats = []
+
+        self.equipment = []
+
+    ##########################
+    # Ability-related methods
+    def getability(self, name): return getattr(self, name, 0)
+    def setability(self, name, score): setattr(self, name, score)
+    def addabilities(self, abilities):
+        for name in abilities:
+            self.setability(name, abilities[name] + self.getability(name))
+
+    def STRbonus(self): return (self.STR // 2) - 5
+    def DEXbonus(self): return (self.DEX // 2) - 5
+    def CONbonus(self): return (self.CON // 2) - 5
+    def INTbonus(self): return (self.INT // 2) - 5
+    def WISbonus(self): return (self.WIS // 2) - 5
+    def CHAbonus(self): return (self.CHA // 2) - 5
+    def abilitybonus(self, name):
+        if name == 'STR': return self.STRbonus()
+        elif name == 'DEX': return self.DEXbonus()
+        elif name == 'CON': return self.CONbonus()
+        elif name == 'INT': return self.INTbonus()
+        elif name == 'WIS': return self.WISbonus()
+        elif name == 'CHA': return self.CHAbonus()
+        else:
+            error("Unrecognized ability bonus request:", name)
+            return None
+
+    ##########################
+    # Race-related methods
+    def setrace(self, racemod):
+        if self.race != None: warn("Replacing",self.race.name,"with",racemod.name,"!")
+        self.race = racemod
+        racemod.apply(self)
+
+    ##########################
+    # Class-related methods
+
+    def hits(self, die):
+        self.hitdice[die] += 1
+        if self.levels() == 1:
+            # Max hit points at first level
+            self.hitpoints += int(die[1:]) # Strip off the 'd'
+        else:
+            # We roll randomly (sort of)
+            top = int(die[1:])
+            self.hitpoints += random.randrange(4, top)
+        # Keep a running total for the CON bonus, since it can change over time/levels
+        self.hpconbonus += self.CONbonus()
+        # Likewise, keep a running total for hit points
+        self.hitpoints += self.CONbonus()
+
+    def hitdicedesc(self):
+        dicelist = []
+        for key in self.hitdice.keys():
+            if self.hitdice[key] > 0:
+                dicelist.append(str(self.hitdice[key]) + str(key))
+        return " + ".join(dicelist)
+
+    # Revisit this when we get to monsters-having-classes
+    # since technically monsters have no levels, so should their
+    # PB add to their class levels?!?
+    def proficiencybonus(self):
+        if self.profbonus == 0:
+            return (self.levels() // 4) + 2
+        else:
+            return self.profbonus
+
+    def levels(self, clss = None):
+        if clss == None: return len(self.classes)
+        else:
+            count = 0
+            if isinstance(clss, str):
+                for cli in self.classes:
+                    if cli.name == clss: count += 1
+            else:
+                for cli in self.classes: 
+                    if cli == clss: count += 1
+            return count
+
+    def applyfeat(self, featname, featmod):
+        self.feats.append(featname)
+        featmod.apply(self)
+
+    def getsavingthrows(self):
+        saves = []
+        for p in self.proficiencies:
+            if p in ['STR','DEX','CON','INT','WIS','CHA']:
+                score = self.proficiencybonus() + self.abilitybonus(p)
+                saves.append(f"{p} +{score}")
+        return saves
+
+    def getskills(self):
+        skills = []
+        for p in self.proficiencies:
+            if p not in roots['Abilities'].skills: continue
+            score = self.proficiencybonus() + self.abilitybonus(roots['Abilities'].skillability[p])
+            skills.append(f"{p} +{score}")
+        return skills
+
+    def getproficiencies(self):
+        profs = []
+        for p in self.proficiencies:
+            if p in ['STR','DEX','CON','INT','WIS','CHA']: continue
+            if p in roots['Abilities'].skills: continue
+            profs.append(p)
+        return profs
+    
+    def getlanguages(self): return self.languages
+
+    def getsenses(self):
+        items = []
+        for (key, value) in self.senses.items():
+            if key == 'passive Perception':
+                if 'Perception' in self.expertises:
+                    items.append(f"passive Perception {10 + value + self.WISbonus() + (self.proficiencybonus() * 2)}")
+                elif 'Perception' in self.proficiencies:
+                    items.append(f"passive Perception {10 + value + self.WISbonus() + self.proficiencybonus()}")
+                else:
+                    items.append(f"passive Perception {10 + value + self.WISbonus()}")
+            else:
+                items.insert(0, f"{key} {value}")
+        return items
+
+    ##########################
+    # "Deference": some abilities/scores/etc need to be calculated not
+    # at the time they are added, but 
+
+
+    ##########################
+    # Feature methods
+    def append(self, feature : Feature):
+        if isinstance(feature, MeleeAttack): self.actions.append(feature)
+        elif isinstance(feature, RangedAttack): self.actions.append(feature)
+        elif isinstance(feature, Action): self.actions.append(feature)
+        elif isinstance(feature, BonusAction): self.bonusactions.append(feature)
+        elif isinstance(feature, Reaction): self.reactions.append(feature)
+        elif isinstance(feature, LairAction): self.lairactions.append(feature)
+        else: self.traits.append(feature)
+        feature.npc = self
+
+    def find(self, featuretitle : str) -> Feature|None:
+        for f in self.traits | self.actions | self.bonusactions | self.reactions | self.lairactions:
+            if f.title == featuretitle:
+                return f
+        return None
+    
+    def findall(self, featuretitle : str) -> list:
+        results = []
+        for f in self.traits | self.actions | self.bonusactions | self.reactions | self.lairactions:
+            if featuretitle in f.title:
+                results.append(f)
+        return results
+    
+    def replace(self, feature : Feature) -> bool:
+        def replacebytype(srclist, feature):
+            for f in srclist:
+                if f.title == feature.title:
+                    srclist.remove(f)
+                    srclist.append(feature)
+                    feature.npc = self
+                    return True
+            return False
+
+        if isinstance(feature, Action) and replacebytype(self.actions, feature): return True
+        if isinstance(feature, BonusAction) and replacebytype(self.bonusactions, feature): return True
+        if isinstance(feature, Reaction) and replacebytype(self.reactions, feature): return True
+        if isinstance(feature, LairAction) and replacebytype(self.lairactions, feature): return True
+
+        for f in self.traits:
+            if f.title == feature.title:
+                self.traits.remove(f)
+                self.traits.append(feature)
+                feature.npc = self
+                return True
+
+        return False
+
+    ##########################
+    # Emitter methods
+    def getracesubstring(self):
+        return f"{self.race.type} ({'' if self.subrace == None else self.subrace.name + ' '}{self.race.name})"
+    
+    def getclasssubstring(self):
+        if self.levels() < 1: return ""
+
+        classmap = {}
+        for c in self.classes:
+            if c not in classmap:
+                classmap[c] = 1
+            else:
+                classmap[c] += 1
+
+        strs = []
+        for c in classmap:
+            if c in self.subclasses.keys():
+                strs.append(f"{c.name} ({self.subclasses[c].name}) {classmap[c]}")
+            else:
+                strs.append(f"{c.name} {classmap[c]}")
+        return "/".join(strs)
 
     def emitmd(self) -> str:
-        return ""
+        linesep = ">___\n"
+
+        result = ""
+
+        def emitheaderblock():
+            text =  f">### {self.name}\n"
+            text += f'>*{self.size} {self.gender} {self.getracesubstring()} {self.getclasssubstring()}, any alignment*\n'
+            text += linesep
+            return text
+        
+        def emitsecondaryheaderblock():
+            def getarmorclass():
+                result = []
+                ac = 10
+                for (actext, acnum) in self.armorclass.items():
+                    if acnum > 8:
+                        # Only armor itself is ever a value 10+
+                        ac = acnum
+                        result.append(f'{actext} ({acnum})')
+                    else:
+                        ac += acnum
+                        result.append(f'{actext} (+{acnum})')
+                if self.DEXbonus() != 0:
+                    ac += self.DEXbonus()
+                    result.append(f'DEX ({self.DEXbonus():+g})')
+                return str(ac) + ' (' + ",".join(result) + ')'
+            
+            def getspeed():
+                text = str(self.speed['walking']) + ' ft'
+                for (key, value) in self.speed.items():
+                    if key == 'walking': continue
+                    else:
+                        text += ", " + key + " " + str(value) + " ft"
+                return text
+
+            text  = f">- **Armor Class** {getarmorclass()}\n"
+            text += f">- **Hit Points** {self.hitpoints} ({self.hitdicedesc()} + {self.hpconbonus})\n"
+            text += f">- **Speed** {getspeed()}\n"
+            text += linesep
+            return text
+
+        def emitabilityblock():
+            text  =  ">|**STR**|**DEX**|**CON**|**INT**|**WIS**|**CHA**|\n"
+            text +=  ">|:-:|:-:|:-:|:-:|:-:|:-:|\n"
+            text += f">|{self.STR} ({self.STRbonus():+g})"
+            text += f"|{self.DEX} ({self.DEXbonus():+g})"
+            text += f"|{self.CON} ({self.CONbonus():+g})"
+            text += f"|{self.INT} ({self.INTbonus():+g})"
+            text += f"|{self.WIS} ({self.WISbonus():+g})"
+            text += f"|{self.CHA} ({self.CHAbonus():+g})|\n"
+            text += linesep
+            return text
+        
+        def emitproficienciesblock():
+            text  = f">- **Proficiency Bonus** {self.proficiencybonus():+g}\n"
+            text += f">- **Saving Throws** {','.join(self.getsavingthrows())}\n"
+            text += f">- **Damage Vulnerabilities** {','.join(self.damagevulnerabilities)}\n"
+            text += f">- **Damage Resistances** {','.join(self.damageresistances)}\n"
+            text += f">- **Damage Immunities** {','.join(self.damageimmunities)}\n"
+            text += f">- **Condition Immunities** {','.join(self.conditionimmunities)}\n"
+            text += f">- **Skills** {','.join(self.getskills())}\n"
+            text += f">- **Proficiencies** {','.join(self.getproficiencies())}\n"
+            text += f">- **Senses** {','.join(self.getsenses())}\n"
+            text += f">- **Languages** {','.join(self.languages)}\n"
+            text += linesep
+            return text
+
+        result += emitheaderblock()
+        result += emitsecondaryheaderblock()
+        result += emitabilityblock()
+        result += emitproficienciesblock()
+
+        if len(self.traits):
+            for trait in self.traits:
+                result += f">{trait}\n"
+                result +=  ">\n"
+
+        if len(self.actions):
+            result +=  ">#### Actions\n"
+            for action in self.actions:
+                result += f">{action}\n"
+                result +=  ">\n"
+
+        if len(self.bonusactions):
+            result +=  ">#### Bonus Actions\n"
+            for action in self.bonusactions:
+                result += f">{action}\n"
+                result +=  ">\n"
+
+        if len(self.reactions):
+            result +=  ">#### Reactions\n"
+            for action in self.reactions:
+                result += f">{action}\n"
+                result +=  ">\n"
+
+        if len(self.lairactions):
+            result +=  ">#### Lair Actions\n"
+            for action in self.lairactions:
+                result += f">{action}\n"
+                result +=  ">\n"
+
+        return result
 
 ##########################
 # Some utility methods for use within the literate modules
@@ -210,14 +561,12 @@ class Input:
         self.output("You chose " + str((responsekey, choicemap[responsekey])))
         return (responsekey, choicemap[responsekey])
 
-    def choose(self, promptmsg : str, choices=None):
+    def choose(self, choices=None):
         if choices == None:
-            return self.input(promptmsg)
+            return self.input("")
         elif isinstance(choices, list):
-            self.output(promptmsg)
             return self.choosefromlist(choices)
         elif isinstance(choices, dict):
-            self.output(promptmsg)
             return self.choosefrommap(choices)
         else:
             error("WTF?!?", choices)
@@ -361,30 +710,31 @@ def loadmodule(filename : str, modulename : str = None, parent : types.ModuleTyp
         global io
 
         mybuiltins = {
-            # Access to a few useful Python packages
+            # Access to a few useful Python packages and builtins
             "os": os,
             #"random": random,
-            # Access to a few of the core Python builtins
             "int": int,
             "str": str,
+
             # Our roots-level modules
             "roots": roots,
+
             # Our I/O facilities
             "log": log,
             "warn": warn,
             "error": error,
             "print": io.output,
             "choose": io.choose,
+
             # Module facilities
-            "getattr": getattr,
-            "setattr": setattr,
             "parent": parent,
-            "loadmodule": loadmodule,
+
             # Utility methods of our own
             "dieroll": dieroll,
             "randomfrom": randompick,
             "randomint": randomint,
-            "randommodule": random,
+            "randompkg": random,
+
             # Character-related pieces
             "Feature": Feature,
             "Action": Action,
@@ -432,8 +782,49 @@ def loadmodule(filename : str, modulename : str = None, parent : types.ModuleTyp
         warn(f"{filename} has no literate code")
         return None
 
+
+
 ##########################
-# Main entrypoint
+# Main entrypoint and workhorse
+def generate(randomlist=[]):
+    global io
+    global roots
+
+    npc = StatBlock()
+
+    # We need to do a few things before we can start kicking off levels,
+    # but we might want to do them in a variety of different orders
+    prereqs = ['Abilities', 'Background', 'Gender', 'Race',] #'Class'
+
+    for r in randomlist:
+        if r == 'Gender': 
+            npc.gender = randompick(['Male', 'Female'])
+        elif r == 'Background':
+            #randompick(roots["Backgrounds"]).random(npc)
+            io.output("Background!")
+        elif r == 'Race':
+            roots["Races"].random(npc)
+        else:
+            io.output(r + ":", roots[r].random())
+        prereqs.remove(r)
+
+    while len(prereqs) > 0:
+        which = io.choosefromlist(prereqs)
+        if which == 'Abilities':
+            print(roots['Abilities'].random())
+        elif which == 'Background':
+            print("Background!")
+        elif which == 'Gender':
+            print(io.choosefromlist(['Male', 'Female']))
+        elif which == 'Race':
+            (_, racemod) = io.choose(roots['Races'].modules)
+            if getattr(racemod, "subraces", None) != None:
+                (_, subracemod) = io.choose(racemod.subraces)
+                print(f"Race: {subracemod.name} {racemod.name}")
+            else:
+                print(f"Race: {racemod.name}")
+        prereqs.remove(which)
+
 def main():
     global verbose
     global quiet
@@ -448,6 +839,7 @@ def main():
     parser.add_argument('--version', action='version', version='%(prog)s 0.1')
     parser.add_argument('--savepy', help="Which modules to save literate-parsed Python code (into ./Python)")
     parser.add_argument('--scripts', nargs='*', help="A list of files to use as scripted input")
+    parser.add_argument('--randomize', help="List of things to generate randomly ahead of time (interactive only)")
     args = parser.parse_args()
 
     # Logging off, on, or a lot?
@@ -457,31 +849,49 @@ def main():
         elif args.verbosity == 'quiet':
             quiet = True
 
+    # Save the loaded literate Python somewhere (for easier debugging)?
     if args.savepy != None:
         SAVEPY = args.savepy
     
     # Load modules, have them bootstrap in turn
     loadrootmodule(REPOROOT + "Abilities")
-    #loadrootmodule(REPOROOT + "Backgrounds")
+    loadrootmodule(REPOROOT + "Backgrounds")
     #loadrootmodule(REPOROOT + "Classes")
     loadrootmodule(REPOROOT + "Equipment")
-    #loadrootmodule(REPOROOT + "Feats")
+    loadrootmodule(REPOROOT + "Feats")
     loadrootmodule(REPOROOT + "Races")
     #loadrootmodule(REPOROOT + "Creatures") # <-- this will be an interesting day
 
     # Test zone
-    #print(roots['Races'].random())
-    #print(roots['Equipment'].weapons)
-    #print(roots['Equipment'].armor)
+    def testzone():
+        #print(roots['Races'].random())
+        #print(roots['Equipment'].weapons)
+        #print(roots['Equipment'].armor)
+        #print(roots['Feats'].choosefeat())
+        #print(roots['Abilities'].abilityscoreincrease())
+
+        npc = StatBlock()
+        npc.name = "Fred Flintstone"
+        npc.gender = 'Male'
+        npc.addabilities(roots['Abilities'].average())
+        npc.setrace(roots['Races'].modules['Half-Orc'])
+        npc.proficiencies.append('STR')
+        npc.proficiencies.append('CON')
+        npc.append(roots['Equipment'].weapons['simple-melee']['Club'])
+        print(npc.emitmd())
 
     # Examine command line, let's see if we need to script-generate
     # our PC/NPC, or if we do it interactively.
     if args.scripts != None:
         for script in args.scripts:
-            print("Processing",script)
-            io = ScriptedInput(script)
+            if script == 'Test':
+                testzone()
+            else:
+                io = ScriptedInput(script)
+                generate()
     else:
-        print("Run interactively!")
+        print(args.randomize.split(','))
+        generate(args.randomize.split(','))
 
 if __name__ == '__main__':
 	main()

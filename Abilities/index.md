@@ -101,7 +101,7 @@ def npcstandard():
 
 ```
 methods = {
-    "Average": average
+    "Average": average,
     "Hand": handentry, 
     "NPC": npcstandard, 
     "Randomgen": randomgen, 
@@ -115,7 +115,32 @@ skills = [
     'Medicine', 'Nature', 'Perception', 'Performance', 'Persuasion',
     'Religion', 'Sleight of Hand', 'Stealth', 'Survival'
 ]
+skillability = { 
+    'Acrobatics' : 'DEX', 
+    'Animal Handling' : 'WIS', 
+    'Arcana' : 'INT', 
+    'Athletics' : 'STR',
+    'Deception' : 'CHA', 
+    'History' : 'INT', 
+    'Insight' : 'WIS', 
+    'Intimidation' : 'CHA', 
+    'Investigation' : 'INT',
+    'Medicine' : 'WIS', 
+    'Nature' : 'INT', 
+    'Perception' : 'WIS', 
+    'Performance' : 'CHA', 
+    'Persuasion' : 'CHA',
+    'Religion' : 'INT', 
+    'Sleight of Hand' : 'DEX', 
+    'Stealth' : 'DEX', 
+    'Survival' : 'WIS'
+}
+
+def chooseskill(): return choose("Choose a skill: ", skills)
 
 def random():
     return randomgen()
+
+def abilityscoreincrease():
+    return choose("Choose an ability score to increase: ", ['STR', 'DEX', 'CON', 'INT', 'WIS', 'CHA'])
 ```

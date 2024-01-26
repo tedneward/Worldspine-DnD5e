@@ -1,8 +1,6 @@
 # Half-Orcs
 When alliances between humans and orcs are sealed by marriages, half-orcs are born. Some half-orcs rise to become proud chiefs of orc tribes, their human blood giving them an edge over their full-blooded orc rivals. Some venture into the world to prove their worth among humans and other more civilized races. Many of these become adventurers, achieving greatness for their mighty deeds and notoriety for their barbaric customs and savage fury.
 
-Half-orcs may be [dragonmarked with the Mark of Finding](Finding.md); see that entry for more details.
-
 ```
 name = 'Half-Orc'
 type = 'humanoid'
@@ -10,7 +8,7 @@ description = "***Race: Half-Orc.*** When alliances between humans and orcs are 
 ```
 
 ```
-def level0(npc):
+def apply(npc):
 ```
 
 * **Ability Score Increase**. Your Strength score increases by 2, and your Constitution score increases by 1.
@@ -45,19 +43,19 @@ def level0(npc):
 * **Menacing**. You gain proficiency in the Intimidation skill.
 
 ```
-    npc.skills.append("Intimidation")
+    npc.proficiencies.append("Intimidation")
 ```
 
 * **Relentless Endurance**. When you are reduced to 0 hit points but not killed outright, you can drop to 1 hit point instead. You can't use this feature again until you finish a long rest.
 
 ```
-    npc.traits.append("***Relentless Endurance (Recharges on long rest.)*** When you are reduced to 0 hit points but not killed outright, you can drop to 1 hit point instead.")
+    npc.append(Feature("Relentless Endurance", "When you are reduced to 0 hit points but not killed outright, you can drop to 1 hit point instead.", "long rest"))
 ```
 
 * **Savage Attacks**. When you score a critical hit with a melee weapon attack, you can roll one of the weapon's damage dice one additional time and add it to the extra damage of the critical hit.
 
 ```
-    npc.traits.append("***Savage Attacks.*** When you score a critical hit with a melee weapon attack, you can roll one of the weapon's damage dice one additional time and add it to the extra damage of the critical hit.")
+    npc.append(Feature("Savage Attacks","When you score a critical hit with a melee weapon attack, you can roll one of the weapon's damage dice one additional time and add it to the extra damage of the critical hit."))
 ```
 
 * **Languages**. You can speak, read, and write Common and Orc. Orc is a harsh, grating language with hard consonants. It has no script of its own but is written in the Dwarvish script.
@@ -65,6 +63,10 @@ def level0(npc):
 ```
     npc.languages.append('Common')
     npc.languages.append('Orcish')
+```
+
+```
+def random(npc): apply(npc)
 ```
 
 ## Half-Orc Names

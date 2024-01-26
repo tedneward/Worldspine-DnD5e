@@ -3,6 +3,11 @@ You have spent your life in the service of a temple to a specific god or pantheo
 
 Choose a god, a pantheon of gods, or some other quasi-divine being, and work with your DM to detail the nature of your religious service. Were you a lesser functionary in the [Kaevarian Church](/Religions/KaevarianChurch.md), raised from childhood to assist the priests in the sacred rites? Or were you an [Al'Uman zealot](/Religions/AlUma.md) who suddenly experienced a call to serve the Eldar in a different way? Perhaps you were the leader of a small [Pantheonic](/Religions/Pantheon/index.md) cult, or even [an occult group](/Organizations/CultOfTheWyrm.md) that served a fiendish master that you now deny.
 
+```
+name = 'Acolyte'
+description = "***Background: Acolyte.*** You have spent your life in the service of a temple to a specific god or pantheon of gods. You act as an intermediary between the realm of the holy and the mortal world, performing sacred rites and offering sacrifices in order to conduct worshipers into the presence of the divine. You are not necessarily a cleric – performing sacred rites is not the same thing as channeling divine power."
+```
+
 ## Skill Proficiencies
 Insight, Religion
 

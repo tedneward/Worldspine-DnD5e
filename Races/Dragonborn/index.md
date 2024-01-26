@@ -20,13 +20,21 @@ type = 'humanoid'
 * **Languages**. You can read, speak, and write Common and Draconic.
 
 ```
-def level0(npc):
+def apply(npc):
     npc.STR += 2
     npc.CHA += 1
     npc.size = 'Medium'
     npc.speed['walking'] = 30
     npc.languages.append('Common')
     npc.languages.append('Draconic')
+
+def random(npc):
+    apply(npc)
+
+    (subracename, subracemod) = randomfrom(subraces)
+    print("I chose a",subracename,npc.race.name,"for you, boss!")
+    npc.subrace = subracemod
+    npc.subrace.random(npc)
 ```
 
 ## Draconic Ancestry
@@ -58,6 +66,12 @@ Dragonborn of metallic colors are often law-abiding, slow to anger, and sometime
 * [Gold](Gold.md)
 * [Silver](Silver.md)
 * [Steel](Steel.md)
+
+## Physical Attributes
+
+### Height
+
+### Weight
 
 ## Names
 Dragonborn have personal names given at birth, but they put their clan names first as a mark of honor. A childhood name or nickname is often used among clutchmates as a descriptive term or a term of endearment. The name might recall an event or center on a habit.

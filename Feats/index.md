@@ -78,3 +78,17 @@
 #### Z
 
 
+```
+def choosefeat(alreadyhave, random = False):
+    choosablelist = []
+
+    for f in modules:
+        if f not in alreadyhave:
+            choosablelist.append(f)
+
+    if not random:
+        featname = choose("Pick a Feat: ", choosablelist)
+    else:
+        featname = randomfrom(choosablelist)
+    return (featname, modules[featname])
+```

@@ -20,7 +20,7 @@
 name = 'Tiefling'
 description = "***Race: Tiefling.*** "
 type = 'humanoid/abyssal'
-def level0(npc):
+def apply(npc):
     npc.size = 'Medium'
     npc.speed['walking'] = 30
 
@@ -32,23 +32,5 @@ def level0(npc):
 
     npc.languages.append('Common')
     npc.languages.append('Infernal')
+def random(npc): apply(npc)
 ```
-
-## Tiefling Bloodlines
-
-Tieflings have a number of bloodlines (subraces), all depending on their infernal heritage:
-
-* [Asmodeus](Asmodeus.md)
-* [Baalzebul](Baalzebul.md)
-* [Dispater](Dispater.md)
-* [Fierna](Fierna.md)
-* [Glasya](Glasya.md)
-* [Levistus](Levistus.md)
-* [Mammon](Mammon.md)
-* [Mephistopheles](Mephistopheles.md)
-* [Zariel](Zariel.md)
-
-Some tieflings have a less-noble bloodline, but still inherit infernal characteristics:
-
-* [Devil's Tongue](DevilsTongue.md)
-* [Winged](Winged.md)
