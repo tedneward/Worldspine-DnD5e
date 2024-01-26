@@ -34,8 +34,12 @@ languages = {
 }
 
 def random(npc):
-    race = modules['Dragonborn'] #(name, race) = randomfrom(modules)
-    print("I chose a",race.name,"for you, boss!")
-    npc.setrace(race)
-    race.random(npc) #subrace choice should come in here
+    racemod = modules['Elf'] # modules[randomfrom(['Dragonborn','Dwarf','Human','Half-Orc','Tiefling'])]
+    racename = racemod.name
+
+    #(racename, racemod) = randomfrom(modules)
+
+    print("I chose a",racemod.name,"for you, boss!")
+    npc.setrace(racemod)
+    npc.race.random(npc) #subrace choice should come in here, if possible/necessary
 ```

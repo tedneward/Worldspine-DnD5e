@@ -15,9 +15,9 @@ As an action, you can channel your draconic energy to protect yourself. For 1 mi
 ```
 name = 'White'
 description = "***White Dragonborn.*** "
-def level0(npc):
+def apply(npc):
     npc.damageresistances.append("cold")
-    npc.defer(lambda npc: npc.actions.append(f"***Breath Weapon ({npc.proficiencybonus()}/Reharges on a long rest).*** You exhale destructive cold in a 15' cone. All creatures in the area must make a CON saving throw, DC {8 + npc.CONbonus() + npc.proficiencybonus()}. A creature takes {'1d10' if npc.levels() < 6 else '2d10' if npc.levels() < 11 else '3d10' if npc.levels() < 16 else '4d10'} cold damage on a failed save, or half on a successful one."))
+    npc.append(parent.breathweaponaction("15' cone", "cold", "CON"))
 def level5(npc):
-    npc.actions.append("***Chromatic Warding (Recharges on long rest).*** For 1 minute, you become immune to cold damage.")
+    npc.append(Action("Chromatic Warding", "For 1 minute, you become immune to cold damage.", "long rest"))
 ```

@@ -97,6 +97,19 @@ def npcstandard():
         stats.remove(stat)
 
     return abilities
+
+def randomnpcstandard():
+    abilities = {}
+
+    scores = [16, 15, 12, 12, 12, 8]
+    stats = ['STR', 'DEX', 'CON', 'INT', 'WIS', 'CHA']
+    while len(stats) > 0:
+        stat = randomfrom(stats)
+        abilities[stat] = scores[0]
+        scores.pop(0)
+        stats.remove(stat)
+
+    return abilities
 ```
 
 ```
@@ -107,7 +120,24 @@ methods = {
     "Randomgen": randomgen, 
     "Standard": standard, 
 }
+```
 
+## Ability Increases
+Characters are often able to increase one or more of their ability scores one or more times. Details will depend (most often) on the class the character is leveling into.
+
+```
+def abilityscoreincrease(npc):
+    return choose("Choose an ability score to increase: ", ['STR', 'DEX', 'CON', 'INT', 'WIS', 'CHA'])
+```
+
+
+## Skills
+Skills are proficiencies that add to a character's ability check or save.
+
+* Acrobatics (DEX):
+* ...
+
+```
 # All the skills that players may use to affect their ability checks
 skills = [ 
     'Acrobatics', 'Animal Handling', 'Arcana', 'Athletics',
@@ -137,10 +167,15 @@ skillability = {
 }
 
 def chooseskill(): return choose("Choose a skill: ", skills)
+```
 
-def random():
-    return randomgen()
+```
+def random(npc):
+    #abilities = randomgen()
+    #abilities = randomnpcstandard()
+    abilities = average()
+    npc.addabilities(abilities)
 
-def abilityscoreincrease():
+def abilityscoreincrease(npc):
     return choose("Choose an ability score to increase: ", ['STR', 'DEX', 'CON', 'INT', 'WIS', 'CHA'])
 ```

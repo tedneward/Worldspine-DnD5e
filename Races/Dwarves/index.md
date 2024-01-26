@@ -1,9 +1,33 @@
 # Dwarves
 See [*Dwarves*](../../Creatures/Dwarves.md) for more details.
 
+Kingdoms rich in ancient grandeur, halls carved into the roots of mountains, the echoing of picks and hammers in deep mines and blazing forges, a commitment to clan and tradition, and a burning hatred of goblins and orcs — these common threads unite all dwarves.
+
+### Short and Stout
+Bold and hardy, dwarves are known as skilled warriors, miners, and workers of stone and metal. Though they stand well under 5 feet tall, dwarves are so broad and compact that they can weigh as much as a human standing nearly two feet taller. Their courage and endurance are also easily a match for any of the larger folk.
+
+Dwarven skin ranges from deep brown to a paler hue tinged with red, but the most common shades are light brown or deep tan, like certain tones of earth. Their hair, worn long but in simple styles, is usually black, gray, or brown, though paler dwarves often have red hair. Male dwarves value their beards highly and groom them carefully.
+
+### Long Memory, Long Grudges
+Dwarves can live to be more than 400 years old, so the oldest living dwarves often remember a very different world. For example, some of the oldest dwarves living in Citadel Felbarr (in the world of the Forgotten Realms) can recall the day, more than three centuries ago, when orcs conquered the fortress and drove them into an exile that lasted over 250 years. This longevity grants them a perspective on the world that shorter-lived races such as humans and halflings lack.
+
+Dwarves are solid and enduring like the mountains they love, weathering the passage of centuries with stoic endurance and little change. They respect the traditions of their clans, tracing their ancestry back to the founding of their most ancient strongholds in the youth of the world, and don’t abandon those traditions lightly. Part of those traditions is devotion to the gods of the dwarves, who uphold the dwarven ideals of industrious labor, skill in battle, and devotion to the forge.
+
+Individual dwarves are determined and loyal, true to their word and decisive in action, sometimes to the point of stubbornness. Many dwarves have a strong sense of justice, and they are slow to forget wrongs they have suffered. A wrong done to one dwarf is a wrong done to the dwarf’s entire clan, so what begins as one dwarf’s hunt for vengeance can become a full-blown clan feud.
+
+### Clans and Kingdoms
+Dwarven kingdoms stretch deep beneath the mountains where the dwarves mine gems and precious metals and forge items of wonder. They love the beauty and artistry of precious metals and fine jewelry, and in some dwarves this love festers into avarice. Whatever wealth they can’t find in their mountains, they gain through trade. They dislike boats, so enterprising humans and halflings frequently handle trade in dwarven goods along water routes. Trustworthy members of other races are welcome in dwarf settlements, though some areas are off limits even to them.
+
+The chief unit of dwarven society is the clan, and dwarves highly value social standing. Even dwarves who live far from their own kingdoms cherish their clan identities and affiliations, recognize related dwarves, and invoke their ancestors’ names in oaths and curses. To be clanless is the worst fate that can befall a dwarf.
+
+Dwarves in other lands are typically artisans, especially weaponsmiths, armorers, and jewelers. Some become mercenaries or bodyguards, highly sought after for their courage and loyalty.
+
+### Gods, Gold, and Clan
+Dwarves who take up the adventuring life might be motivated by a desire for treasure — for its own sake, for a specific purpose, or even out of an altruistic desire to help others. Other dwarves are driven by the command or inspiration of a deity, a direct calling or simply a desire to bring glory to one of the dwarf gods. Clan and ancestry are also important motivators. A dwarf might seek to restore a clan’s lost honor, avenge an ancient wrong the clan suffered, or earn a new place within the clan after having been exiled. Or a dwarf might search for the axe wielded by a mighty ancestor, lost on the field of battle centuries ago.
+
 ```
 name = 'Dwarf'
-description = "***Race: Dwarf.*** Dwarves are hardy folk, often usually working in skilled professions. Some have taken up more agrarian roots, choosing to embrace the world of sun and rain, but many dwarves find themselves naturally drawn to lives of practiced skills. Take careful note, though: despite their history, dwarves are just as fond of scroll and pen as they are crossbow and axe. Traditions hold among the dwarven clans, one of those being martial exercise, so most dwarves are trained in some form of weaponry, and likely to fight if antagonized."
+description = "***Race: Dwarf.*** Dwarves are solid and enduring like the mountains they love, weathering the passage of centuries with stoic endurance and little change. They respect the traditions of their clans, tracing their ancestry back to the founding of their most ancient strongholds in the youth of the world, and don’t abandon those traditions lightly. Part of those traditions is devotion to the gods of the dwarves, who uphold the dwarven ideals of industrious labor, skill in battle, and devotion to the forge."
 type = 'humanoid'
 ```
 
@@ -30,24 +54,47 @@ type = 'humanoid'
 * **Languages**. You can speak, read, and write Common and Dwarvish. Dwarvish is full of hard consonants and guttural sounds, and those characteristics spill over into whatever other language a dwarf might speak.
 
 ```
-def level0(npc):
+def apply(npc):
     npc.CON += 2
     npc.size = 'Medium'
     npc.speed['walking'] = 25
     npc.senses['darkvision'] = 60
     npc.damageresistances.append('poison')
-    npc.traits.append("***Dwarven Resilience.*** You have advantage on saving throws against poison.")
+    npc.append(Feature("Dwarven Resilience", "You have advantage on saving throws against poison."))
+    npc.append(Feature("Stonecunning", "Whenever you make an Intelligence (History) check related to the origin of stonework, it is considered proficient in the History skill and add doubles its proficiency bonus to the check."))
+
+    # TODO: Add these from the roots['Equipment'] weapons?
     npc.proficiencies.append("Battleaxe")
     npc.proficiencies.append("Hand axe")
     npc.proficiencies.append("Light hammer")
     npc.proficiencies.append("Warhammer")
-    npc.proficiencies.append(choose("Choose a tool proficiency:", ["Smith's Tools", "Brewer's Supplies", "Mason's Tools"]))
-    npc.traits.append("***Stonecunning.*** Whenever you make an Intelligence (History) check related to the origin of stonework, it is considered proficient in the History skill and add doubles its proficiency bonus to the check.")
+
+    # TODO: These should come from roots['Equipment'] tools?
+    # TODO: What do we do in the event of random invocation?
+    toolchoice = choose("Choose a tool proficiency:", ["Smith's Tools", "Brewer's Supplies", "Mason's Tools"])
+    npc.proficiencies.append(toolchoice)
 ```
 
 Dwarves have a number of genetically-differentiated offshoots (subraces):
 
-* [Hill](Hill.md) and [Mountain](Mountain.md) dwarves are the core stock of dwarvish lineage.
+* [Hill](Hill.md)
+* [Mountain](Mountain.md)
+
+
+```
+def random(npc):
+    (subracename, subracemod) = randomfrom(subraces)
+    print("I choose a",subracename,npc.race.name,"for you, boss!")
+    npc.setsubrace(subracemod)
+```
+
+## Physical Attributes
+
+### Height
+
+### Weight
+
+## Names
 
 ```
 def generate_name(npc, gender):

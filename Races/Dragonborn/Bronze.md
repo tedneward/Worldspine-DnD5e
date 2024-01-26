@@ -20,9 +20,9 @@ Once you use your Metallic Breath Weapon, you can’t do so again until you fini
 ```
 name = 'Bronze'
 description = "***Bronze Dragonborn.***"
-def level0(npc):
+def apply(npc):
     npc.damageresistances.append("lightning")
-    npc.defer(lambda npc: npc.actions.append(f"***Breath Weapon ({npc.proficiencybonus()}/Reharges on a long rest).*** You exhale destructive lightning in a line 5' x 30'. All creatures in the area must make a DEX saving throw, DC {8 + npc.CONbonus() + npc.proficiencybonus()}. A creature takes {'2d6' if npc.levels() < 6 else '3d6' if npc.levels() < 11 else '4d6' if npc.levels() < 16 else '5d6'} lightning damage on a failed save, or half on a successful one."))
+    npc.append(parent.breathweaponaction("line 5' x 30'", "lightning", "DEX", ['2d6', '3d6', '4d6', '5d6']))
 def level5(npc):
-    npc.defer(lambda npc: npc.actions.append("***Metallic Breath Weapon (Recharges on long rest).*** You exhale a 15-foot cone of either Enervating Breath (Each creature in the cone must succeed on a Constitution saving throw or become incapacitated until the start of your next turn) or Repulsion Breath (Each creature in the cone must succeed on a Strength saving throw or be pushed 20 feet away from you and be knocked prone); save DC is {8 + npc.CONbonus() + npc.proficiencybonus()}.") )
+    npc.append(parent.metallicbreathweaponaction())
 ```

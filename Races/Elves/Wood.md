@@ -1,5 +1,5 @@
 # Wood Elf
-Wood elves and high elves are, by this point in Azgaarnoth's history, fairly well intermixed and are found in most locations all across Azgaarnoth; at this point in their evolution, no non-elf can tell the difference between them.
+...
 
 * **Ability Score Increase**. Your Wisdom score increases by 1.
 
@@ -11,8 +11,8 @@ Wood elves and high elves are, by this point in Azgaarnoth's history, fairly wel
 
 ```
 name = 'Wood'
-description = "***Subrace: Wood Elf.*** Wood elves and high elves are, by this point in Azgaarnoth's history, fairly well intermixed and are found in most locations all across Azgaarnoth; at this point in their evolution, no non-elf can tell the difference between them."
-def level0(npc):
+description = "***Subrace: Wood Elf.***"
+def apply(npc):
   npc.WIS += 1
 
   npc.proficiencies.append("Longsword")
@@ -22,5 +22,5 @@ def level0(npc):
 
   npc.speed['walking'] = 35
 
-  npc.traits.append("***Mask of the Wild.*** You can attempt to hide even when you are only lightly obscured by foliage, heavy rain, falling snow, mist, and other natural phenomena.")
+  npc.append(Feature("Mask of the Wild", "You can attempt to hide even when you are only lightly obscured by foliage, heavy rain, falling snow, mist, and other natural phenomena.") )
 ```

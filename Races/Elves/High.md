@@ -1,5 +1,5 @@
 # High Elf
-High elves and wood elves are, by this point in Azgaarnoth's history, fairly well intermixed and are found in most locations all across Azgaarnoth; at this point in their evolution, no non-elf can tell the difference between them.
+...
 
 * **Ability Score Increase**. Your Intelligence score increases by 1.
 
@@ -11,17 +11,35 @@ High elves and wood elves are, by this point in Azgaarnoth's history, fairly wel
 
 ```
 name = 'High'
-description = "***Subrace: High Elf.*** High elves and wood elves are, by this point in Azgaarnoth's history, fairly well intermixed and are found in most locations all across Azgaarnoth; at this point in their evolution, no non-elf can tell the difference between them."
-def level0(npc):
-  npc.INT += 1
+description = "***Subrace: High Elf.***"
 
-  spellcasting = innatecaster(npc, 'INT', "High Elf")
-  spellcasting.cantripsknown.append("CHOOSE-Wizard")
+class CantripCasting(Action):
+    def __init__(self, cantrip):
+        Action.__init__(self, "Cantrip", "")
+        self.cantrip = cantrip
 
-  npc.proficiencies.append("Longsword")
-  npc.proficiencies.append("Shortsword")
-  npc.proficiencies.append("Longbow")
-  npc.proficiencies.append("Shortbow")
+    def __str__(self):
+        text  =  "***High Elf Cantrip.*** "
+        text += f"You know {spelllink(self.cantrip)} and can cast it at will. "
+        text += f"**Spell Save DC** {8 + self.npc.proficiencybonus() + self.npc.INTbonus()} "
+        text += f"**Spell Attack Bonus** +{self.npc.proficiencybonus() + self.npc.INTbonus()}."
+        return text
 
-  npc.languages.append("CHOOSE")
+def apply(npc):
+    npc.INT += 1
+
+    availablecantrips = [
+        'acid splash', 'chill touch', 'dancing lights', 'fire bolt', 'light', 'mage hand',
+        'mending', 'message', 'minor illusion', 'poison spray', 'prestidigitation',
+        'ray of frost', 'shocking grasp', 'true strike'
+    ]
+    chosen = choose("Choose a cantrip:", availablecantrips)
+    npc.append(CantripCasting(chosen))
+
+    npc.proficiencies.append("Longsword")
+    npc.proficiencies.append("Shortsword")
+    npc.proficiencies.append("Longbow")
+    npc.proficiencies.append("Shortbow")
+
+    npc.languages.append(choose("Choose a language:", roots['Races'].languages['Common']))
 ```

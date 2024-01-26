@@ -28,13 +28,44 @@ def apply(npc):
     npc.languages.append('Common')
     npc.languages.append('Draconic')
 
-def random(npc):
-    apply(npc)
+class BreathWeapon(Action):
+    def __init__(self, shape, dmgtype, save, dmgtiers, title="Breath Weapon"):
+        Action.__init__(self,title, "")
+        self.recharges = "long rest"
+        self.shape = shape
+        self.dmgtype = dmgtype
+        self.save = save
+        self.dmgtiers = dmgtiers
+    
+    def __str__(self):
+        uses = self.npc.proficiencybonus()
+        damage = ''
+        if self.npc.levels() < 6: damage = self.dmgtiers[0]
+        elif self.npc.levels() < 11: damage = self.dmgtiers[1]
+        elif npc.levels() < 16: damage = self.dmgtiers[2]
+        else: damage = self.dmgtiers[3]
 
-    (subracename, subracemod) = randomfrom(subraces)
-    print("I chose a",subracename,npc.race.name,"for you, boss!")
-    npc.subrace = subracemod
-    npc.subrace.random(npc)
+        text  = f"You exhale destructive {self.dmgtype} in a {self.shape}. "
+        text += f"All creatures in the area must make a {self.save} saving throw "
+        text += f"(DC {8 + self.npc.CONbonus() + self.npc.proficiencybonus()}). "
+        text += f"A creature takes {damage} {self.dmgtype} damage on a failed save, or half on a successful one."
+        return text
+
+class MetallicBreathWeapon(Action):
+    def __init__(self):
+        Action.__init__(self,"Metallic Breath Weapon", "")
+        self.recharges = "long rest"
+        self.shape = shape
+        self.dmgtype = type
+        self.save = save
+
+    def __str__(self):
+        return f"You exhale a 15-foot cone of either Enervating Breath (Each creature in the cone must succeed on a Constitution saving throw or become incapacitated until the start of your next turn) or Repulsion Breath (Each creature in the cone must succeed on a Strength saving throw or be pushed 20 feet away from you and be knocked prone), DC {8 + self.npc.CONbonus() + self.npc.proficiencybonus()}."
+
+def breathweaponaction(shape, dmgtype, save, damagetiers=['1d10','2d10','3d10','4d10']):
+    return BreathWeapon(shape, dmgtype, save, damagetiers)
+def metallicbreathweaponaction():
+    return MetallicBreathWeapon()
 ```
 
 ## Draconic Ancestry
@@ -66,6 +97,13 @@ Dragonborn of metallic colors are often law-abiding, slow to anger, and sometime
 * [Gold](Gold.md)
 * [Silver](Silver.md)
 * [Steel](Steel.md)
+
+```
+def random(npc):
+    (subracename, subracemod) = randomfrom(subraces)
+    print("I choose a",subracename,npc.race.name,"for you, boss!")
+    npc.setsubrace(subracemod)
+```
 
 ## Physical Attributes
 

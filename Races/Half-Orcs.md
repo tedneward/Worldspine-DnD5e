@@ -66,7 +66,7 @@ def apply(npc):
 ```
 
 ```
-def random(npc): apply(npc)
+def random(npc): pass
 ```
 
 ## Half-Orc Names

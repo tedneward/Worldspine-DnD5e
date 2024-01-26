@@ -32,6 +32,9 @@ def log(*values):
 # based approach from this location.
 REPOROOT = os.path.realpath(os.path.dirname(os.path.realpath(__file__)) + '/../../') + "/"
 
+# ONLINEROOT should be the root of the repository online, via HTTP
+ONLINEROOT = "http://worldspine.tedneward.com"
+
 ##########################
 # Character-related pieces
 class Feature:
@@ -201,6 +204,11 @@ class StatBlock:
         self.race = racemod
         racemod.apply(self)
 
+    def setsubrace(self, subracemod):
+        if self.subrace != None: warn("Replacing",self.subrace.name,"with",subracemod.name,"!")
+        self.subrace = subracemod
+        subracemod.apply(self)
+
     ##########################
     # Class-related methods
 
@@ -298,6 +306,7 @@ class StatBlock:
     ##########################
     # Feature methods
     def append(self, feature : Feature):
+        log("StatBlock::append",feature.title)
         if isinstance(feature, MeleeAttack): self.actions.append(feature)
         elif isinstance(feature, RangedAttack): self.actions.append(feature)
         elif isinstance(feature, Action): self.actions.append(feature)
@@ -504,8 +513,22 @@ def randompick(src):
         error("What the heck is src here?", src)
         return None
 
+def creaturelinkify(name):
+    linkdest = name.lower().replace(' ','-').replace("'","")
+    return f"[{name}]({ONLINEROOT}/creatures/{linkdest}/)"
+
+def itemlinkify(name):
+    linkdest = name.lower().replace(' ','-').replace("'","")
+    return f"[{name}]({ONLINEROOT}/magic/items/{linkdest}/)"
+
+def spelllinkify(name):
+    linkdest = name.lower().replace(' ','-').replace("'","")
+    return f"[{name}]({ONLINEROOT}/magic/spells/{linkdest}/)"
+
+
 ##########################
 # I/O infrastructure
+
 class Input:
     def output(self, *values):
         # NOP; Expected to be overridden in derived classes
@@ -561,7 +584,8 @@ class Input:
         self.output("You chose " + str((responsekey, choicemap[responsekey])))
         return (responsekey, choicemap[responsekey])
 
-    def choose(self, choices=None):
+    def choose(self, prompt, choices=None):
+        self.output(prompt)
         if choices == None:
             return self.input("")
         elif isinstance(choices, list):
@@ -579,12 +603,48 @@ class TerminalInput(Input):
 class ScriptedInput(Input):
     def __init__(self, inputfile):
         self.inputfile = inputfile
+        self.answers = []
+
+        # TODO Parse inputfile, load answers, capture them.
+        # Then we can feed each one as input until we run out.
 
     def output(self, *values): print(*values)
 
     def input(self, prompt : str = "") -> str: return input(prompt + ">>> ")
 
-io = TerminalInput()
+class RandomInput(Input):
+    def output(self, *values): print(*values)
+
+    def choosefromlist(self, choicelist : list):
+        response = random.randint(0, len(choicelist)-1)
+        self.output("I chose " + choicelist[response])
+        return choicelist[response]
+
+    def choosefrommap(self, choicemap):
+        keys = list(choicemap.keys())
+        responseidx = random.randint(0, len(keys)-1)
+        responsekey = keys[responseidx]
+        self.output("I chose " + str((responsekey, choicemap[responsekey])))
+        return (responsekey, choicemap[responsekey])
+
+# We need a constant object in place since this gets passed into each of the loaded
+# modules to use as an I/O facility; so we "wrap" the Input object, thus allowing us
+# to replace it without anyone being the wiser.
+class Shell:
+    def __init__(self, io):
+        self.io = io
+
+    def input(self, prompt : str = "") -> str: return self.io.input(prompt)
+
+    def output(self, *values): return self.io.output(*values)
+
+    def choosefromlist(self, choicelist : list): return self.io.choosefromlist(choicelist)
+
+    def choosefrommap(self, choicemap): return self.io.choosefrommap(choicemap)
+
+    def choose(self, prompt, choices=None): return self.io.choose(prompt, choices)
+
+shell = Shell(TerminalInput())
 
 ##########################
 # Module infrastructure
@@ -723,8 +783,13 @@ def loadmodule(filename : str, modulename : str = None, parent : types.ModuleTyp
             "log": log,
             "warn": warn,
             "error": error,
-            "print": io.output,
-            "choose": io.choose,
+            "print": shell.output,
+            "choose": shell.choose,
+
+            # Some helper methods
+            "creaturelink": creaturelinkify,
+            "itemlink": itemlinkify,
+            "spelllink": spelllinkify,
 
             # Module facilities
             "parent": parent,
@@ -787,43 +852,52 @@ def loadmodule(filename : str, modulename : str = None, parent : types.ModuleTyp
 ##########################
 # Main entrypoint and workhorse
 def generate(randomlist=[]):
-    global io
+    global shell
     global roots
 
     npc = StatBlock()
 
     # We need to do a few things before we can start kicking off levels,
     # but we might want to do them in a variety of different orders
-    prereqs = ['Abilities', 'Background', 'Gender', 'Race',] #'Class'
+    reqs = ['Abilities', 'Background', 'Gender', 'Race',] #'Class'
 
+    oldio = shell.io
+    shell.io = RandomInput()
     for r in randomlist:
-        if r == 'Gender': 
-            npc.gender = randompick(['Male', 'Female'])
+        if r == 'Abilities':
+            roots['Abilities'].random(npc)
         elif r == 'Background':
             #randompick(roots["Backgrounds"]).random(npc)
-            io.output("Background!")
+            shell.output("Background!")
+        elif r == 'Class':
+            shell.output("Classes!")
+        elif r == 'Gender': 
+            npc.gender = randompick(['Male', 'Female'])
         elif r == 'Race':
             roots["Races"].random(npc)
         else:
-            io.output(r + ":", roots[r].random())
-        prereqs.remove(r)
+            shell.output(r + ":", roots[r].random())
+        reqs.remove(r)
 
-    while len(prereqs) > 0:
-        which = io.choosefromlist(prereqs)
+    shell.io = oldio
+    while len(reqs) > 0:
+        which = shell.choosefromlist(reqs)
         if which == 'Abilities':
             print(roots['Abilities'].random())
         elif which == 'Background':
             print("Background!")
         elif which == 'Gender':
-            print(io.choosefromlist(['Male', 'Female']))
+            print(shell.choosefromlist(['Male', 'Female']))
         elif which == 'Race':
-            (_, racemod) = io.choose(roots['Races'].modules)
+            (_, racemod) = shell.choose(roots['Races'].modules)
             if getattr(racemod, "subraces", None) != None:
-                (_, subracemod) = io.choose(racemod.subraces)
+                (_, subracemod) = shell.choose(racemod.subraces)
                 print(f"Race: {subracemod.name} {racemod.name}")
             else:
                 print(f"Race: {racemod.name}")
-        prereqs.remove(which)
+        reqs.remove(which)
+
+    return npc
 
 def main():
     global verbose
@@ -855,7 +929,7 @@ def main():
     
     # Load modules, have them bootstrap in turn
     loadrootmodule(REPOROOT + "Abilities")
-    loadrootmodule(REPOROOT + "Backgrounds")
+    #loadrootmodule(REPOROOT + "Backgrounds")
     #loadrootmodule(REPOROOT + "Classes")
     loadrootmodule(REPOROOT + "Equipment")
     loadrootmodule(REPOROOT + "Feats")
@@ -887,11 +961,13 @@ def main():
             if script == 'Test':
                 testzone()
             else:
-                io = ScriptedInput(script)
-                generate()
+                shell.io = ScriptedInput(script)
+                npc = generate()
+                print(npc.emitmd())
     else:
-        print(args.randomize.split(','))
-        generate(args.randomize.split(','))
+        print("Randomly generating a character's",args.randomize)
+        npc = generate(args.randomize.split(','))
+        print(npc.emitmd())
 
 if __name__ == '__main__':
 	main()
