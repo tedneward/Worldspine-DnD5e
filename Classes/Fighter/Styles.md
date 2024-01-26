@@ -145,5 +145,6 @@ def choosestyle(npc):
     npc.fightingstyles.append(stylename)
     stylefn(npc)
 
-allclasses['Fighter'].choosestyle = choosestyle
+def init():
+    parent.choosestyle = choosestyle
 ```

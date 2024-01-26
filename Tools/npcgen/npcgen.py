@@ -99,6 +99,8 @@ class MeleeAttack(Action):
         self.reach = "5ft."
 
     def __str__(self):
+        if self.npc == None: return self.title
+
         text  = f"***{self.title}.*** *Melee Weapon Attack:* "
         text += f"+{self.npc.STRbonus() + self.npc.proficiencybonus() + self.tohit} to hit, "
         text += f"range {self.reach}, one target. "
@@ -245,12 +247,30 @@ class StatBlock:
         else:
             return self.profbonus
 
+    def addclass(self, classmod):
+        self.classes.append(classmod)
+
+        # Now that we added the level, invoke the new levelX fn (if present)
+        classlvls = self.levels(classmod)
+        levelfn = getattr(classmod, "everylevel", None)
+        if levelfn != None: levelfn(self)
+        levelfn = getattr(classmod, "level" + str(classlvls), None)
+        if levelfn != None:
+            levelfn(self)
+
+        # Do the same for any subclass for that class
+        if classmod.name in self.subclasses:
+            subclassmod = self.subclasses[classmod.name]
+            levelfn = getattr(subclassmod, "level" + str(classlvls), None)
+            if levelfn != None:
+                levelfn(self)
+
     def levels(self, clss = None):
         if clss == None: return len(self.classes)
         else:
             count = 0
             if isinstance(clss, str):
-                for cli in self.classes:
+                for cli in self.classes: 
                     if cli.name == clss: count += 1
             else:
                 for cli in self.classes: 
@@ -355,6 +375,14 @@ class StatBlock:
                 return True
 
         return False
+
+    def addequipment(self, equip):
+        self.equipment.append(equip)
+
+        # Let's pull actions out for convenience
+        #gaa = getattr(equip, "getactions", None)
+        #if gaa != None:
+            # This equipment has attack actions so pull 'em out
 
     ##########################
     # Emitter methods
@@ -589,12 +617,12 @@ class Input:
 
     def choose(self, prompt, choices=None):
         self.output(prompt)
-        if choices == None:
-            return self.input("")
-        elif isinstance(choices, list):
+        if isinstance(choices, list):
             return self.choosefromlist(choices)
         elif isinstance(choices, dict):
             return self.choosefrommap(choices)
+        elif choices == None:
+            return self.input("")
         else:
             error("WTF?!?", choices)
 
@@ -862,7 +890,7 @@ def generate(randomlist=[]):
 
     # We need to do a few things before we can start kicking off levels,
     # but we might want to do them in a variety of different orders
-    reqs = ['Abilities', 'Background', 'Gender', 'Race',] #'Class'
+    reqs = ['Abilities', 'Background', 'Class', 'Gender', 'Race']
 
     # Generate the random bits
     oldio = shell.io
@@ -874,7 +902,7 @@ def generate(randomlist=[]):
             #randompick(roots["Backgrounds"]).random(npc)
             shell.output("Background!")
         elif r == 'Class':
-            shell.output("Classes!")
+            shell.output("Class(es)!")
         elif r == 'Gender': 
             npc.gender = randompick(['Male', 'Female'])
         elif r == 'Race':
@@ -892,6 +920,10 @@ def generate(randomlist=[]):
             npc.addabilities(abilityfn())
         elif which == 'Background':
             print("Background!")
+        elif which == 'Class':
+            print(roots['Classes'].modules)
+            (_, classmod) = shell.choosefrommap(roots['Classes'].modules)
+            npc.addclass(classmod)
         elif which == 'Gender':
             npc.gender = shell.choosefromlist(['Male', 'Female'])
         elif which == 'Race':
@@ -935,7 +967,7 @@ def main():
     # Load modules, have them bootstrap in turn
     loadrootmodule(REPOROOT + "Abilities")
     #loadrootmodule(REPOROOT + "Backgrounds")
-    #loadrootmodule(REPOROOT + "Classes")
+    loadrootmodule(REPOROOT + "Classes")
     loadrootmodule(REPOROOT + "Equipment")
     loadrootmodule(REPOROOT + "Feats")
     loadrootmodule(REPOROOT + "Races")

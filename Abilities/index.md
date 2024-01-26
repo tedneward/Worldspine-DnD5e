@@ -199,7 +199,7 @@ skillability = {
     'Survival' : 'WIS'
 }
 
-def chooseskill(): return choose("Choose a skill: ", skills)
+def chooseskill(availableskills = skills): return choose("Choose a skill: ", availableskills)
 ```
 
 ```

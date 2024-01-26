@@ -1,4 +1,4 @@
-# Fighter
+# Class: Fighter
 Questing knights, conquering overlords, royal champions, elite foot soldiers, hardened mercenaries, and bandit kings — as fighters, they all share an unparalleled mastery with weapons and armor, and a thorough knowledge of the skills of combat. And they are well acquainted with death, both meting it out and staring it defiantly in the face.
 
 ***Well-Rounded Specialists.*** Fighters learn the basics of all combat styles. Every fighter can swing an axe, fence with a rapier, wield a longsword or a greatsword, use a bow, and even trap foes in a net with some degree of skill. Likewise, a fighter is adept with shields and every form of armor. Beyond that basic degree of familiarity, each fighter specializes in a certain style of combat. Some concentrate on archery, some on fighting with two weapons at once, and some on augmenting their martial skills with magic. This combination of broad general ability and extensive specialization makes fighters superior combatants on battlefields and in dungeons alike.
@@ -10,7 +10,7 @@ Some fighters feel drawn to use their training as adventurers. The dungeon delvi
 ```
 name = 'Fighter'
 description = "***Class: Fighter.*** Questing knights, conquering overlords, royal champions, elite foot soldiers, hardened mercenaries, and bandit kings — as fighters, they all share an unparalleled mastery with weapons and armor, and a thorough knowledge of the skills of combat. And they are well acquainted with death, both meting it out and staring it defiantly in the face."
-dependencies = ['Maneuvers.md', 'Styles.md']
+dependencies = ['Styles.md']
 ```
 
 Level|Proficiency Bonus|traits
@@ -69,22 +69,33 @@ Equipment
 
 ```
 def level1(npc):
-    npc.savingthrows.append("STR")
-    npc.savingthrows.append("CON")
+    npc.proficiencies.append("STR")
+    npc.proficiencies.append("CON")
 
+    armor = roots['Equipment'].armor
     for arm in armor['light'] | armor['medium'] | armor['heavy'] | armor['shields']:
         npc.proficiencies.append(arm)
+
+    weapons = roots['Equipment'].weapons
     for wpn in weapons['simple-melee'] | weapons['martial-melee'] | weapons['simple-ranged'] | weapons['martial-ranged']:
         npc.proficiencies.append(wpn)
 
     skills = ['Acrobatics', 'Animal Handling', 'Athletics', 'History', 'Insight', 'Intimidation', 'Perception', 'Survival']
-    chooseskill(npc, skills)
-    chooseskill(npc, skills)
+    npc.proficiencies.append(roots['Abilities'].chooseskill(skills))
+    npc.proficiencies.append(roots['Abilities'].chooseskill(skills))
 
-    npc.equipment.append("Martial weapon")
-    npc.equipment.append("Shield OR martial weapon")
-    npc.equipment.append("Light crossbow and 20 bolts OR two handaxes")
-    npc.equipment.append("Dungeoneer's pack, or explorer's pack")
+    availwpns = weapons['martial-melee'] | weapons['martial-ranged']
+    (_, chosen) = choose("Choose a weapon: ", availwpns)
+    npc.addequipment(chosen)
+
+    availwpns = weapons['martial-melee'] | weapons['martial-ranged'] | armor['shields']
+    (_, chosen) = choose("Choose a weapon: ", availwpns)
+    npc.addequipment(chosen)
+
+    npc.addequipment("Light crossbow and 20 bolts OR two handaxes")
+    npc.addequipment("Dungeoneer's pack, or explorer's pack")
+
+    npc.addequipment("Chain mail")
     npc.armorclass['Chain mail'] = 16
 ```
 
@@ -94,7 +105,7 @@ def level1(npc):
 You adopt a particular style of fighting as your specialty. Choose one of the [styles](Styles.md) available. You can't take a Fighting Style option more than once, even if you later get to choose again.
 
 ```
-    choosestyle(npc)
+    #choosestyle(npc)
     #style = choose("Choose a Fighting Style:", styles)
     #npc.fightingstyle = style[0]
     #(style[1])(npc)
@@ -106,7 +117,7 @@ You have a limited well of stamina that you can draw on to protect yourself from
 Once you use this feature, you must finish a short or long rest before you can use it again.
 
 ```
-    npc.defer(lambda npc: npc.bonusactions.append(f"***Second Wind (Recharges on short or long rest).*** On your turn, you can regain 1d10 + {npc.levels('Fighter')} hit points."))
+    #npc.defer(lambda npc: npc.bonusactions.append(f"***Second Wind (Recharges on short or long rest).*** On your turn, you can regain 1d10 + {npc.levels('Fighter')} hit points."))
 ```
 
 
@@ -117,7 +128,8 @@ Once you use this feature, you must finish a short or long rest before you can u
 
 ```
 def level2(npc):
-    npc.defer(lambda npc: npc.traits.append(f"***Action Surge ({'2/' if npc.levels('Fighter') > 16 else ''}Recharges on short or long rest).*** On your turn, you can take one additional action on top of your regular action and a possible bonus action."))
+    #npc.defer(lambda npc: npc.traits.append(f"***Action Surge ({'2/' if npc.levels('Fighter') > 16 else ''}Recharges on short or long rest).*** On your turn, you can take one additional action on top of your regular action and a possible bonus action."))
+    pass
 ```
 
 ## Martial Archetype
@@ -130,22 +142,21 @@ The archetype you choose grants you traits at 3rd level and again at 7th, 10th, 
 ```
 def level3(npc):
     # Choose subclass
-    (_, subclass) = choose("Choose a Martial Archetype:", subclasses)
-    npc.subclasses[root['Classes']['Fighter']] = subclass
-    npc.description.append(subclass.description)
+    (subclassname, subclassmod) = choose("Choose a Martial Archetype:", subclasses)
+    npc.setsubclass(subclassmod)
 ```
 
 ## Ability Score Improvement
 When you reach 4th level, and again at 6th, 8th, 12th, 14th, 16th, and 19th level, you can increase one ability score of your choice by 2, or you can increase two ability scores of your choice by 1. As normal, you can't increase an ability score above 20 using this feature.
 
 ```
-def level4(npc): abilityscoreimprovement(npc)
-def level6(npc): abilityscoreimprovement(npc)
-def level8(npc): abilityscoreimprovement(npc)
-def level12(npc): abilityscoreimprovement(npc)
-def level14(npc): abilityscoreimprovement(npc)
-def level16(npc): abilityscoreimprovement(npc)
-def level19(npc): abilityscoreimprovement(npc)
+#def level4(npc): abilityscoreimprovement(npc)
+#def level6(npc): abilityscoreimprovement(npc)
+#def level8(npc): abilityscoreimprovement(npc)
+#def level12(npc): abilityscoreimprovement(npc)
+#def level14(npc): abilityscoreimprovement(npc)
+#def level16(npc): abilityscoreimprovement(npc)
+#def level19(npc): abilityscoreimprovement(npc)
 ```
 
 ### Martial Versatility
@@ -162,8 +173,8 @@ You can attack twice, instead of once, whenever you take the Attack action on yo
 The number of attacks increases to three when you reach 11th level in this class and to four when you reach 20th level in this class.
 
 ```
-def level5(npc):
-    npc.defer(lambda npc: npc.actions.append(f"***Multiattack.*** You can attack {'twice' if npc.levels('Fighter') < 11 else '3 times' if npc.levels('Fighter') < 20 else 'four times'} whenever you take the Attack action on your turn."))
+#def level5(npc):
+#    npc.defer(lambda npc: npc.actions.append(f"***Multiattack.*** You can attack {'twice' if npc.levels('Fighter') < 11 else '3 times' if npc.levels('Fighter') < 20 else 'four times'} whenever you take the Attack action on your turn."))
 ```
 
 ## Indomitable
@@ -174,6 +185,6 @@ You can reroll a saving throw that you fail. If you do so, you must use the new 
 You can use this feature twice between long rests starting at 13th level and three times between long rests starting at 17th level.
 
 ```
-def level9(npc):
-    npc.defer(lambda npc: npc.traits.append(f"***Indomitable ({'' if npc.levels('Fighter') < 13 else '2/' if npc.levels('Fighter') < 17 else '3/'}Recharges on long rest).*** You can reroll a saving throw that you fail. If you do so, you must use the new roll, and you can't use this feature again until you finish a long rest."))
+#def level9(npc):
+#    npc.defer(lambda npc: npc.traits.append(f"***Indomitable ({'' if npc.levels('Fighter') < 13 else '2/' if npc.levels('Fighter') < 17 else '3/'}Recharges on long rest).*** You can reroll a saving throw that you fail. If you do so, you must use the new roll, and you can't use this feature again until you finish a long rest."))
 ```

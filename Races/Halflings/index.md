@@ -24,6 +24,7 @@ Many halflings live among other races, where the halflings’ hard work and loya
 ```
 name = 'Halfling'
 description = "***Race: Halfling.*** Halflings are the archetypal small race, and have made beloved thieves and trackers and hosts for millennia."
+type = 'humanoid'
 ```
 
 ***Ability Score Increase.*** Your Dexterity score increases by 2.
