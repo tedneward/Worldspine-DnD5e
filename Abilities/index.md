@@ -28,21 +28,53 @@ def handentry():
 ## Random: 3d6 six times
 
 ```
-def randomgen():
+def threedsixrandomgen():
     abilities = {}
 
-    abilities['STR'] = randomint(3,18)
-    abilities['DEX'] = randomint(3,18)
-    abilities['CON'] = randomint(3,18)
-    abilities['INT'] = randomint(3,18)
-    abilities['WIS'] = randomint(3,18)
-    abilities['CHA'] = randomint(3,18)
+    abilities['STR'] = randomint(1,6) + randomint(1,6) + randomint(1,6)
+    abilities['DEX'] = randomint(1,6) + randomint(1,6) + randomint(1,6)
+    abilities['CON'] = randomint(1,6) + randomint(1,6) + randomint(1,6)
+    abilities['INT'] = randomint(1,6) + randomint(1,6) + randomint(1,6)
+    abilities['WIS'] = randomint(1,6) + randomint(1,6) + randomint(1,6)
+    abilities['CHA'] = randomint(1,6) + randomint(1,6) + randomint(1,6)
 
     return abilities
 ```
 
 ## Random: 4d6 seven times
 4d6, throwing out lowest d6 each time, seven times throwing out lowest score 
+
+```
+def fourdsevenrandomgen():
+    def dieframe():
+        frame = []
+        for _ in range(0,4): frame.append(randomint(1,6))
+        frame.sort()
+        frame.reverse()
+        return frame
+
+    def sevenrolls():
+        stats = []
+        for _ in range(0,7):
+            frame = dieframe()
+            stats.append(frame.pop(0) + frame.pop(0) + frame.pop(0))
+        stats.sort()
+        stats.reverse()
+        return stats
+
+    abilities = {}
+
+    scores = sevenrolls()
+    stats = ['STR', 'DEX', 'CON', 'INT', 'WIS', 'CHA']
+    while len(stats) > 0:
+        print(f"You have {scores} to assign")
+        stat = choose(f"Apply the {scores[0]}: ", stats)
+        abilities[stat] = scores[0]
+        scores.pop(0)
+        stats.remove(stat)
+
+    return abilities
+```
 
 ## Average
 11s across the board, baby
@@ -117,7 +149,8 @@ methods = {
     "Average": average,
     "Hand": handentry, 
     "NPC": npcstandard, 
-    "Randomgen": randomgen, 
+    "ThreeDSixRandomgen": threedsixrandomgen, 
+    "FourDSevenRandomgen": fourdsevenrandomgen, 
     "Standard": standard, 
 }
 ```
@@ -171,6 +204,7 @@ def chooseskill(): return choose("Choose a skill: ", skills)
 
 ```
 def random(npc):
+    print("I'm rolling stats for you, boss!")
     #abilities = randomgen()
     #abilities = randomnpcstandard()
     abilities = average()

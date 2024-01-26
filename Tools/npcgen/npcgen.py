@@ -38,12 +38,15 @@ ONLINEROOT = "http://worldspine.tedneward.com"
 ##########################
 # Character-related pieces
 class Feature:
-    def __init__(self, title, text, recharges=None, uses=None):
+    def __init__(self, title : str, text : str, recharges=None, uses=None):
         self.title = title
         self.text = text
         self.uses = uses
         self.recharges = recharges
         self.npc = None # The StatBlock to which this Feature is attached
+
+    def markdownifytext(self):
+        return self.text.replace('\n', '\n>')
 
     def __str__(self):
         posttitletext = ""
@@ -63,7 +66,7 @@ class Feature:
                 posttitletext = f" (Recharges on {self.recharges})"
             else:
                 posttitletext = " ({self.uses}/Recharges on {self.recharges})"
-        return f"***{self.title}{posttitletext}.*** {self.text}"
+        return f"***{self.title}{posttitletext}.*** {self.markdownifytext()}"
 
 class Action(Feature):
     def __init__(self, title, text, uses=None, recharges=None):
@@ -125,7 +128,7 @@ class RangedAttack(Action):
 
 class StatBlock:
     def __init__(self):
-        self.name = ""
+        self.name = "(Name)"
         self.size = 'Medium'
         self.type = ''
         self.gender = ''
@@ -861,6 +864,7 @@ def generate(randomlist=[]):
     # but we might want to do them in a variety of different orders
     reqs = ['Abilities', 'Background', 'Gender', 'Race',] #'Class'
 
+    # Generate the random bits
     oldio = shell.io
     shell.io = RandomInput()
     for r in randomlist:
@@ -879,22 +883,23 @@ def generate(randomlist=[]):
             shell.output(r + ":", roots[r].random())
         reqs.remove(r)
 
+    # Now do the interactive bits
     shell.io = oldio
     while len(reqs) > 0:
         which = shell.choosefromlist(reqs)
         if which == 'Abilities':
-            print(roots['Abilities'].random())
+            (_, abilityfn) = shell.choosefrommap(roots['Abilities'].methods)
+            npc.addabilities(abilityfn())
         elif which == 'Background':
             print("Background!")
         elif which == 'Gender':
-            print(shell.choosefromlist(['Male', 'Female']))
+            npc.gender = shell.choosefromlist(['Male', 'Female'])
         elif which == 'Race':
-            (_, racemod) = shell.choose(roots['Races'].modules)
+            (_, racemod) = shell.choosefrommap(roots['Races'].modules)
+            npc.setrace(racemod)
             if getattr(racemod, "subraces", None) != None:
-                (_, subracemod) = shell.choose(racemod.subraces)
-                print(f"Race: {subracemod.name} {racemod.name}")
-            else:
-                print(f"Race: {racemod.name}")
+                (_, subracemod) = shell.choosefrommap(racemod.subraces)
+                npc.setsubrace(subracemod)
         reqs.remove(which)
 
     return npc
@@ -902,7 +907,7 @@ def generate(randomlist=[]):
 def main():
     global verbose
     global quiet
-    global io
+    global shell
     global SAVEPY
 
     parser = argparse.ArgumentParser(
@@ -936,37 +941,23 @@ def main():
     loadrootmodule(REPOROOT + "Races")
     #loadrootmodule(REPOROOT + "Creatures") # <-- this will be an interesting day
 
-    # Test zone
-    def testzone():
-        #print(roots['Races'].random())
-        #print(roots['Equipment'].weapons)
-        #print(roots['Equipment'].armor)
-        #print(roots['Feats'].choosefeat())
-        #print(roots['Abilities'].abilityscoreincrease())
-
-        npc = StatBlock()
-        npc.name = "Fred Flintstone"
-        npc.gender = 'Male'
-        npc.addabilities(roots['Abilities'].average())
-        npc.setrace(roots['Races'].modules['Half-Orc'])
-        npc.proficiencies.append('STR')
-        npc.proficiencies.append('CON')
-        npc.append(roots['Equipment'].weapons['simple-melee']['Club'])
-        print(npc.emitmd())
-
     # Examine command line, let's see if we need to script-generate
     # our PC/NPC, or if we do it interactively.
     if args.scripts != None:
         for script in args.scripts:
-            if script == 'Test':
-                testzone()
-            else:
-                shell.io = ScriptedInput(script)
-                npc = generate()
-                print(npc.emitmd())
+            shell.io = ScriptedInput(script)
+            npc = generate()
+            # Write to "{script}.md" file
+            print(npc.emitmd())
     else:
         print("Randomly generating a character's",args.randomize)
-        npc = generate(args.randomize.split(','))
+        shell.io = TerminalInput()
+        npc = None
+        if args.randomize != None:
+            npc = generate(args.randomize.split(','))
+        else:
+            npc = generate()
+        # Write to "output.md"
         print(npc.emitmd())
 
 if __name__ == '__main__':

@@ -8,9 +8,9 @@ As a stout halfling, you’re hardier than average and have some resistance to p
 ```
 name = 'Stout'
 description = "***Stout Halfling.***"
-def level0(npc):
+def apply(npc):
     npc.CON += 1
     npc.damageresistances.append('poison')
-    npc.traits.append("***Stout Resilience.*** You have advantage on saving throws against poison.")
+    npc.append(Feature("Stout Resilience", "You have advantage on saving throws against poison."))
 ```
 

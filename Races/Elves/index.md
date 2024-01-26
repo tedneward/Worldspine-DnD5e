@@ -1,5 +1,7 @@
-# [Elves](../Creatures/Elves.md)
-Elves may be [dragonmarked](Dragonmarked.md) with the Mark of Shadow; see that entry for details.
+# Race: Elves
+See [*Elves*](../../Creatures/Elves.md) for more details.
+
+...
 
 ```
 name = 'Elf'

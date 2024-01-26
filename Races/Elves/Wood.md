@@ -7,7 +7,7 @@
 
 * **Fleet of Foot**. Your base walking speed increases to 35 feet.
 
-* **Mask of the Wild**. You can attempt to hide even when you are only lightly obscured by foliage, heavy rain, falling snow, mist, and other natural phenomena.
+* **Mask of the Wild**. You can attempt to Hide even when you are only lightly obscured by foliage, heavy rain, falling snow, mist, and other natural phenomena.
 
 ```
 name = 'Wood'
@@ -22,5 +22,5 @@ def apply(npc):
 
   npc.speed['walking'] = 35
 
-  npc.append(Feature("Mask of the Wild", "You can attempt to hide even when you are only lightly obscured by foliage, heavy rain, falling snow, mist, and other natural phenomena.") )
+  npc.append(Feature("Mask of the Wild", "You can attempt to Hide even when you are only lightly obscured by foliage, heavy rain, falling snow, mist, and other natural phenomena.") )
 ```

@@ -47,11 +47,7 @@ def apply(npc):
     (featname, featmod) = roots['Feats'].choosefeat(npc.feats)
     npc.applyfeat(featname, featmod)
 
-def random(npc):
-    npc.size = 'Medium'
-    npc.speed['walking'] = 30
-
-    npc.languages.append("Common")
+def random(npc): pass
 ```
 
 ## Physical Attributes

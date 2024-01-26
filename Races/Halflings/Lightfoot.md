@@ -6,12 +6,12 @@ name = 'Lightfoot'
 description = "***Lightfoot Halfling.***"
 ```
 
-**Ability Score Increase.** Your Charisma score increases by 1.
+***Ability Score Increase.*** Your Charisma score increases by 1.
 
-**Naturally Stealthy.** You can attempt to hide even when you are obscured only by a creature that is at least one size larger than you.
+***Naturally Stealthy.*** You can attempt to Hide even when you are obscured only by a creature that is at least one size larger than you.
 
 ```
-def level0(npc):
+def apply(npc):
     npc.CHA += 1
     npc.traits.append("***Naturally Stealthy.*** You can attempt to hide even when you are obscured only by a creature that is at least one size larger than you.")
 ```
