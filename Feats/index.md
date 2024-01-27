@@ -79,16 +79,15 @@
 
 
 ```
-def choosefeat(alreadyhave, random = False):
+def choosefeat(npc):
     choosablelist = []
 
     for f in modules:
-        if f not in alreadyhave:
+        if f not in npc.feats:
             choosablelist.append(f)
 
-    if not random:
-        featname = choose("Pick a Feat: ", choosablelist)
-    else:
-        featname = randomfrom(choosablelist)
-    return (featname, modules[featname])
+    featname = choose("Pick a Feat: ", choosablelist)
+    featmod = modules[featname]
+    npc.applyfeat(featmod)
+    return (featname, featmod)
 ```

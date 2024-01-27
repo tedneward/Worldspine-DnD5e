@@ -158,9 +158,14 @@ methods = {
 ## Ability Increases
 Characters are often able to increase one or more of their ability scores one or more times. Details will depend (most often) on the class the character is leveling into.
 
+Normally, no ability score can be increased beyond 20.
+
 ```
-def abilityscoreincrease(npc):
-    return choose("Choose an ability score to increase: ", ['STR', 'DEX', 'CON', 'INT', 'WIS', 'CHA'])
+def abilityscoreincrease(npc, abilities=['STR', 'DEX', 'CON', 'INT', 'WIS', 'CHA']):
+    chosen = choose("Choose an ability score to increase: ", abilities)
+    if npc.getability(chosen) >= 20:
+        warn("Increasing ability score",chosen,"takes it beyond 20!")
+    npc.setability(chosen, npc.getability(chosen) + 1)
 ```
 
 
@@ -199,17 +204,23 @@ skillability = {
     'Survival' : 'WIS'
 }
 
-def chooseskill(availableskills = skills): return choose("Choose a skill: ", availableskills)
+def chooseskill(npc, availableskills = skills): 
+    srclist = availableskills
+    for skill in npc.proficiencies:
+        print("Testing to see if",skill,"is in",srclist)
+        if skill in srclist:
+            srclist.remove(skill)
+    chosen = choose("Choose a skill: ", srclist)
+    npc.proficiencies.append(chosen)
 ```
 
 ```
 def random(npc):
     print("I'm rolling stats for you, boss!")
+
     #abilities = randomgen()
     #abilities = randomnpcstandard()
     abilities = average()
-    npc.addabilities(abilities)
 
-def abilityscoreincrease(npc):
-    return choose("Choose an ability score to increase: ", ['STR', 'DEX', 'CON', 'INT', 'WIS', 'CHA'])
+    npc.addabilities(abilities)
 ```

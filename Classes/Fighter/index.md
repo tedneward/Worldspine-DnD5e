@@ -81,8 +81,8 @@ def level1(npc):
         npc.proficiencies.append(wpn)
 
     skills = ['Acrobatics', 'Animal Handling', 'Athletics', 'History', 'Insight', 'Intimidation', 'Perception', 'Survival']
-    npc.proficiencies.append(roots['Abilities'].chooseskill(skills))
-    npc.proficiencies.append(roots['Abilities'].chooseskill(skills))
+    roots['Abilities'].chooseskill(npc, skills)
+    roots['Abilities'].chooseskill(npc, skills)
 
     availwpns = weapons['martial-melee'] | weapons['martial-ranged']
     (_, chosen) = choose("Choose a weapon: ", availwpns)

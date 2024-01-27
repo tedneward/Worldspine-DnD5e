@@ -277,8 +277,8 @@ class StatBlock:
                     if cli == clss: count += 1
             return count
 
-    def applyfeat(self, featname, featmod):
-        self.feats.append(featname)
+    def applyfeat(self, featmod):
+        self.feats.append(featmod.name)
         featmod.apply(self)
 
     def getsavingthrows(self):
