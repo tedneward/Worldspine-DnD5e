@@ -105,10 +105,7 @@ def level1(npc):
 You adopt a particular style of fighting as your specialty. Choose one of the [styles](Styles.md) available. You can't take a Fighting Style option more than once, even if you later get to choose again.
 
 ```
-    #choosestyle(npc)
-    #style = choose("Choose a Fighting Style:", styles)
-    #npc.fightingstyle = style[0]
-    #(style[1])(npc)
+    choosestyle(npc)
 ```
 
 ## Second Wind
@@ -117,7 +114,7 @@ You have a limited well of stamina that you can draw on to protect yourself from
 Once you use this feature, you must finish a short or long rest before you can use it again.
 
 ```
-    #npc.defer(lambda npc: npc.bonusactions.append(f"***Second Wind (Recharges on short or long rest).*** On your turn, you can regain 1d10 + {npc.levels('Fighter')} hit points."))
+    npc.append(BonusAction("Second Wind", f"On your turn, you can regain 1d10 + {npc.levels('Fighter')} hit points.", "short rest") )
 ```
 
 
@@ -128,8 +125,7 @@ Once you use this feature, you must finish a short or long rest before you can u
 
 ```
 def level2(npc):
-    #npc.defer(lambda npc: npc.traits.append(f"***Action Surge ({'2/' if npc.levels('Fighter') > 16 else ''}Recharges on short or long rest).*** On your turn, you can take one additional action on top of your regular action and a possible bonus action."))
-    pass
+    npc.append(Feature("Action Surge", "On your turn, you can take one additional action on top of your regular action and a possible bonus action.", "short rest", f"{'2/' if self.npc.levels('Fighter') >= 17 else ''}") )
 ```
 
 ## Martial Archetype
@@ -150,20 +146,19 @@ def level3(npc):
 When you reach 4th level, and again at 6th, 8th, 12th, 14th, 16th, and 19th level, you can increase one ability score of your choice by 2, or you can increase two ability scores of your choice by 1. As normal, you can't increase an ability score above 20 using this feature.
 
 ```
-#def level4(npc): abilityscoreimprovement(npc)
-#def level6(npc): abilityscoreimprovement(npc)
-#def level8(npc): abilityscoreimprovement(npc)
-#def level12(npc): abilityscoreimprovement(npc)
-#def level14(npc): abilityscoreimprovement(npc)
-#def level16(npc): abilityscoreimprovement(npc)
-#def level19(npc): abilityscoreimprovement(npc)
+def level4(npc): roots['Abilities'].abilityscoreincrease(npc)
+def level6(npc): roots['Abilities'].abilityscoreincrease(npc)
+def level8(npc): roots['Abilities'].abilityscoreincrease(npc)
+def level12(npc): roots['Abilities'].abilityscoreincrease(npc)
+def level14(npc): roots['Abilities'].abilityscoreincrease(npc)
+def level16(npc): roots['Abilities'].abilityscoreincrease(npc)
+def level19(npc): roots['Abilities'].abilityscoreincrease(npc)
 ```
 
 ### Martial Versatility
 Whenever you reach a level in this class that grants the Ability Score Improvement feature, you can do one of the following, as you shift the focus of your martial practice:
 
 * Replace a fighting style you know with another fighting style available to fighters.
-* If you know any maneuvers from the [Battle Master](BattleMaster.md) archetype, you can replace one maneuver you know with a different maneuver. 
 
 ## Extra Attack
 *5th-level Fighter feature*
@@ -173,8 +168,8 @@ You can attack twice, instead of once, whenever you take the Attack action on yo
 The number of attacks increases to three when you reach 11th level in this class and to four when you reach 20th level in this class.
 
 ```
-#def level5(npc):
-#    npc.defer(lambda npc: npc.actions.append(f"***Multiattack.*** You can attack {'twice' if npc.levels('Fighter') < 11 else '3 times' if npc.levels('Fighter') < 20 else 'four times'} whenever you take the Attack action on your turn."))
+def level5(npc):
+    npc.append(Action("Multiattack", f"You can attack {'twice' if self.npc.levels('Fighter') < 11 else 'three times' if self.npc.levels('Fighter') < 20 else 'four times'} whenever you take the Attack action on your turn.") )
 ```
 
 ## Indomitable
@@ -185,6 +180,6 @@ You can reroll a saving throw that you fail. If you do so, you must use the new 
 You can use this feature twice between long rests starting at 13th level and three times between long rests starting at 17th level.
 
 ```
-#def level9(npc):
-#    npc.defer(lambda npc: npc.traits.append(f"***Indomitable ({'' if npc.levels('Fighter') < 13 else '2/' if npc.levels('Fighter') < 17 else '3/'}Recharges on long rest).*** You can reroll a saving throw that you fail. If you do so, you must use the new roll, and you can't use this feature again until you finish a long rest."))
+def level9(npc):
+    npc.append(Feature("Indomitable", "You can reroll a saving throw that you fail. If you do so, you must use the new roll, and you can't use this feature again until you finish a long rest.", "long rest", "{'' if npc.levels('Fighter') < 13 else '2/' if npc.levels('Fighter') < 17 else '3/'}"))
 ```
