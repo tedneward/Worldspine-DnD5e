@@ -33,9 +33,14 @@ languages = {
                'Sylvan', 'Undercommon' ]
 }
 def chooselanguage(npc, which='Common'):
-    srclist = languages[which]
+    if which == 'All':
+        srclist = languages['Common'] | languages['Exotic']
+    else:
+        srclist = languages[which]
+
     for lang in npc.languages:
         srclist.remove(lang)
+
     chosen = choose("Choose a language: ", srclist)
     npc.languages.append(chosen)
 

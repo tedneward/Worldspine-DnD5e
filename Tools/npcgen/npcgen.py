@@ -49,6 +49,11 @@ class Feature:
         return self.text.replace('\n', '\n>')
 
     def __str__(self):
+        if "{" in self.text:
+            self.text = eval('f"' + self.text + '"')
+        #if "{" in self.uses:
+        #    self.uses = eval('f"' + self.uses + '"')
+
         posttitletext = ""
         if self.recharges == None:
             if self.uses == None:
@@ -72,6 +77,13 @@ class Action(Feature):
     def __init__(self, title, text, uses=None, recharges=None):
         Feature.__init__(self, title, text, uses, recharges)
 
+# This can be innate spellcasting, class-based spellcasting, or PactMagic.
+# Any ability that can cast a spell as an Action is Spellcasting as far as
+# this tool is concerned.
+class Spellcasting(Action):
+    def __init__(self, title):
+        Action.__init__(self, title, "")
+
 class BonusAction(Feature):
     def __init__(self, title, text, uses=None, recharges=None):
         Feature.__init__(self, title, text, uses, recharges)
@@ -84,7 +96,7 @@ class LairAction(Feature):
     def __init__(self, title, text, uses=None, recharges=None):
         Feature.__init__(self, title, text, uses, recharges)
 
-# Specifically for melee attack Actions; produces text similar to:
+# Specifically for melee attack Actions; produces text like:
 # "***Club.*** *Melee Weapon Attack:* +{proficiency bonus + STRbonus} to hit, 
 # 5ft., one target. Hit: 1d4 + {STRbonus} bludgeoning damage."
 class MeleeAttack(Action):
@@ -94,20 +106,21 @@ class MeleeAttack(Action):
         self.dmgtype = dmgtype 
             # should be one of the recognized types: bludgeoning, piercing, slashing, etc
         self.properties = properties if properties != None else []
-            # light, finesse, two-handed, versatile, etc
+            # finesse is the only one I really care about since it changes up the ability bonus
         self.tohit = 0
         self.reach = "5ft."
 
+    # Take finesse into account here
     def __str__(self):
         if self.npc == None: return self.title
 
         text  = f"***{self.title}.*** *Melee Weapon Attack:* "
         text += f"+{self.npc.STRbonus() + self.npc.proficiencybonus() + self.tohit} to hit, "
         text += f"reach {self.reach}, one target. "
-        text += f"Hit: {self.dmgamt} {self.dmgtype}"
+        text += f"Hit: {self.dmgamt} + {self.npc.STRbonus()} {self.dmgtype}"
         return text
 
-# Specifically for ranged attack Actions; produces text similar to:
+# Specifically for ranged attack Actions; produces text like:
 # "***Shortbow.*** *Ranged Weapon Attack:* +{proficiency bonus + DEXbonus} to hit, 
 # range 80/200, one target. Hit: 1d4 + {STRbonus} bludgeoning damage."
 class RangedAttack(Action):
@@ -121,11 +134,12 @@ class RangedAttack(Action):
         self.properties = properties if properties != None else []
             # thrown, ammunition, etc
 
+    # TODO: Factor in ability bonus damage 
     def __str__(self):
         text  = f"***{self.title}.*** *Ranged Weapon Attack:* "
         text += f"+{self.npc.DEXbonus() + self.npc.proficiencybonus() + self.tohit} to hit, "
         text += f"range {self.range}, one target. "
-        text += f"Hit: {self.dmgamt} {self.dmgtype}"
+        text += f"Hit: {self.dmgamt} + {self.npc.DEXbonus()} {self.dmgtype}"
         return text
 
 class StatBlock:
@@ -177,6 +191,8 @@ class StatBlock:
 
         self.equipment = []
 
+        self.description = []
+
     ##########################
     # Ability-related methods
     def getability(self, name): return getattr(self, name, 0)
@@ -207,11 +223,13 @@ class StatBlock:
     def setrace(self, racemod):
         if self.race != None: warn("Replacing",self.race.name,"with",racemod.name,"!")
         self.race = racemod
+        self.description.append(racemod.description)
         racemod.apply(self)
 
     def setsubrace(self, subracemod):
         if self.subrace != None: warn("Replacing",self.subrace.name,"with",subracemod.name,"!")
         self.subrace = subracemod
+        self.description.append(subracemod.description)
         subracemod.apply(self)
 
     ##########################
@@ -250,20 +268,48 @@ class StatBlock:
     def addclass(self, classmod):
         self.classes.append(classmod)
 
-        # Now that we added the level, invoke the new levelX fn (if present)
-        classlvls = self.levels(classmod)
-        levelfn = getattr(classmod, "everylevel", None)
-        if levelfn != None: levelfn(self)
-        levelfn = getattr(classmod, "level" + str(classlvls), None)
-        if levelfn != None:
-            levelfn(self)
+        # Is this the first time we've added this class?
+        if self.levels(classmod) == 1:
+            classfn = getattr(classmod, "apply", None)
+            if classfn != None: classfn(self)
+            self.description.append(classmod.description)
 
-        # Do the same for any subclass for that class
-        if classmod.name in self.subclasses:
-            subclassmod = self.subclasses[classmod.name]
-            levelfn = getattr(subclassmod, "level" + str(classlvls), None)
-            if levelfn != None:
-                levelfn(self)
+    def addsubclass(self, subclassmod):
+        # Let's make sure we only have one subclass per class
+        if subclassmod.parent.name in self.subclasses.keys():
+            error("We already have a subclass for",subclassmod.parent.name,"it's",self.subclasses[subclassmod.parent.name],"!")
+
+        self.subclasses[subclassmod.parent.name] = subclassmod
+        subclassfn = getattr(subclassmod, "apply", None)
+        if subclassfn != None: subclassfn(self)
+        self.description.append(subclassmod.description)
+
+    def levelup(self, leveledclass):
+        # We've added a level, invoke everylevel/levelX fns (if present)
+        # in all of the relevant modules that would affect us:
+        # Race, Subrace, leveledclass Class and Subclass
+        def levelupinvoke(module, name):
+            fn = getattr(module, name, None)
+            if fn != None: 
+                log("Invoking",name,"on",module.name)
+                fn(self)
+
+        totallevels = self.levels()
+        levelupinvoke(self.race, "everylevel")
+        levelupinvoke(self.race, "level" + str(totallevels))
+
+        if self.subrace != None:
+            levelupinvoke(self.race, "everylevel")
+            levelupinvoke(self.race, "level" + str(totallevels))
+
+        classlvls = self.levels(leveledclass)
+        levelupinvoke(leveledclass, "everylevel")
+        levelupinvoke(leveledclass, "level" + str(classlvls))
+
+        if leveledclass.name in self.subclasses:
+            subclassmod = self.subclasses[leveledclass.name]
+            levelupinvoke(subclassmod, "everylevel")
+            levelupinvoke(subclassmod, "everylevel" + str(classlvls))
 
     def levels(self, clss = None):
         if clss == None: return len(self.classes)
@@ -279,6 +325,7 @@ class StatBlock:
 
     def applyfeat(self, featmod):
         self.feats.append(featmod.name)
+        featmod.npc = self
         featmod.apply(self)
 
     def getsavingthrows(self):
@@ -385,7 +432,6 @@ class StatBlock:
             # This equipment has attack actions so pull 'em out
             actions = equip.getactions()
             for action in actions:
-                print("Adding action", action)
                 self.append(action)
 
     ##########################
@@ -410,6 +456,21 @@ class StatBlock:
             else:
                 strs.append(f"{c.name} {classmap[c]}")
         return "/".join(strs)
+
+    # This method is the last step before an emit(), to give the StatBlock a chance
+    # to organize and/or optimize itself.
+    def freeze(self):
+        log("StatBlock",self.name,"frozen in place.")
+
+        # Lint the StatBlock for any warnings
+
+        # Sort lists by alphabetical order
+        self.actions.sort()
+        self.bonusactions.sort()
+        self.reactions.sort()
+        self.lairactions.sort()
+        self.equipment.sort()
+        # Do NOT sort description!
 
     def emitmd(self) -> str:
         linesep = ">___\n"
@@ -492,6 +553,7 @@ class StatBlock:
         if len(self.actions):
             result +=  ">#### Actions\n"
             for action in self.actions:
+                print("About to examine",action.title)
                 result += f">{action}\n"
                 result +=  ">\n"
 
@@ -512,6 +574,18 @@ class StatBlock:
             for action in self.lairactions:
                 result += f">{action}\n"
                 result +=  ">\n"
+
+        if len(self.equipment) > 0:
+            result += ">#### Equipment\n"
+            for equip in self.equipment:
+                result += f">{equip}\n"
+                result +=  ">\n"
+
+        result += ">___\n"
+        result += ">#### Description\n"
+        for desc in self.description:
+            result += f">{desc}\n"
+            result +=  ">\n"
 
         return result
 
@@ -892,51 +966,78 @@ def generate(randomlist=[]):
 
     npc = StatBlock()
 
-    # We need to do a few things before we can start kicking off levels,
-    # but we might want to do them in a variety of different orders
-    reqs = ['Abilities', 'Background', 'Class', 'Gender', 'Race']
-
     # Generate the random bits
     oldio = shell.io
     shell.io = RandomInput()
+
+    abilities = False
+    background = False
+    gender = False
+    race = False
+
+    classgen = []
     for r in randomlist:
-        if r == 'Abilities':
+        if r.find("Class-") > -1:
+            # We're going to generate some class levels
+            classgen.append(r)
+        elif r == 'Abilities':
             roots['Abilities'].random(npc)
-        elif r == 'Background':
+            abilities = True
+        #elif r == 'Background':
             #randompick(roots["Backgrounds"]).random(npc)
-            shell.output("Background!")
-        elif r == 'Class':
-            shell.output("Class(es)!")
+            #background = True
         elif r == 'Gender': 
             npc.gender = randompick(['Male', 'Female'])
+            gender = True
         elif r == 'Race':
-            roots["Races"].random(npc)
+            roots['Races'].random(npc)
+            race = True
         else:
             shell.output(r + ":", roots[r].random())
-        reqs.remove(r)
 
-    # Now do the interactive bits
     shell.io = oldio
-    while len(reqs) > 0:
-        which = shell.choosefromlist(reqs)
-        if which == 'Abilities':
-            (_, abilityfn) = shell.choosefrommap(roots['Abilities'].methods)
-            npc.addabilities(abilityfn())
-        elif which == 'Background':
-            print("Background!")
-        elif which == 'Class':
-            print(roots['Classes'].modules)
-            (_, classmod) = shell.choosefrommap(roots['Classes'].modules)
-            npc.addclass(classmod)
-        elif which == 'Gender':
-            npc.gender = shell.choosefromlist(['Male', 'Female'])
-        elif which == 'Race':
-            (_, racemod) = shell.choosefrommap(roots['Races'].modules)
-            npc.setrace(racemod)
-            if getattr(racemod, "subraces", None) != None:
-                (_, subracemod) = shell.choosefrommap(racemod.subraces)
-                npc.setsubrace(subracemod)
-        reqs.remove(which)
+
+    # Do the interactive bits for whatever hasn't been randomized
+    if not abilities:            
+        (_, abilityfn) = shell.choosefrommap(roots['Abilities'].methods)
+        npc.addabilities(abilityfn())
+    if not gender:
+        npc.gender = shell.choosefromlist(['Male', 'Female'])
+    if not race:
+        (_, racemod) = shell.choosefrommap(roots['Races'].modules)
+        npc.setrace(racemod)
+        if getattr(racemod, "subraces", None) != None:
+            (_, subracemod) = shell.choosefrommap(racemod.subraces)
+            npc.setsubrace(subracemod)
+
+    # Now randomize some class levels
+    shell.io = RandomInput()
+    for cg in classgen:
+        # We expect Class to look like one of a few flavors:
+        # "Class": random number of levels in a random class/subclass
+        # "Class-(classname)": random number of levels in classname/random-subclass
+        # "Class-(classname)-(level)": level number of levels in classname/random-subclass
+        parts = cg.split('-')
+        if len(parts) == 1:
+            print("Random number of levels in a random class/subclass")
+        elif len(parts) == 2:
+            print("Random number of levels in class/subclass", parts[1])
+        elif len(parts) == 3:
+            print(parts[2],"levels in",parts[1])
+            for _ in range(0, int(parts[2])):
+                classmod = roots['Classes'].modules[parts[1]]
+                npc.addclass(classmod)
+                npc.levelup(classmod)
+
+    # Now interactively gen some class levels
+    shell.io = oldio
+
+    choice = shell.choose("Add a new level? ", ['Yes', 'No'])
+    while (choice == 'Yes'):
+        print(roots['Classes'].modules)
+        (_, classmod) = shell.choosefrommap(roots['Classes'].modules)
+        npc.addclass(classmod)
+        npc.levelup(npc.levels(classmod))
 
     return npc
 
