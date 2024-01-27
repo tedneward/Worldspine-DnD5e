@@ -28,24 +28,14 @@ def apply(npc):
 
     npc.languages.append("Common")
 
-    abilities = [ 'STR', 'DEX', 'CON', 'INT', 'WIS', 'CHA']
-    for _ in range(0, 2):
-        ability = choose("Choose an ability to improve: ", abilities)
-        if ability == 'STR': npc.STR += 1
-        elif ability == 'DEX': npc.DEX += 1
-        elif ability == 'CON': npc.CON += 1
-        elif ability == 'INT': npc.INT += 1
-        elif ability == 'WIS': npc.WIS += 1
-        elif ability == 'CHA': npc.CHA += 1
+    roots['Abilities'].abilityscoreincrease(npc)
+    roots['Abilities'].abilityscoreincrease(npc)
 
-    lang = choose("Choose a language: ", roots['Races'].languages['Common'])
-    npc.languages.append(lang)
+    roots['Races'].chooselanguage(npc)
 
-    # Choose a skill
-    npc.proficiencies.append(roots['Abilities'].chooseskill())
+    roots['Abilities'].chooseskill(npc)
 
-    (featname, featmod) = roots['Feats'].choosefeat(npc.feats)
-    npc.applyfeat(featname, featmod)
+    roots['Feats'].choosefeat(npc)
 
 def random(npc): pass
 ```

@@ -32,6 +32,12 @@ languages = {
                'Primordial','Aquan', 'Auran', 'Ignan', 'Terran',
                'Sylvan', 'Undercommon' ]
 }
+def chooselanguage(npc, which='Common'):
+    srclist = languages[which]
+    for lang in npc.languages:
+        srclist.remove(lang)
+    chosen = choose("Choose a language: ", srclist)
+    npc.languages.append(chosen)
 
 def random(npc):
     (racename, racemod) = randomfrom(modules)
