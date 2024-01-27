@@ -103,7 +103,7 @@ class MeleeAttack(Action):
 
         text  = f"***{self.title}.*** *Melee Weapon Attack:* "
         text += f"+{self.npc.STRbonus() + self.npc.proficiencybonus() + self.tohit} to hit, "
-        text += f"range {self.reach}, one target. "
+        text += f"reach {self.reach}, one target. "
         text += f"Hit: {self.dmgamt} {self.dmgtype}"
         return text
 
@@ -380,9 +380,13 @@ class StatBlock:
         self.equipment.append(equip)
 
         # Let's pull actions out for convenience
-        #gaa = getattr(equip, "getactions", None)
-        #if gaa != None:
+        gaa = getattr(equip, "getactions", None)
+        if gaa != None:
             # This equipment has attack actions so pull 'em out
+            actions = equip.getactions()
+            for action in actions:
+                print("Adding action", action)
+                self.append(action)
 
     ##########################
     # Emitter methods

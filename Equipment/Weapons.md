@@ -12,7 +12,7 @@ class Weapon:
         self.properties = properties
 
     def findproperty(self, property):
-        for prop in properties:
+        for prop in self.properties:
             if property in prop:
                 return prop
         return None
@@ -27,10 +27,22 @@ class MeleeWeapon(Weapon):
         # If the weapon has 'versatile', it can be used one- or two-handed
         # If the weapon has 'reach', it's reach is doubled
         # If the weapon has 'finesse', it can use either STR or DEX (ugh)
+        actions = [ MeleeAttack(self.name, self.dmg, self.dmgtype) ]
 
-        return [ 
-            MeleeAttack(self.name, self.dmg, self.dmgtype) 
-        ]
+        versatile = self.findproperty('versatile')
+        if versatile != None:
+            dmg = versatile[len("versatile "):][1:-1]
+            actions.append(MeleeAttack(self.name + " (Two-Handed)", dmg, self.dmgtype))
+
+        reach = self.findproperty('reach')
+        if reach != None:
+            actions[0].reach = "10ft"
+
+        finesse = self.findproperty('finesse')
+        if finesse != None:
+            warn(self.name,"has property 'finesse' and I don't know what to do about it!")
+
+        return actions
 
 class RangedWeapon(Weapon):
     def __init__(self, name, range, dmg, dmgtype, properties=[]):
@@ -102,7 +114,7 @@ Scimitar | 25 gp | 1d6 slashing | 3 lb. | Finesse, light |
 Shortsword | 10 gp | 1d6 piercing | 2 lb. | Finesse, light | 
 Trident | 5 gp | 1d6 piercing | 4 lb. | Thrown (20/60), versatile (1d8) | 
 War pick | 5 gp | 1d8 piercing | 2 lb. | — | 
-Warhammer | 15 gp | 1d8 bludgeoning | 2 lb. | Versatile (1d10) | 
+Warhammer | 15 gp | 1d8 bludgeoning | 2 lb. | versatile (1d10) | 
 Whip | 2 gp | 1d4 slashing | 3 lb. | Finesse, reach | 
 
 ```
@@ -140,12 +152,9 @@ Sling | 1 sp | 1d4 piercing | — | Ammunition, range (30/120) |
 ```
 weapons['simple-ranged'] = {
     'Light Crossbow': RangedAttack("Light Crossbow", '80/320', '1d8', 'piercing', ['ammunition', 'loading', 'two-handed']),
-    'Dagger': RangedAttack("Dagger", '20/60', '1d4', 'piercing', ['finesse','light','thrown']),
     'Dart': RangedAttack("Dart", '20/60', '1d4', 'piercing', ['finesse', 'thrown']),
-    'Handaxe': RangedAttack("Handaxe", '20/60', '1d6', 'slashing', ['light', 'thrown']),
     'Shortbow': RangedAttack("Shortbow", '80/320', '1d6', 'piercing', ['ammunition', 'two-handed']),
     'Sling': RangedAttack("Sling", '30/120', '1d4', 'bludgeoning', ['ammunition']),
-    'Spear': RangedAttack("Spear",'20/60', '1d6', 'piercing', ['thrown']),
 }
 ```
 
