@@ -22,7 +22,7 @@ name = 'Bronze'
 description = "***Bronze Dragonborn.***"
 def apply(npc):
     npc.damageresistances.append("lightning")
-    npc.append(parent.breathweaponaction("line 5' x 30'", "lightning", "DEX", ['2d6', '3d6', '4d6', '5d6']))
+    npc.append(parent.breathweaponaction("line 5' x 30'", "lightning", "DEX"))
 def level5(npc):
     npc.append(parent.metallicbreathweaponaction())
 ```

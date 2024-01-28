@@ -55,7 +55,7 @@ When a creature you can see hits a target, other than you, within 5 feet of you 
 
 ```
 def interception(npc):
-    npc.append(Reaction("Fighting Style: Interception", f"When a creature you can see hits a target, other than you, within 5 feet of you with an attack, you can reduce the damage the target takes by 1d10 + {self.npc.proficiencybonus()}. You must be wielding a shield or a simple or martial weapon to use this reaction."))
+    npc.append(Reaction("Fighting Style: Interception", "When a creature you can see hits a target, other than you, within 5 feet of you with an attack, you can reduce the damage the target takes by 1d10 + {self.npc.proficiencybonus()}. You must be wielding a shield or a simple or martial weapon to use this reaction."))
 ```
 
 ## Mariner
@@ -120,7 +120,7 @@ At the start of each of your turns, you can deal 1d4 bludgeoning damage to one c
 
 ```
 def unarmedfighting(npc):
-    npc.append(Action("Fighting Style: Unarmed Fighting", f"Your unarmed strikes can deal 1d6 + {self.npc.STRbonus()} bludgeoning damage on a hit. If you aren't wielding any weapons or a shield when you make the attack roll, the d6 becomes a d8. At the start of each of your turns, you can deal 1d4 bludgeoning damage to one creature grappled by you.") )
+    npc.append(Action("Fighting Style: Unarmed Fighting", "Your unarmed strikes can deal 1d6 + {self.npc.STRbonus()} bludgeoning damage on a hit. If you aren't wielding any weapons or a shield when you make the attack roll, the d6 becomes a d8. At the start of each of your turns, you can deal 1d4 bludgeoning damage to one creature grappled by you.") )
 ```
 
 ```

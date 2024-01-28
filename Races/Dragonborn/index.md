@@ -73,7 +73,7 @@ class MetallicBreathWeapon(Action):
         self.save = save
 
     def __str__(self):
-        return f"You exhale a 15-foot cone of either Enervating Breath (Each creature in the cone must succeed on a Constitution saving throw or become incapacitated until the start of your next turn) or Repulsion Breath (Each creature in the cone must succeed on a Strength saving throw or be pushed 20 feet away from you and be knocked prone), DC {8 + self.npc.CONbonus() + self.npc.proficiencybonus()}."
+        return "You exhale a 15-foot cone of either Enervating Breath (Each creature in the cone must succeed on a Constitution saving throw or become incapacitated until the start of your next turn) or Repulsion Breath (Each creature in the cone must succeed on a Strength saving throw or be pushed 20 feet away from you and be knocked prone), DC {8 + self.npc.CONbonus() + self.npc.proficiencybonus()}."
 
 def breathweaponaction(shape, dmgtype, save, damagetiers=['2d6','3d6','4d6','5d6']):
     return BreathWeapon(shape, dmgtype, save, damagetiers)

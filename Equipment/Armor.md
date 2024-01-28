@@ -21,7 +21,7 @@ class Armor:
         self.stealthpenalty = stealthpenalty
 
     def __str__(self):
-        return self.name + " (" + self.weight + "lb)"
+        return self.name + " (" + str(self.weight) + "lb)"
 
 class Shield:
     def __init__(self, name, weight, bonus, minstrength=0):
@@ -31,7 +31,7 @@ class Shield:
         self.minstrength = 0
 
     def __str__(self):
-        return self.name + " (" + self.weight + "lb)"
+        return self.name + " (" + str(self.weight) + "lb)"
 ```
 
 ## Light Armor

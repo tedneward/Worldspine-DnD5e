@@ -50,7 +50,33 @@ class Feature:
 
     def __str__(self):
         if "{" in self.text:
-            self.text = eval('f"' + self.text + '"')
+            # Grab the module's __dict__ and pass it in as the globals or locals or whatever
+            evalglobals = {
+                "self": self,
+
+                # Our roots-level modules
+                "roots": roots,
+
+                # Our I/O facilities
+                "log": log,
+                "warn": warn,
+                "error": error,
+                "print": shell.output,
+                "choose": shell.choose,
+
+                # Some helper methods
+                "creaturelink": creaturelinkify,
+                "itemlink": itemlinkify,
+                "spelllink": spelllinkify,
+
+                # Utility methods of our own
+                "dieroll": dieroll,
+                "randomfrom": randompick,
+                "randomint": randomint,
+                "randompkg": random,
+            }
+            evallocals = {}
+            self.text = eval('f"' + self.text + '"', evalglobals, evallocals) # pass in mybuiltins as globals?
         #if "{" in self.uses:
         #    self.uses = eval('f"' + self.uses + '"')
 
@@ -70,7 +96,7 @@ class Feature:
             if self.uses == None:
                 posttitletext = f" (Recharges on {self.recharges})"
             else:
-                posttitletext = " ({self.uses}/Recharges on {self.recharges})"
+                posttitletext = f" ({self.uses}/Recharges on {self.recharges})"
         return f"***{self.title}{posttitletext}.*** {self.markdownifytext()}"
 
 class Action(Feature):
@@ -872,6 +898,7 @@ def loadrootmodule(dirname : str) -> types.ModuleType:
             submodhumanname = getattr(submodmod, "name", None)
             modules[submodhumanname] = submodmod
     return rootmod
+
 
 def loadmodule(filename : str, modulename : str = None, parent : types.ModuleType = None) -> types.ModuleType:
     def enhance(module):
