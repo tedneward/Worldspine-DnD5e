@@ -44,32 +44,7 @@ class Feature:
     def __str__(self):
         if "{" in self.text:
             # Grab the module's __dict__ and pass it in as the globals or locals or whatever
-            evalglobals = {
-                "self": self,
-
-                # Our roots-level modules
-                "roots": roots,
-
-                # Our I/O facilities
-                "log": log,
-                "warn": warn,
-                "error": error,
-                "print": shell.output,
-                "choose": shell.choose,
-
-                # Some helper methods
-                "creaturelink": creaturelinkify,
-                "itemlink": itemlinkify,
-                "spelllink": spelllinkify,
-
-                # Utility methods of our own
-                "dieroll": dieroll,
-                "randomfrom": randompick,
-                "randomint": randomint,
-                "randompkg": random,
-            }
-            evallocals = {}
-            self.text = eval('f"' + self.text + '"', evalglobals, evallocals) # pass in mybuiltins as globals?
+            litexec('"f' + self.text + '"', { "self" : self })
         #if "{" in self.uses:
         #    self.uses = eval('f"' + self.uses + '"')
 
@@ -97,11 +72,30 @@ class Action(Feature):
         Feature.__init__(self, title, text, uses, recharges)
 
 # This can be innate spellcasting, class-based spellcasting, or PactMagic.
-# Any ability that can cast a spell as an Action is Spellcasting as far as
+# I think any sort of psionic or other abilities could fit in here as well.
+# Any ability that can cast a spell as an Action is Casting as far as
 # this tool is concerned.
-class Spellcasting(Action):
+class Casting(Action):
     def __init__(self, title):
-        Action.__init__(self, title, "")
+        Action.__init__(self, title, "", recharges="long rest")
+
+class InnateCasting(Casting):
+    def __init__(self, innatetype):
+        Spellcasting.__init__(self, innatetype + " Spellcasting")
+        self.recharges = None
+        self.perday = {}
+
+class Spellcasting(Casting):
+    def __init__(self, title, classspelllist, ability):
+        Casting.__init__(self, title + " Casting")
+        self.classspelllist = classspelllist
+        self.ability = ability
+        self.maxcantripsknown = 0
+        self.cantripsknown = []
+        self.slottable = {}
+        self.maxspellsknown = 0
+        self.spellsknown = []
+        
 
 class BonusAction(Feature):
     def __init__(self, title, text, uses=None, recharges=None):
@@ -303,6 +297,12 @@ class StatBlock:
         if classmod.name in self.subclasses:
             subclassmod = self.subclasses[classmod.name]
             levelup(subclassmod, classlvls)
+
+        for f in self.feats:
+            childmods = getattr(moduleglobals['roots']['Feats'].childmods)
+            for childmod in childmods:
+                if childmod.name in self.feats:
+                    levelup(childmod, totallvls)
     
     def levels(self, clss = None):
         if clss == None: return len(self.classes)
@@ -847,6 +847,9 @@ moduleglobals = {
     "LairAction": LairAction,
     "MeleeAttack": MeleeAttack,
     "RangedAttack": RangedAttack,
+    "Casting": Casting,
+    "InnateCasting": InnateCasting,
+    "Spellcasting": Spellcasting,
 }
 
 # Take a path, and if it's a file, load a singular module.
@@ -935,14 +938,12 @@ def loadroot(path : str) -> types.ModuleType:
 # to reflect all of what's in moduleglobals?
 def fixuproots() -> None:
     def fixup(module) -> None:
-        print("Fixing up ", module.__name__)
-        print("Before:", module.__dict__.keys())
+        #log("Fixing up " + str(module.__name__))
         module.__dict__.update(moduleglobals)
         childmods = getattr(module, "childmods", None)
         if childmods != None:
             for childmod in childmods:
                 fixup(childmod)
-        print("After:", module.__dict__.keys())
 
     # Backport all the rootmodules to other rootmodules
     for rootmodname in moduleglobals['roots']:
@@ -951,7 +952,6 @@ def fixuproots() -> None:
 
 def litexec(source : str, litlocals : dict[str, object]) -> None:
     #debug("============ Executing lit Python with moduleglobals = " + dumpfirstlevel(moduleglobals))
-    print("Moduleglobals:", moduleglobals.keys())
     exec(source, moduleglobals, litlocals)
     
 
@@ -972,15 +972,18 @@ def generate(randomlist=[]):
     gender = False
     race = False
 
-    classgen = []
+    classgen = [] # The classes to generate randomly
+
     for r in randomlist:
         if r == 'Abilities':
             litexec("Abilities.random(npc)", { "npc" : npc })
+            abilities = True
         elif r == 'Background':
-            #randompick(roots["Backgrounds"]).random(npc)
+            #litexec("Background.random(npc)", { "npc" : npc })
             background = True
-        elif r.startsWith("Class"):
+        elif r.startswith("Class"):
             classstr : str = r
+
             # Is this a "Class", "Class-Fighter", "Class-12", or "Class-Fighter-12"?
             parts = classstr.split("-")
             if len(parts) == 0:
@@ -998,6 +1001,7 @@ def generate(randomlist=[]):
             gender = True
         elif r == 'Race':
             litexec("Races.random(npc)", { "npc" : npc })
+            race = True
         else:
             shell.output(r + ":", roots[r].random())
 

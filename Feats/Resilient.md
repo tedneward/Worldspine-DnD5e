@@ -10,5 +10,5 @@ description = "***Feat: Resilient.*** You are harder to kill than most."
 def prereq(npc): return True
 def apply(npc):
     ability = chooseability(npc)
-    npc.savingthrows.append(ability)
+    npc.addproficiency(ability)
 ```
