@@ -69,7 +69,7 @@ def level1(npc):
     npc.savingthrows.append("CON")
 
     for wpn in ['Dagger', 'Dart', 'Sling', 'Quarterstaff', 'Light crossbow']:
-        npc.proficiencies.append(wpn)
+        npc.addproficiency(wpn)
 
     skills = ['Arcana', 'Deception', 'Insight', 'Intimidation', 'Persuasion', 'Religion']
     chooseskill(npc, skills)

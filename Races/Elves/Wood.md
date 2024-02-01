@@ -15,10 +15,10 @@ description = "***Subrace: Wood Elf.***"
 def apply(npc):
   npc.WIS += 1
 
-  npc.proficiencies.append("Longsword")
-  npc.proficiencies.append("Shortsword")
-  npc.proficiencies.append("Longbow")
-  npc.proficiencies.append("Shortbow")
+  npc.addproficiency("Longsword")
+  npc.addproficiency("Shortsword")
+  npc.addproficiency("Longbow")
+  npc.addproficiency("Shortbow")
 
   npc.speed['walking'] = 35
 

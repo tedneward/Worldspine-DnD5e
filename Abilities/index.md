@@ -2,6 +2,10 @@
 
 There are as many different ways to roll ability scores as there are DMs.
 
+```
+name = "Abilities"
+```
+
 ## Hand-Entry
 
 ```
@@ -183,6 +187,9 @@ skills = [
     'Medicine', 'Nature', 'Perception', 'Performance', 'Persuasion',
     'Religion', 'Sleight of Hand', 'Stealth', 'Survival'
 ]
+def skilllist(): 
+    return skills
+
 skillability = { 
     'Acrobatics' : 'DEX', 
     'Animal Handling' : 'WIS', 
@@ -203,6 +210,8 @@ skillability = {
     'Stealth' : 'DEX', 
     'Survival' : 'WIS'
 }
+def abilityforskill(skillname): 
+    return skillability[skillname]
 
 def chooseskill(npc, availableskills = skills): 
     srclist = availableskills
@@ -211,16 +220,19 @@ def chooseskill(npc, availableskills = skills):
         if skill in srclist:
             srclist.remove(skill)
     chosen = choose("Choose a skill: ", srclist)
-    npc.proficiencies.append(chosen)
+    npc.addproficiency(chosen)
 ```
 
 ```
 def random(npc):
-    print("I'm rolling stats for you, boss!")
-
     #abilities = randomgen()
     #abilities = randomnpcstandard()
     abilities = average()
+    print("I rolled",abilities," as stats for you, boss!")
 
     npc.addabilities(abilities)
+```
+
+```
+exports = [ abilityscoreincrease, skilllist, abilityforskill, chooseskill ]
 ```

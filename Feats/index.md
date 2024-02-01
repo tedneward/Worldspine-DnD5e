@@ -79,15 +79,19 @@
 
 
 ```
+name = "Feats"
+
 def choosefeat(npc):
     choosablelist = []
 
-    for f in modules:
+    for f in childmods:
         if f not in npc.feats:
             choosablelist.append(f)
 
     featname = choose("Pick a Feat: ", choosablelist)
-    featmod = modules[featname]
+    featmod = childmods[featname]
     npc.applyfeat(featmod)
     return (featname, featmod)
+
+exports = [ choosefeat ]
 ```

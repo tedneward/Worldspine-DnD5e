@@ -50,7 +50,7 @@ You gain proficiency with martial weapons and heavy armor.
 
 ```
     for prof in weapons['martial-melee'] | weapons['martial-ranged'] | armor['heavy']:
-        npc.proficiencies.append(prof)
+        npc.addproficiency(prof)
 ```
 
 ## War Priest

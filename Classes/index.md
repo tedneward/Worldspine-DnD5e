@@ -37,6 +37,10 @@ The Warlock forms a pact with a divine or near-divine figure to gain occult powe
 ## [Wizard](Wizard)
 The Wizard uses their ability to study and learn to master the casting of arcane magic.
 
+```
+name = 'Classes'
+```
+
 ---
 
 # Multiclassing

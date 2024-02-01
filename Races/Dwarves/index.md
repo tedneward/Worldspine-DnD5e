@@ -64,15 +64,14 @@ def apply(npc):
     npc.append(Feature("Stonecunning", "Whenever you make an Intelligence (History) check related to the origin of stonework, it is considered proficient in the History skill and add doubles its proficiency bonus to the check."))
 
     # TODO: Add these from the roots['Equipment'] weapons?
-    npc.proficiencies.append("Battleaxe")
-    npc.proficiencies.append("Hand axe")
-    npc.proficiencies.append("Light hammer")
-    npc.proficiencies.append("Warhammer")
+    npc.addproficiency("Battleaxe")
+    npc.addproficiency("Hand axe")
+    npc.addproficiency("Light hammer")
+    npc.addproficiency("Warhammer")
 
     # TODO: These should come from roots['Equipment'] tools?
-    # TODO: What do we do in the event of random invocation?
     toolchoice = choose("Choose a tool proficiency:", ["Smith's Tools", "Brewer's Supplies", "Mason's Tools"])
-    npc.proficiencies.append(toolchoice)
+    npc.addproficiency(toolchoice)
 ```
 
 Dwarves have a number of genetically-differentiated offshoots (subraces):
@@ -83,8 +82,8 @@ Dwarves have a number of genetically-differentiated offshoots (subraces):
 
 ```
 def random(npc):
-    (subracename, subracemod) = randomfrom(subraces)
-    print("I choose a",subracename,npc.race.name,"for you, boss!")
+    subracemod = randomfrom(childmods)
+    print("I choose a",subracemod.name,npc.race.name,"for you, boss!")
     npc.setsubrace(subracemod)
 ```
 

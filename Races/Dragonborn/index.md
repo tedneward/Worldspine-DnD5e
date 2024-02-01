@@ -23,7 +23,7 @@ type = 'humanoid'
 
 ***Age.*** Young dragonborn grow quickly. They walk hours after hatching, attain the size and development of a 10-year-old human child by the age of 3, and reach adulthood by 15. They live to be around 80.
 
-***Alignment.*** Dragonborn tend towards extremes, making a conscious choice for one side or the other between Good and Evil (represented by Bahamut and Tiamat, respectively). More side with Bahamut than Tiamat (whose non-dragon followers are mostly kobolds), but villainous dragonborn can be quite terrible indeed. However, some dragonborn seek to distance themselves from their draconic heritage, and eschew the worship of either the Platinum or Chromatic Dragon, and instead prefer to dedicate themselves to another of the gods; in fact, many dragonborn find the all-encompassing [Kaevar](../Religions/KaevarianChurch.md) to be most comfortable.
+***Alignment.*** Dragonborn tend towards extremes, making a conscious choice for one side or the other between Good and Evil (represented by Bahamut and Tiamat, respectively). More side with Bahamut than Tiamat (whose non-dragon followers are mostly kobolds), but villainous dragonborn can be quite terrible indeed. However, some dragonborn seek to distance themselves from their draconic heritage, and eschew the worship of either the Platinum or Chromatic Dragon, and instead prefer to dedicate themselves to another of the gods.
 
 ***Size.*** Dragonborn are taller and heavier than humans, standing well over 6 feet tall and averaging almost 250 pounds. Your size is Medium.
 
@@ -74,7 +74,7 @@ class MetallicBreathWeapon(Action):
     def __str__(self):
         return f"You exhale a 15-foot cone of either Enervating Breath (Each creature in the cone must succeed on a Constitution saving throw or become incapacitated until the start of your next turn) or Repulsion Breath (Each creature in the cone must succeed on a Strength saving throw or be pushed 20 feet away from you and be knocked prone), DC {8 + self.npc.CONbonus() + self.npc.proficiencybonus()}."
 
-def breathweaponaction(shape, dmgtype, save, damagetiers=['1d10','2d10','3d10','4d10']):
+def breathweaponaction(shape, dmgtype, save, damagetiers=['2d6','3d6','4d6','5d6']):
     return BreathWeapon(shape, dmgtype, save, damagetiers)
 def metallicbreathweaponaction():
     return MetallicBreathWeapon()
@@ -93,14 +93,6 @@ Dragonborn of chromatic colors are often chaotic, prone to violence, and sometim
 * [Red](Red.md)
 * [White](White.md)
 
-Dragonborn of gemstone colors are often quiet, contemplative, and aloof.
-
-* [Amethyst](Amethyst.md)
-* [Crystal](Crystal.md)
-* [Emerald](Emerald.md)
-* [Sapphire](Sapphire.md)
-* [Topaz](Topaz.md)
-
 Dragonborn of metallic colors are often law-abiding, slow to anger, and sometimes so noble you want to punch them in their perfect teeth.
 
 * [Bronze](Bronze.md)
@@ -112,8 +104,8 @@ Dragonborn of metallic colors are often law-abiding, slow to anger, and sometime
 
 ```
 def random(npc):
-    (subracename, subracemod) = randomfrom(subraces)
-    print("I choose a",subracename,npc.race.name,"for you, boss!")
+    subracemod = randomfrom(subraces)
+    print("I choose a",subracemod.name,npc.race.name,"for you, boss!")
     npc.setsubrace(subracemod)
 ```
 

@@ -69,16 +69,16 @@ Equipment
 
 ```
 def level1(npc):
-    npc.proficiencies.append("STR")
-    npc.proficiencies.append("CON")
+    npc.addproficiency("STR")
+    npc.addproficiency("CON")
 
     armor = roots['Equipment'].armor
     for arm in armor['light'] | armor['medium'] | armor['heavy'] | armor['shields']:
-        npc.proficiencies.append(arm)
+        npc.addproficiency(arm)
 
     weapons = roots['Equipment'].weapons
     for wpn in weapons['simple-melee'] | weapons['martial-melee'] | weapons['simple-ranged'] | weapons['martial-ranged']:
-        npc.proficiencies.append(wpn)
+        npc.addproficiency(wpn)
 
     skills = ['Acrobatics', 'Animal Handling', 'Athletics', 'History', 'Insight', 'Intimidation', 'Perception', 'Survival']
     roots['Abilities'].chooseskill(npc, skills)

@@ -60,17 +60,17 @@ def level1(npc):
     npc.savingthrows.append("CHA")
 
     for arm in armor['light']:
-        npc.proficiencies.append(arm)
+        npc.addproficiency(arm)
     for wpn in weapons['simple-melee'] | weapons['simple-ranged']:
-        npc.proficiencies.append(wpn)
-    npc.proficiencies.append('Hand crossbow')
-    npc.proficiencies.append('Longsword')
-    npc.proficiencies.append('Shortsword')
-    npc.proficiencies.append('Rapier')
+        npc.addproficiency(wpn)
+    npc.addproficiency('Hand crossbow')
+    npc.addproficiency('Longsword')
+    npc.addproficiency('Shortsword')
+    npc.addproficiency('Rapier')
 
-    npc.proficiencies.append(choose("Choose an instrument: ", tools['musical']))
-    npc.proficiencies.append(choose("Choose an instrument: ", tools['musical']))
-    npc.proficiencies.append(choose("Choose an instrument: ", tools['musical']))
+    npc.addproficiency(choose("Choose an instrument: ", tools['musical']))
+    npc.addproficiency(choose("Choose an instrument: ", tools['musical']))
+    npc.addproficiency(choose("Choose an instrument: ", tools['musical']))
 
     chooseskill(npc)
     chooseskill(npc)

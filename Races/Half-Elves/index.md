@@ -47,7 +47,7 @@ def apply(npc):
 
     npc.languages.append('Common')
     npc.languages.append('Elvish')
-    npc.languages.append(choose("Choose a language: ", roots['Races'].languages['Common']))
+    roots['Races'].chooselanguage(npc)
 ```
 
 **Elf Heritage.** Choose one of the following elvish subraces as your elvish parent's heritage:
@@ -57,7 +57,7 @@ def apply(npc):
 
 ```
 def random(npc):
-    (subracename, subracemod) = randomfrom(subraces)
-    print("I choose a",subracename,npc.race.name,"for you, boss!")
+    subracemod = randomfrom(childmods)
+    print("I choose a",subracemod.name,npc.race.name,"for you, boss!")
     npc.setsubrace(subracemod)
 ```

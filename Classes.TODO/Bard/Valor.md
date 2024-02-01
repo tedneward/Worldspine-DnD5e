@@ -16,9 +16,9 @@ You gain proficiency with medium armor, shields, and martial weapons.
 ```
 def level3(npc):
     for arm in armor['medium'] | armor['shields']:
-        npc.proficiencies.append(arm)
+        npc.addproficiency(arm)
     for wpn in weapons['martial-melee'] | weapons['martial-ranged']:
-        npc.proficiencies.append(wpn)
+        npc.addproficiency(wpn)
 ```
 
 ## Combat Inspiration

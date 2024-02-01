@@ -120,8 +120,8 @@ You gain proficiency in the Deception and Persuasion skills.
 
 ```
 def beguilinginfluence(npc):
-    npc.proficiencies.append('Deception')
-    npc.proficiencies.append('Persuasion')
+    npc.addproficiency('Deception')
+    npc.addproficiency('Persuasion')
 
 def beguilinginfluence_prereq(npc): return True
 ```
@@ -516,7 +516,7 @@ def hagsheritage_prereq(npc): return npc.subclasses[allclasses['Warlock']].name 
 def hagsheritage(npc):
     npc.traits.append("***Hag's Heritage.*** You have advantage on saving throws against being charmed.")
     npc.conditionimmunities.append("sleep")
-    npc.proficiencies.append(choose("Choose a proficiency: ", ['Deception','Perception','Stealth']))
+    npc.addproficiency(choose("Choose a proficiency: ", ['Deception','Perception','Stealth']))
     npc.languages.append(choose("Choose a language: ", ['Abyssal','Giant', 'Primordial','Sylvan']))
 
     npc.defer(lambda npc: npc.actions.append(f"***Hag's Heritage: Cast Illusion.*** You cover yourself and anything you are wearing or carrying with a magical illusion that makes you look like an ugly creature of your general size and humanoid shape. The effect ends if you take a bonus action to end it or if you die. A creature must take an action to visually inspect the illusion and succeed on a Intelligence (Investigation) check (DC {8 + npc.proficiencybonus() + npc.CHAbonus()}) to tell you are disguised. However, the changes wrought by this effect fail to hold up to physical inspection.") )

@@ -43,7 +43,7 @@ def apply(npc):
 
     npc.append(Feature("Trance", "Elves do not sleep. Instead they meditate deeply, remaining semi-conscious, for 4 hours a day. The Common word for this meditation is 'trance'. While meditating, you dream after a fashion; such dreams are actually mental exercises that have become reflexive after years of practice. After resting in this way, you gain the same benefit a human would from 8 hours of sleep.") )
 
-    npc.proficiencies.append("Perception")
+    npc.addproficiency("Perception")
 
     npc.languages.append("Common")
     npc.languages.append("Elven")
@@ -56,7 +56,7 @@ Elves have a number of genetically-differentiated offshoots (subraces):
 
 ```
 def random(npc):
-    (subracename, subracemod) = randomfrom(subraces)
-    print("I choose a",subracename,npc.race.name,"for you, boss!")
+    subracemod = randomfrom(childmods)
+    print("I choose a",subracemod.name,npc.race.name,"for you, boss!")
     npc.setsubrace(subracemod)
 ```

@@ -19,6 +19,6 @@ def apply(npc):
     chooseability(npc, ['STR', 'DEX'])
 
     for arm in armor['medium'] | armor['shields']:
-        npc.proficiencies.append(arm)
+        npc.addproficiency(arm)
 ```
 
