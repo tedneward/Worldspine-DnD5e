@@ -18,22 +18,22 @@ Level|Proficiency Bonus|traits
 1st|+2|[Fighting Style](#fighting-style), [Second Wind](#second-wind)
 2nd|+2|[Action Surge](#action-surge) (x1)
 3rd|+2|[Martial Archetype](#martial-archetype)
-4th|+2|[Ability Score Improvement](#ability-score-improvement)
+4th|+2|[Ability Score Improvement](#ability-score-improvement) or [Feat](../../Feats/index.md)
 5th|+3|[Extra Attack](#extra-attack) (x1)
-6th|+3|[Ability Score Improvement](#ability-score-improvement)
+6th|+3|[Ability Score Improvement](#ability-score-improvement) or [Feat](../../Feats/index.md)
 7th|+3|[Martial Archetype feature](#martial-archetype)
-8th|+3|[Ability Score Improvement](#ability-score-improvement)
+8th|+3|[Ability Score Improvement](#ability-score-improvement) or [Feat](../../Feats/index.md)
 9th|+4|[Indomitable](#indomitable) (x1)
 10th|+4|[Martial Archetype feature](#martial-archetype)
 11th|+4|[Extra Attack](#extra-attack) (x2)
-12th|+4|[Ability Score Improvement](#ability-score-improvement)
+12th|+4|[Ability Score Improvement](#ability-score-improvement) or [Feat](../../Feats/index.md)
 13th|+5|[Indomitable](#indomitable) (x2)
-14th|+5|[Ability Score Improvement](#ability-score-improvement)
+14th|+5|[Ability Score Improvement](#ability-score-improvement) or [Feat](../../Feats/index.md)
 15th|+5|[Martial Archetype feature](#martial-archetype)
-16th|+5|[Ability Score Improvement](#ability-score-improvement)
+16th|+5|[Ability Score Improvement](#ability-score-improvement) or [Feat](../../Feats/index.md)
 17th|+6|[Action Surge](#action-surge) (x2), [Indomitable](#indomitable) (x3)
 18th|+6|[Martial Archetype feature](#martial-archetype)
-19th|+6|[Ability Score Improvement](#ability-score-improvement)
+19th|+6|[Ability Score Improvement](#ability-score-improvement) or [Feat](../../Feats/index.md)
 20th|+6|[Extra Attack](#extra-attack) (x3)
 
 As a fighter, you gain the following class traits.
@@ -151,13 +151,15 @@ def level3(npc):
 When you reach 4th level, and again at 6th, 8th, 12th, 14th, 16th, and 19th level, you can increase one ability score of your choice by 2, or you can increase two ability scores of your choice by 1. As normal, you can't increase an ability score above 20 using this feature.
 
 ```
-def level4(npc): roots['Abilities'].abilityscoreincrease(npc)
-def level6(npc): roots['Abilities'].abilityscoreincrease(npc)
-def level8(npc): roots['Abilities'].abilityscoreincrease(npc)
-def level12(npc): roots['Abilities'].abilityscoreincrease(npc)
-def level14(npc): roots['Abilities'].abilityscoreincrease(npc)
-def level16(npc): roots['Abilities'].abilityscoreincrease(npc)
-def level19(npc): roots['Abilities'].abilityscoreincrease(npc)
+def level4(npc): 
+    print(globals())
+    abilityscoreincrease(npc)
+def level6(npc): abilityscoreincrease(npc)
+def level8(npc): abilityscoreincrease(npc)
+def level12(npc): abilityscoreincrease(npc)
+def level14(npc): abilityscoreincrease(npc)
+def level16(npc): abilityscoreincrease(npc)
+def level19(npc): abilityscoreincrease(npc)
 ```
 
 ### Martial Versatility

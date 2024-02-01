@@ -27,12 +27,133 @@ def log(*values):
     if verbose and not quiet:
         print(*values)
 
-# TODO: REPOROOT should be picked up from an environment variable, or a default
-# file location (like a .properties file equivalent). If not, default to a location-
-# based approach from this location.
+##########################
+# I/O infrastructure
+
+class Input:
+    def output(self, *values):
+        # NOP; Expected to be overridden in derived classes
+        pass
+
+    def input(self, prompt : str = "") -> str:
+        # NOP; Expected to be overridden in derived classes
+        pass
+
+    def choosefromlist(self, choicelist : list):
+        choicelist.sort()
+        choiceidx = 0
+        for c in choicelist:
+            choiceidx += 1
+            self.output(f'{choiceidx}: {c}')
+
+        response = None
+        while response == None:
+            response = self.input()
+            if not response.isnumeric:
+                response = None
+            if int(response) < 1:
+                response = None
+            if int(response) > len(choicelist):
+                response = None
+
+        response = int(response) - 1 # Account for z'ero-based 'index
+        self.output("You chose " + choicelist[response])
+        return choicelist[response]
+
+    def choosefrommap(self, choicemap):
+        keys = list(choicemap.keys())
+        keys.sort()
+        choiceidx = 0
+        for k in keys:
+            choiceidx += 1
+            c = choicemap[k]
+            self.output(f'{choiceidx}: {k} ({c})')
+
+        # Interactive
+        response = None
+        while response == None:
+            response = self.input()
+            if not response.isnumeric:
+                response = None
+            if int(response) < 1:
+                response = None
+            if int(response) > len(choicemap):
+                response = None
+
+        responseidx = int(response) - 1 # Account for z'ero-based 'index
+        responsekey = keys[responseidx]
+        self.output("You chose " + str((responsekey, choicemap[responsekey])))
+        return (responsekey, choicemap[responsekey])
+
+    def choose(self, prompt, choices=None):
+        self.output(prompt)
+        if isinstance(choices, list):
+            return self.choosefromlist(choices)
+        elif isinstance(choices, dict):
+            return self.choosefrommap(choices)
+        elif choices == None:
+            return self.input("")
+        else:
+            error("WTF?!?", choices)
+
+class TerminalInput(Input):
+    def output(self, *values): print(*values)
+
+    def input(self, prompt : str = "") -> str: return input(prompt + " >>> ")
+
+class ScriptedInput(Input):
+    def __init__(self, inputfile):
+        self.inputfile = inputfile
+        self.answers = []
+
+        # TODO Parse inputfile, load answers, capture them.
+        # Then we can feed each one as input until we run out.
+
+    def output(self, *values): print(*values)
+
+    def input(self, prompt : str = "") -> str: return input(prompt + ">>> ")
+
+class RandomInput(Input):
+    def output(self, *values): print(*values)
+
+    def choosefromlist(self, choicelist : list):
+        response = random.randint(0, len(choicelist)-1)
+        self.output("I chose " + choicelist[response])
+        return choicelist[response]
+
+    def choosefrommap(self, choicemap):
+        keys = list(choicemap.keys())
+        responseidx = random.randint(0, len(keys)-1)
+        responsekey = keys[responseidx]
+        self.output("I chose " + str((responsekey, choicemap[responsekey])))
+        return (responsekey, choicemap[responsekey])
+
+# We need a constant object in place since this gets passed into each of the loaded
+# modules to use as an I/O facility; so we "wrap" the Input object, thus allowing us
+# to replace it without anyone being the wiser.
+class Shell:
+    def __init__(self, io):
+        self.io = io
+
+    def input(self, prompt : str = "") -> str: return self.io.input(prompt)
+
+    def output(self, *values): return self.io.output(*values)
+
+    def choosefromlist(self, choicelist : list): return self.io.choosefromlist(choicelist)
+
+    def choosefrommap(self, choicemap): return self.io.choosefrommap(choicemap)
+
+    def choose(self, prompt, choices=None): return self.io.choose(prompt, choices)
+
+shell = Shell(TerminalInput())
+
+# REPOROOT is the root directory of the content; maybe at some point let this be 
+# adjusted by command-line argument?
 REPOROOT = os.path.realpath(os.path.dirname(os.path.realpath(__file__)) + '/../../') + "/"
 
 # ONLINEROOT should be the root of the repository online, via HTTP
+# This should probably get picked up by environment variable or command-line arg
+# at some point in the future.
 ONLINEROOT = "http://worldspine.tedneward.com"
 
 ##########################
@@ -50,33 +171,10 @@ class Feature:
 
     def __str__(self):
         if "{" in self.text:
-            # Grab the module's __dict__ and pass it in as the globals or locals or whatever
-            evalglobals = {
+            evallocals = {
                 "self": self,
-
-                # Our roots-level modules
-                "roots": roots,
-
-                # Our I/O facilities
-                "log": log,
-                "warn": warn,
-                "error": error,
-                "print": shell.output,
-                "choose": shell.choose,
-
-                # Some helper methods
-                "creaturelink": creaturelinkify,
-                "itemlink": itemlinkify,
-                "spelllink": spelllinkify,
-
-                # Utility methods of our own
-                "dieroll": dieroll,
-                "randomfrom": randompick,
-                "randomint": randomint,
-                "randompkg": random,
             }
-            evallocals = {}
-            self.text = eval('f"' + self.text + '"', evalglobals, evallocals) # pass in mybuiltins as globals?
+            self.text = eval('f"' + self.text + '"', rootdict, evallocals) # pass in mybuiltins as globals?
         #if "{" in self.uses:
         #    self.uses = eval('f"' + self.uses + '"')
 
@@ -579,7 +677,6 @@ class StatBlock:
         if len(self.actions):
             result +=  ">#### Actions\n"
             for action in self.actions:
-                print("About to examine",action.title)
                 result += f">{action}\n"
                 result +=  ">\n"
 
@@ -660,126 +757,42 @@ def spelllinkify(name):
     linkdest = name.lower().replace(' ','-').replace("'","")
     return f"[{name}]({ONLINEROOT}/magic/spells/{linkdest}/)"
 
+# The "root" is a root namespace for any loaded modules, such as
+# classes, races, backgrounds, etc. Key will be the lowercased
+# directory name that loaded the "root" module,
+# so all Races (and the module Races/index.md) will be "races"
+# and all Classes (Classes/index.md) will be "classes".
+rootdict = {
+    # Some imports
+    "os": os,
 
-##########################
-# I/O infrastructure
+    # The I/O and utility methods
+    "log": log,
+    "warn": warn,
+    "error": error,
+    "print": shell.output,
+    "choose": shell.choose,
 
-class Input:
-    def output(self, *values):
-        # NOP; Expected to be overridden in derived classes
-        pass
+    # Some helper methods
+    "creaturelink": creaturelinkify,
+    "itemlink": itemlinkify,
+    "spelllink": spelllinkify,
+    "dieroll": dieroll,
+    "randomfrom": randompick,
+    "randomint": randomint,
 
-    def input(self, prompt : str = "") -> str:
-        # NOP; Expected to be overridden in derived classes
-        pass
+    # Character-related classes
+    "Feature": Feature,
+    "Action": Action,
+    "BonusAction": BonusAction,
+    "Reaction": Reaction,
+    "LairAction": LairAction,
+    "MeleeAttack": MeleeAttack,
+    "RangedAttack": RangedAttack,
 
-    def choosefromlist(self, choicelist : list):
-        choicelist.sort()
-        choiceidx = 0
-        for c in choicelist:
-            choiceidx += 1
-            self.output(f'{choiceidx}: {c}')
-
-        response = None
-        while response == None:
-            response = self.input()
-            if not response.isnumeric:
-                response = None
-            if int(response) < 1:
-                response = None
-            if int(response) > len(choicelist):
-                response = None
-
-        response = int(response) - 1 # Account for z'ero-based 'index
-        self.output("You chose " + choicelist[response])
-        return choicelist[response]
-
-    def choosefrommap(self, choicemap):
-        keys = list(choicemap.keys())
-        keys.sort()
-        choiceidx = 0
-        for k in keys:
-            choiceidx += 1
-            c = choicemap[k]
-            self.output(f'{choiceidx}: {k} ({c})')
-
-        # Interactive
-        response = None
-        while response == None:
-            response = self.input()
-            if not response.isnumeric:
-                response = None
-            if int(response) < 1:
-                response = None
-            if int(response) > len(choicemap):
-                response = None
-
-        responseidx = int(response) - 1 # Account for z'ero-based 'index
-        responsekey = keys[responseidx]
-        self.output("You chose " + str((responsekey, choicemap[responsekey])))
-        return (responsekey, choicemap[responsekey])
-
-    def choose(self, prompt, choices=None):
-        self.output(prompt)
-        if isinstance(choices, list):
-            return self.choosefromlist(choices)
-        elif isinstance(choices, dict):
-            return self.choosefrommap(choices)
-        elif choices == None:
-            return self.input("")
-        else:
-            error("WTF?!?", choices)
-
-class TerminalInput(Input):
-    def output(self, *values): print(*values)
-
-    def input(self, prompt : str = "") -> str: return input(prompt + " >>> ")
-
-class ScriptedInput(Input):
-    def __init__(self, inputfile):
-        self.inputfile = inputfile
-        self.answers = []
-
-        # TODO Parse inputfile, load answers, capture them.
-        # Then we can feed each one as input until we run out.
-
-    def output(self, *values): print(*values)
-
-    def input(self, prompt : str = "") -> str: return input(prompt + ">>> ")
-
-class RandomInput(Input):
-    def output(self, *values): print(*values)
-
-    def choosefromlist(self, choicelist : list):
-        response = random.randint(0, len(choicelist)-1)
-        self.output("I chose " + choicelist[response])
-        return choicelist[response]
-
-    def choosefrommap(self, choicemap):
-        keys = list(choicemap.keys())
-        responseidx = random.randint(0, len(keys)-1)
-        responsekey = keys[responseidx]
-        self.output("I chose " + str((responsekey, choicemap[responsekey])))
-        return (responsekey, choicemap[responsekey])
-
-# We need a constant object in place since this gets passed into each of the loaded
-# modules to use as an I/O facility; so we "wrap" the Input object, thus allowing us
-# to replace it without anyone being the wiser.
-class Shell:
-    def __init__(self, io):
-        self.io = io
-
-    def input(self, prompt : str = "") -> str: return self.io.input(prompt)
-
-    def output(self, *values): return self.io.output(*values)
-
-    def choosefromlist(self, choicelist : list): return self.io.choosefromlist(choicelist)
-
-    def choosefrommap(self, choicemap): return self.io.choosefrommap(choicemap)
-
-    def choose(self, prompt, choices=None): return self.io.choose(prompt, choices)
-
-shell = Shell(TerminalInput())
+    # Crutch?
+    "roots": {}
+}
 
 ##########################
 # Module infrastructure
@@ -807,13 +820,6 @@ def parsemd(mdfilename : str) -> str:
 
     return pythoncode
 
-# The "root" is a root namespace for any loaded modules, such as
-# classes, races, backgrounds, etc. Key will be the lowercased
-# directory name that loaded the "root" module,
-# so all Races (and the module Races/index.md) will be "races"
-# and all Classes (Classes/index.md) will be "classes".
-roots = {}
-
 def listdirwithoutdeps(path, dependencies=[]):
     retlist = []
     for it in os.listdir(path):
@@ -833,7 +839,7 @@ def listdirwithoutdeps(path, dependencies=[]):
 # * random: a function designed to select a random (whatever), along with all
 #    possible additional selectable options, for this root module.
 def loadrootmodule(dirname : str) -> types.ModuleType:
-    global roots
+    global rootdict
 
     if not os.path.isdir(dirname):
         error(f"{dirname} is not a root module")
@@ -845,7 +851,7 @@ def loadrootmodule(dirname : str) -> types.ModuleType:
     rootmodname = os.path.splitext(os.path.basename(dirname))[0]
     rootmod = loadmodule(dirname + "/index.md", rootmodname)
 
-    roots[rootmodname] = rootmod
+    rootdict['roots'][rootmod.__name__] = rootmod
 
     # This is a root module, so it's always going to have submodules
     # So let's define a top-level dictionary in the rootmod to hold
@@ -897,56 +903,13 @@ def loadrootmodule(dirname : str) -> types.ModuleType:
             submodmod = loadmodule(dirname + '/' + entry, submodname, rootmod)
             submodhumanname = getattr(submodmod, "name", None)
             modules[submodhumanname] = submodmod
+
+    log("After loading root module",rootmod.__name__,"rootdict =",rootdict)
+
     return rootmod
 
-
 def loadmodule(filename : str, modulename : str = None, parent : types.ModuleType = None) -> types.ModuleType:
-    def enhance(module):
-        global roots
-        global io
-
-        mybuiltins = {
-            # Access to a few useful Python packages and builtins
-            "os": os,
-            #"random": random,
-            "int": int,
-            "str": str,
-
-            # Our roots-level modules
-            "roots": roots,
-
-            # Our I/O facilities
-            "log": log,
-            "warn": warn,
-            "error": error,
-            "print": shell.output,
-            "choose": shell.choose,
-
-            # Some helper methods
-            "creaturelink": creaturelinkify,
-            "itemlink": itemlinkify,
-            "spelllink": spelllinkify,
-
-            # Module facilities
-            "parent": parent,
-
-            # Utility methods of our own
-            "dieroll": dieroll,
-            "randomfrom": randompick,
-            "randomint": randomint,
-            "randompkg": random,
-
-            # Character-related pieces
-            "Feature": Feature,
-            "Action": Action,
-            "Reaction": Reaction,
-            "BonusAction": BonusAction,
-            "LairAction": LairAction,
-            "MeleeAttack": MeleeAttack,
-            "RangedAttack": RangedAttack,
-        }
-        for (key, value) in mybuiltins.items():
-            module.__dict__[key] = value
+    global rootdict
 
     if not quiet: log(f"Loading module found in {filename}")
     literatecode = parsemd(filename)
@@ -955,28 +918,31 @@ def loadmodule(filename : str, modulename : str = None, parent : types.ModuleTyp
         if modulename == None:
             modulename = os.path.splitext(os.path.basename(filename))[0]
         module = types.ModuleType(modulename)
-        log(f"Loaded {modulename}")
-        enhance(module)
-        exec(literatecode, module.__dict__)
+        if parent != None: module.__dict__["parent"] = parent
+        exec(literatecode, rootdict, module.__dict__)
 
-        # Lets clean up the module.__dict__ of stuff
-        # that Python puts there by default, since I really
-        # don't think we'll ever need it.
-        del module.__dict__['__builtins__']
+        log(f"Loaded {modulename}")
+
+        # Cleanup __builtins__ since I don't think I'll ever need them
+        del rootdict['__builtins__']
 
         # If the module defines an "init" method, invoke it
-        if getattr(module, "init", None) != None:
-            module.init()
+        if getattr(module, "init", None) != None: module.init()
 
         # If the module defines a "dependencies" list,
         # iterate and loadmodule() each of those in turn
+        # TODO: I think we should load them into the depending module!
         if getattr(module, "dependencies", None) != None:
             # Iterate and invoke
             for dep in module.dependencies:
                 depfilename = os.path.dirname(filename) + "/" + dep
-                depmodule = loadmodule(depfilename, modulename + "-" + dep, module)
-                if getattr(depmodule, "init", None) != None:
-                    depmodule.init()
+                loadmodule(depfilename, modulename + "-" + dep, module)
+
+        # If the module has any "exports", pull them into the rootdict
+        if getattr(module, "exports", None) != None:
+            log(module.__name__,"exported the following symbols to root:",module.exports)
+            for (exportname) in module.exports:
+                rootdict[exportname] = module.exports[exportname]
         
         return module
     else:
@@ -989,7 +955,6 @@ def loadmodule(filename : str, modulename : str = None, parent : types.ModuleTyp
 # Main entrypoint and workhorse
 def generate(randomlist=[]):
     global shell
-    global roots
 
     npc = StatBlock()
 
@@ -1008,7 +973,7 @@ def generate(randomlist=[]):
             # We're going to generate some class levels
             classgen.append(r)
         elif r == 'Abilities':
-            roots['Abilities'].random(npc)
+            rootdict['roots']['Abilities'].random(npc)
             abilities = True
         #elif r == 'Background':
             #randompick(roots["Backgrounds"]).random(npc)
@@ -1017,21 +982,21 @@ def generate(randomlist=[]):
             npc.gender = randompick(['Male', 'Female'])
             gender = True
         elif r == 'Race':
-            roots['Races'].random(npc)
+            rootdict['roots']['Races'].random(npc)
             race = True
         else:
-            shell.output(r + ":", roots[r].random())
+            shell.output(r + ":", rootdict[r].random())
 
     shell.io = oldio
 
     # Do the interactive bits for whatever hasn't been randomized
     if not abilities:            
-        (_, abilityfn) = shell.choosefrommap(roots['Abilities'].methods)
+        (_, abilityfn) = shell.choosefrommap(rootdict['roots']['Abilities'].methods)
         npc.addabilities(abilityfn())
     if not gender:
         npc.gender = shell.choosefromlist(['Male', 'Female'])
     if not race:
-        (_, racemod) = shell.choosefrommap(roots['Races'].modules)
+        (_, racemod) = shell.choosefrommap(rootdict['Races'].modules)
         npc.setrace(racemod)
         if getattr(racemod, "subraces", None) != None:
             (_, subracemod) = shell.choosefrommap(racemod.subraces)
@@ -1052,7 +1017,7 @@ def generate(randomlist=[]):
         elif len(parts) == 3:
             print(parts[2],"levels in",parts[1])
             for _ in range(0, int(parts[2])):
-                classmod = roots['Classes'].modules[parts[1]]
+                classmod = rootdict['roots']['Classes'].modules[parts[1]]
                 npc.addclass(classmod)
                 npc.levelup(classmod)
 
@@ -1061,8 +1026,8 @@ def generate(randomlist=[]):
 
     choice = shell.choose("Add a new level? ", ['Yes', 'No'])
     while (choice == 'Yes'):
-        print(roots['Classes'].modules)
-        (_, classmod) = shell.choosefrommap(roots['Classes'].modules)
+        print(rootdict['Classes'].modules)
+        (_, classmod) = shell.choosefrommap(rootdict['Classes'].modules)
         npc.addclass(classmod)
         npc.levelup(npc.levels(classmod))
 
@@ -1083,6 +1048,7 @@ def main():
     parser.add_argument('--savepy', help="Which modules to save literate-parsed Python code (into ./Python)")
     parser.add_argument('--scripts', nargs='*', help="A list of files to use as scripted input")
     parser.add_argument('--randomize', help="List of things to generate randomly ahead of time (interactive only)")
+    parser.add_argument("--nop", help="Do nothing after loading; this is to test the module-loading initialization")
     args = parser.parse_args()
 
     # Logging off, on, or a lot?
@@ -1099,11 +1065,13 @@ def main():
     # Load modules, have them bootstrap in turn
     loadrootmodule(REPOROOT + "Abilities")
     #loadrootmodule(REPOROOT + "Backgrounds")
-    loadrootmodule(REPOROOT + "Classes")
-    loadrootmodule(REPOROOT + "Equipment")
+    #loadrootmodule(REPOROOT + "Classes")
+    #loadrootmodule(REPOROOT + "Equipment")
     loadrootmodule(REPOROOT + "Feats")
-    loadrootmodule(REPOROOT + "Races")
+    #loadrootmodule(REPOROOT + "Races")
     #loadrootmodule(REPOROOT + "Creatures") # <-- this will be an interesting day
+
+    if args.nop != None: return
 
     # Examine command line, let's see if we need to script-generate
     # our PC/NPC, or if we do it interactively.

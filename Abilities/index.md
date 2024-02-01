@@ -148,10 +148,10 @@ def randomnpcstandard():
 methods = {
     "Average": average,
     "Hand": handentry, 
-    "NPC": npcstandard, 
+    "NPCStandard": npcstandard, 
+    "Standard": standard, 
     "ThreeDSixRandomgen": threedsixrandomgen, 
     "FourDSevenRandomgen": fourdsevenrandomgen, 
-    "Standard": standard, 
 }
 ```
 
@@ -215,11 +215,18 @@ def chooseskill(npc, availableskills = skills):
 
 ```
 def random(npc):
-    print("I'm rolling stats for you, boss!")
+    abilities = npcstandard()
 
-    #abilities = randomgen()
-    #abilities = randomnpcstandard()
-    abilities = average()
+    print("I rolled",abilities,"for you, boss!")
 
     npc.addabilities(abilities)
+```
+
+```
+exports = {
+    "abilityscoreincrease" : abilityscoreincrease,
+    "skills" : skills, 
+    "skillability" : skillability,
+    "chooseskill": chooseskill
+}
 ```

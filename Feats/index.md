@@ -90,4 +90,17 @@ def choosefeat(npc):
     featmod = modules[featname]
     npc.applyfeat(featmod)
     return (featname, featmod)
+
+def choosefeatorasi(npc):
+    choice = choose("Take a Feat or an Ability Score Increase? ", ['Ability','Feat'])
+    if choice == 'Ability': abilityscoreincrease(npc)
+    else: choosefeat(npc)
+
+exports = { 
+    "choosefeatorasi": choosefeatorasi,
+    "choosefeat": choosefeat 
+}
+
+def init():
+    print(globals())
 ```

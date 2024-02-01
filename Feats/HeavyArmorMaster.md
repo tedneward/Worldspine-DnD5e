@@ -10,7 +10,7 @@ You can use your armor to deflect strikes that would kill others. You gain the f
 name = 'Heavy Armor Master'
 description = "***Feat: Heavy Armor Master.*** You can use your heavy armor to deflect strikes that would kill others."
 def prereq(npc): 
-    for arm in roots['Equipment'].armor['heavy']:
+    for arm in armor['heavy']:
         if arm in npc.proficiencies:
             return True
     return False

@@ -41,5 +41,5 @@ def apply(npc):
     npc.proficiencies.append("Longbow")
     npc.proficiencies.append("Shortbow")
 
-    npc.languages.append(choose("Choose a language:", roots['Races'].languages['Common']))
+    chooselanguage(npc, 'Common')
 ```

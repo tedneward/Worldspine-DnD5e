@@ -44,6 +44,8 @@ def chooselanguage(npc, which='Common'):
     chosen = choose("Choose a language: ", srclist)
     npc.languages.append(chosen)
 
+exports = { "chooselanguage" : chooselanguage }
+
 def random(npc):
     (racename, racemod) = randomfrom(modules)
 

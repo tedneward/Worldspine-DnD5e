@@ -147,6 +147,7 @@ def choosestyle(npc):
     npc.fightingstyles.append(stylename)
     stylefn(npc)
 
-def init():
-    parent.choosestyle = choosestyle
+exports = {
+    "choosestyle" : choosestyle
+}
 ```

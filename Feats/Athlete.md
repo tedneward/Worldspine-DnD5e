@@ -11,7 +11,7 @@ name = 'Athlete'
 description = "***Feat: Athlete.*** You have undergone extensive physical training."
 def prereq(npc): return True
 def apply(npc):
-    roots['Abilities'].abilityscoreincrease(npc, ['STR', 'DEX'])
+    abilityscoreincrease(npc, ['STR', 'DEX'])
 
     npc.speed['climbing'] = npc.speed['walking']
     npc.append(Feature("Athletic", "When you are prone, standing up uses only 5 feet of your movement. You can make a running long jump or a running high jump after moving only 5 feet on foot, rather than 10 feet.") )

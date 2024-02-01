@@ -28,14 +28,14 @@ def apply(npc):
 
     npc.languages.append("Common")
 
-    roots['Abilities'].abilityscoreincrease(npc)
-    roots['Abilities'].abilityscoreincrease(npc)
+    abilityscoreincrease(npc)
+    abilityscoreincrease(npc)
 
-    roots['Races'].chooselanguage(npc)
+    chooselanguage(npc)
 
-    roots['Abilities'].chooseskill(npc)
+    chooseskill(npc)
 
-    roots['Feats'].choosefeat(npc)
+    choosefeat(npc)
 
 def random(npc): pass
 ```

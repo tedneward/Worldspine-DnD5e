@@ -51,3 +51,20 @@ print(dieroll("1d4"))
 print(dieroll("2d20"))
 print("2d20 + 19", dieroll("2d20 + 19"))
 print("1d4 - 20", dieroll("1d4 - 20"))
+
+classdef = """class Foo:
+    def __init__(self, name):
+        self.name = name
+"""
+
+globs = globals()
+print("------------------------")
+print("Globals:",globs)
+locs = locals()
+print("------------------------")
+print("Locals:",locs)
+exec(classdef, globs, locs)
+print("------------------------")
+print("Globals:",globs)
+print("------------------------")
+print("Locals:",locs)

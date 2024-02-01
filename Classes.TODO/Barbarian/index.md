@@ -32,6 +32,31 @@ Level|Proficiency Bonus|Rages|Rage Damage|Features
 19th |+6|6|+4|[Ability Score Improvement](#ability-score-improvement) or [Feat](../../Feats/index.md)	
 20th |+6|Unlimited|+4|[Primal Champion](#primal-champion)
 
+```
+rages = {
+    1: [2, "+2"],
+    2: [2, "+2"],
+    3:
+    4:
+    5:
+    6:
+    7:
+    8:
+    9:
+    10:
+    11:
+    12:
+    13:
+    14:
+    15:
+    16:
+    17:
+    18:
+    19:
+    20:
+}
+```
+
 ### Hit Points
 **Hit Dice**: 1d12 per barbarian level
 
@@ -56,16 +81,16 @@ def everylevel(npc): npc.hits('d12')
 
 ```
 def level1(npc):
-    for arm in armor['light'] | armor['medium'] | armor['shields']:
+    for arm in roots['Equipment'].armor['light'] | roots['Equipment'].armor['medium'] | roots['Equipment'].armor['shields']:
         npc.proficiencies.append(arm)
-    for wpn in weapons['simple-melee'] | weapons['simple-ranged'] | weapons['martial-melee'] | weapons['martial-ranged']:
+    for wpn in roots['Equipment'].weapons['simple-melee'] | roots['Equipment'].weapons['simple-ranged'] | roots['Equipment'].weapons['martial-melee'] | roots['Equipment'].weapons['martial-ranged']:
         npc.proficiencies.append(wpn)
 
-    npc.savingthrows.append("STR")
-    npc.savingthrows.append("CON")
+    npc.proficiencies.append("STR")
+    npc.proficiencies.append("CON")
 
-    chooseskill(npc, ['Animal Handling','Athletics','Intimidation','Nature','Perception','Survival'])
-    chooseskill(npc, ['Animal Handling','Athletics','Intimidation','Nature','Perception','Survival'])
+    roots['Abilities'].chooseskill(npc, ['Animal Handling','Athletics','Intimidation','Nature','Perception','Survival'])
+    roots['Abilities'].chooseskill(npc, ['Animal Handling','Athletics','Intimidation','Nature','Perception','Survival'])
 ```
 
 ### Equipment
@@ -76,10 +101,10 @@ You start with the following equipment, in addition to the equipment granted by 
 * An explorer's pack and four javelins
 
 ```
-    npc.equipment.append("Greataxe OR any martial melee weapon")
-    npc.equipment.append("Two handaxes OR any simple weapon")
-    npc.equipment.append("Four javelins")
-    npc.equipment.append("An explorer's pack")
+    #npc.equipment.append("Greataxe OR any martial melee weapon")
+    #npc.equipment.append("Two handaxes OR any simple weapon")
+    #npc.equipment.append("Four javelins")
+    #npc.equipment.append("An explorer's pack")
 ```
 
 ## Rage
@@ -100,7 +125,7 @@ Your rage lasts for 1 minute. It ends early if you are knocked unconscious or if
 Once you have raged the number of times shown for your barbarian level in the Rages column of the Barbarian table, you must finish a long rest before you can rage again.
 
 ```
-    npc.defer(lambda npc: npc.bonusactions.append(f"***Rage ({2 if npc.levels(name) < 3 else 3 if npc.levels(name) < 6 else 4 if npc.levels(name) < 12 else 5 if npc.levels(name) < 17 else 6}/Recharges on long rest).*** Your rage lasts for 1 minute. {'It ends early if you fall unconscious or if your turn ends and you have not attacked a hostile creature since your last turn or taken damage since then.' if npc.levels(name) < 15 else 'It ends early if you fall unconscious.'} You can end your rage on your turn as a bonus action. {'' if npc.levels(name) < 7 else ' You can move up to half your speed as part of this bonus action. '}If you aren't wearing heavy armor, you gain the following benefits: You have advantage on Strength checks and Strength saving throws; When you make a melee weapon attack using Strength, you gain a +{2 if npc.levels(name) < 9 else 3 if npc.levels(name) < 16 else 4} bonus to the damage roll; You have resistance to bludgeoning, piercing, and slashing damage.") )
+    npc.bonusactions.append(BonusAction("Rage", "" ({2 if npc.levels(name) < 3 else 3 if npc.levels(name) < 6 else 4 if npc.levels(name) < 12 else 5 if npc.levels(name) < 17 else 6}/Recharges on long rest).*** Your rage lasts for 1 minute. {'It ends early if you fall unconscious or if your turn ends and you have not attacked a hostile creature since your last turn or taken damage since then.' if npc.levels(name) < 15 else 'It ends early if you fall unconscious.'} You can end your rage on your turn as a bonus action. {'' if npc.levels(name) < 7 else ' You can move up to half your speed as part of this bonus action. '}If you aren't wearing heavy armor, you gain the following benefits: You have advantage on Strength checks and Strength saving throws; When you make a melee weapon attack using Strength, you gain a +{2 if npc.levels(name) < 9 else 3 if npc.levels(name) < 16 else 4} bonus to the damage roll; You have resistance to bludgeoning, piercing, and slashing damage.") )
 ```
 
 ## Unarmored Defense

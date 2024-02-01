@@ -12,6 +12,6 @@ description = "***Subrace: Mountain Dwarf.*** The hill and mountain dwarves are 
 def apply(npc): 
     npc.STR += 2
 
-    for arm in roots['Equipment'].armor['light'] | roots['Equipment'].armor['medium']:
+    for arm in Equipment.armor['light'] | Equipment.armor['medium']:
         npc.proficiencies.append(arm)
 ```
