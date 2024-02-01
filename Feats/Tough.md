@@ -8,6 +8,7 @@ def prereq(npc): return True
 def apply(npc):
     print("Taking this feat at level " + str(npc.levels()))
     npc.hitpoints += npc.levels() * 2
-    def hitpointadjustment(npc): npc.hitpoints += (2 * npc.levels())
-    npc.defer(lambda npc: hitpointadjustment(npc))
+def everylevel(npc): 
+    print("Adding 2 hit points for a new level")
+    npc.hitpoints += 2
 ```

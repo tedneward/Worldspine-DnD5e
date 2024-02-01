@@ -62,7 +62,7 @@ def level1(npc):
     npc.savingthrows.append("INT")
 
     for wpn in ['Dagger', 'Dart', 'Sling', 'Quarterstaff', 'Light crossbow']:
-        npc.proficiencies.append(wpn)
+        npc.addproficiency(wpn)
 
     skills = ['Arcana', 'History', 'Insight', 'Investigation', 'Medicine', 'Religion']
     chooseskill(npc, skills)

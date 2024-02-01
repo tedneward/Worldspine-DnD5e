@@ -113,4 +113,5 @@ Aristocratic | 4 gp
 
 ```
 # Placeholder
+name = 'Equipment'
 ```

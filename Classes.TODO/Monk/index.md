@@ -67,9 +67,9 @@ def level1(npc):
     npc.savingthrows.append("DEX")
 
     for wpn in weapons['simple-melee'] | weapons['simple-ranged']:
-        npc.proficiencies.append(wpn)
-    npc.proficiencies.append("Shortsword")
-    npc.proficiencies.append("One type of artisan's tools or musical instrument")
+        npc.addproficiency(wpn)
+    npc.addproficiency("Shortsword")
+    npc.addproficiency("One type of artisan's tools or musical instrument")
 
     skills = ['Acrobatics', 'Athletics', 'History', 'Insight', 'Religion', 'Stealth']
     chooseskill(npc, skills)

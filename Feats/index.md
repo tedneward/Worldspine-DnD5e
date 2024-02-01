@@ -79,17 +79,18 @@
 
 
 ```
+name = "Feats"
+
 def choosefeat(npc):
     choosablelist = []
 
-    for f in modules:
-        if f not in npc.feats:
+    for f in childmods:
+        if f.name not in npc.feats:
             choosablelist.append(f)
 
-    featname = choose("Pick a Feat: ", choosablelist)
-    featmod = modules[featname]
+    featmod = choose("Pick a Feat: ", choosablelist)
     npc.applyfeat(featmod)
-    return (featname, featmod)
+    return featmod.name
 
 def choosefeatorasi(npc):
     choice = choose("Take a Feat or an Ability Score Increase? ", ['Ability','Feat'])
@@ -101,6 +102,7 @@ exports = {
     "choosefeat": choosefeat 
 }
 
-def init():
-    print(globals())
+def init(): pass
+
+exports = [ choosefeat, choosefeatorasi ]
 ```

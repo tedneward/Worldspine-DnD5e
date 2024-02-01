@@ -81,8 +81,8 @@ Dwarves have a number of genetically-differentiated offshoots (subraces):
 
 ```
 def random(npc):
-    (subracename, subracemod) = randomfrom(subraces)
-    print("I choose a",subracename,npc.race.name,"for you, boss!")
+    subracemod = randomfrom(childmods)
+    print("I choose a",subracemod.name,npc.race.name,"for you, boss!")
     npc.setsubrace(subracemod)
 ```
 

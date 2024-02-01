@@ -11,8 +11,8 @@ When you choose this archetype at 3rd level, you gain proficiency with the disgu
 
 ```
 def level3(npc):
-    npc.proficiencies.append("Disguise kit")
-    npc.proficiencies.append("Poisoner's kit")
+    npc.addproficiency("Disguise kit")
+    npc.addproficiency("Poisoner's kit")
 ```
 
 ## Assassinate

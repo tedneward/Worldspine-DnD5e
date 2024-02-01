@@ -10,15 +10,15 @@ You have trained to master the use of medium armor and shields, gaining the foll
 name = 'Moderately Armored'
 description = "***Feat: Moderately Armored.*** You have trained to master the use of medium armor and shields."
 def prereq(npc): 
-    if 'Padded armor' in npc.proficiencies or 'Leather armor' in npc.proficiencies or 'Studded leather armor' in npc.proficiencies:
-        return True
-    else:
-        return False
+    for lightarmor in Equipment.armor['light']:
+        if lightarmor in npc.proficiencies:
+            return True
+    return False
 
 def apply(npc):
     chooseability(npc, ['STR', 'DEX'])
 
-    for arm in armor['medium'] | armor['shields']:
-        npc.proficiencies.append(arm)
+    for arm in Equipment.armor['medium'] | Equipment.armor['shields']:
+        npc.addproficiency(arm)
 ```
 

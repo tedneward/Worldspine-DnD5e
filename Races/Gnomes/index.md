@@ -64,7 +64,7 @@ There are a few known gnomish subraces:
 
 ```
 def random(npc):
-    (subracename, subracemod) = randomfrom(subraces)
+    subracemod = randomfrom(childmods)
     print("I choose a",subracemod.name,npc.race.name,"for you, boss!")
     npc.setsubrace(subracemod)
 ```

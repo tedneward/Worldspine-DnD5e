@@ -11,7 +11,7 @@ def prereq(npc): return True
 def apply(npc):
     chooseability(npc, ['STR','DEX'])
 
-    for arm in armor['light']:
-        npc.proficiencies.append(arm)
+    for arm in Equipment.armor['light']:
+        npc.addproficiency(arm)
 ```
 

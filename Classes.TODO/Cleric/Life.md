@@ -50,7 +50,7 @@ When you choose this domain at 1st level, you gain proficiency with heavy armor.
 
 ```
     for arm in armor['heavy']:
-        npc.proficiencies.append(arm)
+        npc.addproficiency(arm)
 ```
 
 ## Disciple of Life

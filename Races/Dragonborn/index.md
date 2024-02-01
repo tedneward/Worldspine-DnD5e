@@ -23,7 +23,7 @@ type = 'humanoid'
 
 ***Age.*** Young dragonborn grow quickly. They walk hours after hatching, attain the size and development of a 10-year-old human child by the age of 3, and reach adulthood by 15. They live to be around 80.
 
-***Alignment.*** Dragonborn tend towards extremes, making a conscious choice for one side or the other between Good and Evil (represented by Bahamut and Tiamat, respectively). More side with Bahamut than Tiamat (whose non-dragon followers are mostly kobolds), but villainous dragonborn can be quite terrible indeed. However, some dragonborn seek to distance themselves from their draconic heritage, and eschew the worship of either the Platinum or Chromatic Dragon, and instead prefer to dedicate themselves to another of the gods; in fact, many dragonborn find the all-encompassing [Kaevar](../Religions/KaevarianChurch.md) to be most comfortable.
+***Alignment.*** Dragonborn tend towards extremes, making a conscious choice for one side or the other between Good and Evil (represented by Bahamut and Tiamat, respectively). More side with Bahamut than Tiamat (whose non-dragon followers are mostly kobolds), but villainous dragonborn can be quite terrible indeed. However, some dragonborn seek to distance themselves from their draconic heritage, and eschew the worship of either the Platinum or Chromatic Dragon, and instead prefer to dedicate themselves to another of the gods.
 
 ***Size.*** Dragonborn are taller and heavier than humans, standing well over 6 feet tall and averaging almost 250 pounds. Your size is Medium.
 
@@ -102,8 +102,8 @@ Dragonborn of metallic colors are often law-abiding, slow to anger, and sometime
 
 ```
 def random(npc):
-    (subracename, subracemod) = randomfrom(subraces)
-    print("I choose a",subracename,npc.race.name,"for you, boss!")
+    subracemod = randomfrom(subraces)
+    print("I choose a",subracemod.name,npc.race.name,"for you, boss!")
     npc.setsubrace(subracemod)
 ```
 

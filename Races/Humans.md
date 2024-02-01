@@ -31,7 +31,7 @@ def apply(npc):
     abilityscoreincrease(npc)
     abilityscoreincrease(npc)
 
-    chooselanguage(npc)
+    chooselanguage(npc, 'Common')
 
     chooseskill(npc)
 

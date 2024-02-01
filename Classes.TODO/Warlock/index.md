@@ -98,9 +98,9 @@ def level1(npc):
     npc.savingthrows.append("CHA")
 
     for arm in armor['light']:
-        npc.proficiencies.append(arm)
+        npc.addproficiency(arm)
     for wpn in weapons['simple-melee'] | weapons['simple-ranged']:
-        npc.proficiencies.append(wpn)
+        npc.addproficiency(wpn)
 
     skills = ['Arcana', 'Deception', 'History', 'Intimidation', 'Investigation', 'Nature', 'Religion']
     chooseskill(npc, skills)

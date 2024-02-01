@@ -2,6 +2,7 @@
 
 import argparse
 import os
+import logging
 import random
 import traceback
 import types
@@ -11,21 +12,13 @@ import types
 # dynamically loaded into a module and used as part of the NPC generation
 # process. In essence, this is a flavor of "literate programming".
 
-quiet = False
-verbose = False
 SAVEPY = os.getenv('SAVE_PY')
 
-def error(*values):
-    print(*values)
-
-def warn(*values):
-    if not quiet:
-        print("WARNING: ", end='')
-        print(*values)
-
-def log(*values):
-    if verbose and not quiet:
-        print(*values)
+# TODO: Refactor to use Python logging
+def error(*values): logging.error(*values)
+def warn(*values): logging.warn(*values)
+def log(*values): logging.info(*values)
+def debug(*values): logging.debug(*values)
 
 ##########################
 # I/O infrastructure
@@ -171,10 +164,8 @@ class Feature:
 
     def __str__(self):
         if "{" in self.text:
-            evallocals = {
-                "self": self,
-            }
-            self.text = eval('f"' + self.text + '"', rootdict, evallocals) # pass in mybuiltins as globals?
+            # Grab the module's __dict__ and pass it in as the globals or locals or whatever
+            litexec('"f' + self.text + '"', { "self" : self })
         #if "{" in self.uses:
         #    self.uses = eval('f"' + self.uses + '"')
 
@@ -202,11 +193,30 @@ class Action(Feature):
         Feature.__init__(self, title, text, uses, recharges)
 
 # This can be innate spellcasting, class-based spellcasting, or PactMagic.
-# Any ability that can cast a spell as an Action is Spellcasting as far as
+# I think any sort of psionic or other abilities could fit in here as well.
+# Any ability that can cast a spell as an Action is Casting as far as
 # this tool is concerned.
-class Spellcasting(Action):
+class Casting(Action):
     def __init__(self, title):
-        Action.__init__(self, title, "")
+        Action.__init__(self, title, "", recharges="long rest")
+
+class InnateCasting(Casting):
+    def __init__(self, innatetype):
+        Spellcasting.__init__(self, innatetype + " Spellcasting")
+        self.recharges = None
+        self.perday = {}
+
+class Spellcasting(Casting):
+    def __init__(self, title, classspelllist, ability):
+        Casting.__init__(self, title + " Casting")
+        self.classspelllist = classspelllist
+        self.ability = ability
+        self.maxcantripsknown = 0
+        self.cantripsknown = []
+        self.slottable = {}
+        self.maxspellsknown = 0
+        self.spellsknown = []
+        
 
 class BonusAction(Feature):
     def __init__(self, title, text, uses=None, recharges=None):
@@ -347,14 +357,12 @@ class StatBlock:
     def setrace(self, racemod):
         if self.race != None: warn("Replacing",self.race.name,"with",racemod.name,"!")
         self.race = racemod
-        self.description.append(racemod.description)
-        racemod.apply(self)
+        litexec("racemod.apply(self)", { "racemod" : racemod, "self": self })
 
     def setsubrace(self, subracemod):
         if self.subrace != None: warn("Replacing",self.subrace.name,"with",subracemod.name,"!")
         self.subrace = subracemod
-        self.description.append(subracemod.description)
-        subracemod.apply(self)
+        litexec("subracemod.apply(self)", { "subracemod" : subracemod, "self": self })
 
     ##########################
     # Class-related methods
@@ -389,52 +397,34 @@ class StatBlock:
         else:
             return self.profbonus
 
+    # This is a level-up function as a side-effect
     def addclass(self, classmod):
         self.classes.append(classmod)
 
-        # Is this the first time we've added this class?
-        if self.levels(classmod) == 1:
-            classfn = getattr(classmod, "apply", None)
-            if classfn != None: classfn(self)
-            self.description.append(classmod.description)
+        def levelup(mod, level):
+            everylvlfn = getattr(mod, "everylevel", None)
+            if everylvlfn != None: litexec("fn(self)", { "fn" : everylvlfn, "self": self })
+            levelfn = getattr(mod, "level" + str(level), None)
+            if levelfn != None: litexec("fn(self)", { "fn" : levelfn, "self": self })
 
-    def addsubclass(self, subclassmod):
-        # Let's make sure we only have one subclass per class
-        if subclassmod.parent.name in self.subclasses.keys():
-            error("We already have a subclass for",subclassmod.parent.name,"it's",self.subclasses[subclassmod.parent.name],"!")
+        # Now that we added the level, invoke the new levelX fn (if present)
+        # in race, subrace (if present), class, and subclass (if present)
+        totallvls = self.levels()
+        levelup(self.race, totallvls)
+        if self.subrace != None: levelup(self.subrace, totallvls)
 
-        self.subclasses[subclassmod.parent.name] = subclassmod
-        subclassfn = getattr(subclassmod, "apply", None)
-        if subclassfn != None: subclassfn(self)
-        self.description.append(subclassmod.description)
+        classlvls = self.levels(classmod)
+        levelup(classmod, classlvls)
+        if classmod.name in self.subclasses:
+            subclassmod = self.subclasses[classmod.name]
+            levelup(subclassmod, classlvls)
 
-    def levelup(self, leveledclass):
-        # We've added a level, invoke everylevel/levelX fns (if present)
-        # in all of the relevant modules that would affect us:
-        # Race, Subrace, leveledclass Class and Subclass
-        def levelupinvoke(module, name):
-            fn = getattr(module, name, None)
-            if fn != None: 
-                log("Invoking",name,"on",module.name)
-                fn(self)
-
-        totallevels = self.levels()
-        levelupinvoke(self.race, "everylevel")
-        levelupinvoke(self.race, "level" + str(totallevels))
-
-        if self.subrace != None:
-            levelupinvoke(self.race, "everylevel")
-            levelupinvoke(self.race, "level" + str(totallevels))
-
-        classlvls = self.levels(leveledclass)
-        levelupinvoke(leveledclass, "everylevel")
-        levelupinvoke(leveledclass, "level" + str(classlvls))
-
-        if leveledclass.name in self.subclasses:
-            subclassmod = self.subclasses[leveledclass.name]
-            levelupinvoke(subclassmod, "everylevel")
-            levelupinvoke(subclassmod, "everylevel" + str(classlvls))
-
+        for f in self.feats:
+            childmods = getattr(moduleglobals['roots']['Feats'].childmods)
+            for childmod in childmods:
+                if childmod.name in self.feats:
+                    levelup(childmod, totallvls)
+    
     def levels(self, clss = None):
         if clss == None: return len(self.classes)
         else:
@@ -449,8 +439,20 @@ class StatBlock:
 
     def applyfeat(self, featmod):
         self.feats.append(featmod.name)
-        featmod.npc = self
-        featmod.apply(self)
+        litexec("fn(self)", { "fn" : featmod.apply, "self": self })
+
+    def addproficiency(self, proficiency):
+        if proficiency in ['STR','DEX','CON','INT','WIS','CHA']:
+            # It's a saving throw -- track separately in the future?
+            self.proficiencies.append(proficiency)
+        elif proficiency in self.proficiencies:
+            self.expertises.append(proficiency)
+        elif proficiency in moduleglobals['Abilities'].skills:
+            # It's a skill -- track separately?
+            self.proficiencies.append(proficiency)
+        else:
+            # It's equipment
+            self.proficiencies.append(proficiency)
 
     def getsavingthrows(self):
         saves = []
@@ -461,10 +463,17 @@ class StatBlock:
         return saves
 
     def getskills(self):
+        # What about expertises?!?
         skills = []
+        for p in self.expertises:
+            if p not in moduleglobals['Abilities'].skills: continue
+            score = (self.proficiencybonus() * 2) + self.abilitybonus(moduleglobals['Abilities'].skillability[p])
+            skills.append(f"{p} +{score}")
+
         for p in self.proficiencies:
-            if p not in roots['Abilities'].skills: continue
-            score = self.proficiencybonus() + self.abilitybonus(roots['Abilities'].skillability[p])
+            if p in self.expertises: continue
+            if p not in moduleglobals['Abilities'].skills: continue
+            score = self.proficiencybonus() + self.abilitybonus(moduleglobals['Abilities'].skillability[p])
             skills.append(f"{p} +{score}")
         return skills
 
@@ -472,7 +481,7 @@ class StatBlock:
         profs = []
         for p in self.proficiencies:
             if p in ['STR','DEX','CON','INT','WIS','CHA']: continue
-            if p in roots['Abilities'].skills: continue
+            if p in moduleglobals['Abilities'].skills: continue
             profs.append(p)
         return profs
     
@@ -492,15 +501,11 @@ class StatBlock:
                 items.insert(0, f"{key} {value}")
         return items
 
-    ##########################
-    # "Deference": some abilities/scores/etc need to be calculated not
-    # at the time they are added, but 
-
 
     ##########################
     # Feature methods
     def append(self, feature : Feature):
-        log("StatBlock::append",feature.title)
+        debug("StatBlock::append: " + feature.title)
         if isinstance(feature, MeleeAttack): self.actions.append(feature)
         elif isinstance(feature, RangedAttack): self.actions.append(feature)
         elif isinstance(feature, Action): self.actions.append(feature)
@@ -757,42 +762,135 @@ def spelllinkify(name):
     linkdest = name.lower().replace(' ','-').replace("'","")
     return f"[{name}]({ONLINEROOT}/magic/spells/{linkdest}/)"
 
-# The "root" is a root namespace for any loaded modules, such as
-# classes, races, backgrounds, etc. Key will be the lowercased
-# directory name that loaded the "root" module,
-# so all Races (and the module Races/index.md) will be "races"
-# and all Classes (Classes/index.md) will be "classes".
-rootdict = {
-    # Some imports
-    "os": os,
 
-    # The I/O and utility methods
-    "log": log,
-    "warn": warn,
-    "error": error,
-    "print": shell.output,
-    "choose": shell.choose,
+def choosefromlist(self, inputlist : list):
+    choicelist = []
 
-    # Some helper methods
-    "creaturelink": creaturelinkify,
-    "itemlink": itemlinkify,
-    "spelllink": spelllinkify,
-    "dieroll": dieroll,
-    "randomfrom": randompick,
-    "randomint": randomint,
+    # If this is an actual list of string options, proceed
+    if isinstance(inputlist[0], str):
+        choicelist = inputlist.copy()
+        choicelist.sort()
+        choiceidx = 0
+        for c in choicelist:
+            choiceidx += 1
+            self.output(f'{choiceidx}: {c}')
 
-    # Character-related classes
-    "Feature": Feature,
-    "Action": Action,
-    "BonusAction": BonusAction,
-    "Reaction": Reaction,
-    "LairAction": LairAction,
-    "MeleeAttack": MeleeAttack,
-    "RangedAttack": RangedAttack,
+        # Now capture the response and determine selection
+        response = None
+        while response == None:
+            response = self.input()
+            if not response.isnumeric:
+                response = None
+            if int(response) < 1:
+                response = None
+            if int(response) > len(choicelist):
+                response = None
 
-    # Crutch?
-    "roots": {}
-}
+        response = int(response) - 1 # Account for z'ero-based 'index
+        self.output("You chose " + choicelist[response])
+        return choicelist[response]
+
+    # Otherwise, build out a map and choose from that
+    else:
+        choicemap = {}
+        if getattr(inputlist[0], "name", None) != None:
+            for item in inputlist:
+                choicemap[item.name] = item
+        elif getattr(inputlist[0], "__name__", None) != None:
+            for item in inputlist:
+                choicemap[item.__name__] = item
+        else:
+            warn("We can't figure out what to display")
+            return None
+        (label, choice) = self.choosefrommap(choicemap)
+        return choice
+
+def choosefrommap(self, choicemap):
+    keys = list(choicemap.keys())
+    keys.sort()
+    choiceidx = 0
+    for k in keys:
+        choiceidx += 1
+        c = choicemap[k]
+        self.output(f'{choiceidx}: {k} ({c})')
+
+    # Interactive
+    response = None
+    while response == None:
+        response = self.input()
+        if not response.isnumeric:
+            response = None
+        if int(response) < 1:
+            response = None
+        if int(response) > len(choicemap):
+            response = None
+
+    responseidx = int(response) - 1 # Account for z'ero-based 'index
+    responsekey = keys[responseidx]
+    self.output("You chose " + str((responsekey, choicemap[responsekey])))
+    return (responsekey, choicemap[responsekey])
+
+def choose(self, prompt, choices=None):
+    self.output(prompt)
+    if isinstance(choices, list):
+        return self.choosefromlist(choices)
+    elif isinstance(choices, dict):
+        return self.choosefrommap(choices)
+    elif choices == None:
+        return self.input("")
+    else:
+        error("WTF?!?", choices)
+
+class TerminalInput(Input):
+    def output(self, *values): print(*values)
+
+    def input(self, prompt : str = "") -> str: return input(prompt + " >>> ")
+
+class ScriptedInput(Input):
+    def __init__(self, inputfile):
+        self.inputfile = inputfile
+        self.answers = []
+
+        # TODO Parse inputfile, load answers, capture them.
+        # Then we can feed each one as input until we run out.
+
+    def output(self, *values): print(*values)
+
+    def input(self, prompt : str = "") -> str: return input(prompt + ">>> ")
+
+class RandomInput(Input):
+    def output(self, *values): print(*values)
+
+    def choosefromlist(self, choicelist : list):
+        response = random.randint(0, len(choicelist)-1)
+        self.output("I chose " + choicelist[response])
+        return choicelist[response]
+
+    def choosefrommap(self, choicemap):
+        keys = list(choicemap.keys())
+        responseidx = random.randint(0, len(keys)-1)
+        responsekey = keys[responseidx]
+        self.output("I chose " + str((responsekey, choicemap[responsekey])))
+        return (responsekey, choicemap[responsekey])
+
+# We need a constant object in place since this gets passed into each of the loaded
+# modules to use as an I/O facility; so we "wrap" the Input object, thus allowing us
+# to replace it without anyone being the wiser.
+class Shell:
+    def __init__(self, io):
+        self.io = io
+
+    def input(self, prompt : str = "") -> str: return self.io.input(prompt)
+
+    def output(self, *values): return self.io.output(*values)
+
+    def choosefromlist(self, choicelist : list): return self.io.choosefromlist(choicelist)
+
+    def choosefrommap(self, choicemap): return self.io.choosefrommap(choicemap)
+
+    def choose(self, prompt, choices=None): return self.io.choose(prompt, choices)
+
+shell = Shell(TerminalInput())
 
 ##########################
 # Module infrastructure
@@ -820,136 +918,150 @@ def parsemd(mdfilename : str) -> str:
 
     return pythoncode
 
-def listdirwithoutdeps(path, dependencies=[]):
-    retlist = []
-    for it in os.listdir(path):
-        if it not in dependencies:
-            retlist.append(it)
-    return retlist
+# A root namespace of symbols, into which modules will
+# also be placed.
+moduleglobals = {
+    # A reference to moduleglobals itself, for breaking
+    # order-dependency issues
+    "roots": {},
 
-# Root modules are Races, Classes, Equipment, Backgrounds, Feats, and other
-# top-level directories in the Worldspine directory structure.
-#
-# A root module will contain a few things, typically:
-# * submodules: the dict of Xs (races, classes, etc) that make up the collection
-#    of options available to be selected; the key is a string containing the
-#    submodule's human-friendly name and the value is the module loaded.
-#    Each of these submodules may have "subXs" (races-subraces, classes-subclasses),
-#    which makes naming variables for all this stuff really tricky.
-# * random: a function designed to select a random (whatever), along with all
-#    possible additional selectable options, for this root module.
-def loadrootmodule(dirname : str) -> types.ModuleType:
-    global rootdict
+    # Access to a few useful Python packages and builtins
+    "os": os,
+    #"random": random,
 
-    if not os.path.isdir(dirname):
-        error(f"{dirname} is not a root module")
+    # Our I/O facilities
+    "log": log,
+    "warn": warn,
+    "error": error,
+    "print": shell.output,
+    "choose": shell.choose,
+
+    # Some helper methods
+    "creaturelink": creaturelinkify,
+    "itemlink": itemlinkify,
+    "spelllink": spelllinkify,
+
+    # Utility methods of our own
+    "dieroll": dieroll,
+    "randomfrom": randompick,
+    "randomint": randomint,
+    #"randompkg": random,
+
+    # Character-related pieces
+    "Feature": Feature,
+    "Action": Action,
+    "Reaction": Reaction,
+    "BonusAction": BonusAction,
+    "LairAction": LairAction,
+    "MeleeAttack": MeleeAttack,
+    "RangedAttack": RangedAttack,
+    "Casting": Casting,
+    "InnateCasting": InnateCasting,
+    "Spellcasting": Spellcasting,
+}
+
+# Take a path, and if it's a file, load a singular module.
+def load(path : str, parentmodule=None, modulename=None) -> types.ModuleType:
+    if os.path.isdir(path): return loaddir(path,modulename,parentmodule)
+    else: return loadmodule(path,modulename,parentmodule)
+
+# Take the given directory, look for the index.md and load that,
+# then load any other files as "sub"-modules of the current one. 
+def loaddir(path : str, 
+            modulename : str = None, 
+            parentmodule : types.ModuleType = None) -> types.ModuleType:
+    if modulename == None: modulename = os.path.basename(path)
+
+    # Look for 'index.md', load it
+    module = loadmodule(path + "/index.md", modulename, parentmodule)
+
+    # Look for other files in here and load them as modules
+    # but with each one having a "parent" symbol that references
+    # the index.md-based module
+    setattr(module, "childmods", [])
+    for f_or_d in os.listdir(path):
+        if f_or_d == 'index.md': continue
+
+        childmod = load(path + '/' + f_or_d,module,modulename + "-" + f_or_d)
+        module.childmods.append(childmod)
+
+    return module
+
+# Take the given file (which we assume is a MD file), and
+# evaluate the codeblocks inside of it as a standalone
+# Python file, loading it into a module whose name is either
+# derived from the filename or given in the modulename param.
+def loadmodule(mdfilename : str, 
+               modulename : str = None,
+               parentmodule : types.ModuleType = None) -> types.ModuleType:
+    global moduleglobals
+
+    if not ismdfile(mdfilename):
+        error(f"{mdfilename} is not a Markdown file!")
         return None
     
-    # Look for an index.md, loadmodule() it, apply() it,
-    # then go after dependentmodules, 
-    # then load submodules
-    rootmodname = os.path.splitext(os.path.basename(dirname))[0]
-    rootmod = loadmodule(dirname + "/index.md", rootmodname)
-
-    rootdict['roots'][rootmod.__name__] = rootmod
-
-    # This is a root module, so it's always going to have submodules
-    # So let's define a top-level dictionary in the rootmod to hold
-    # those submodules; within the rootmod, we call it "modules"
-    # because otherwise we have submodules, subsubmodules, 
-    # and subsubsubmodules and it just gets worse from there...
-    setattr(rootmod, "modules", {})
-    modules = getattr(rootmod, "modules", None)
-
-    rootmoddeps = getattr(rootmod, "dependencies", [])
-    rootmoddeps.append('index.md')
-
-    # Now look in the directory itself and loadmodule() each
-    # md file in the directory (except index.md) and leave out
-    # any file marked as a dependency.
-    for entry in listdirwithoutdeps(dirname, rootmoddeps):
-        # If the entry is a directory, then there's sub-submodules
-        # and we want to load the whole mess
-        if os.path.isdir(dirname + "/" + entry):
-            moduleplural = "sub" + rootmodname.lower()
-
-            entrydirname = dirname + "/" + entry
-
-            # First load the index.md in that directory
-            mod = loadmodule(entrydirname + "/index.md", (rootmodname + "-" + entry), rootmod)
-            modname = getattr(mod, "name", None)
-            if modname == None:
-                error("Module",dirname + "/" + entry,"must have a name!")
-            modules[modname] = mod
-            # Set up sub-(whatevers) in the mod
-            setattr(mod, moduleplural, {})
-
-            # If that mod has a "dependencies", then make sure we don't load them
-            # as subs of that entry
-            dependencies = getattr(mod, "dependencies", [])
-            dependencies.append('index.md')
-
-            # Then load the other files as subs of the entry
-            for entrymd in listdirwithoutdeps(dirname + "/" + entry, dependencies):
-                entrymdname = dirname + "/" + entry + "/" + entrymd
-
-                entrymod = loadmodule(entrymdname, (rootmodname + "-" + entry + "-" + entrymd)[:-3], mod)
-                subs = getattr(mod, moduleplural, None)
-                subs[entrymod.name] = entrymod
-
-        # Otherwise it's just a standalone .md file, so just load that singly.
-        else:
-            submodname = (rootmodname + "-" + entry)[:-3]
-            submodmod = loadmodule(dirname + '/' + entry, submodname, rootmod)
-            submodhumanname = getattr(submodmod, "name", None)
-            modules[submodhumanname] = submodmod
-
-    log("After loading root module",rootmod.__name__,"rootdict =",rootdict)
-
-    return rootmod
-
-def loadmodule(filename : str, modulename : str = None, parent : types.ModuleType = None) -> types.ModuleType:
-    global rootdict
-
-    if not quiet: log(f"Loading module found in {filename}")
-    literatecode = parsemd(filename)
+    literatecode = parsemd(mdfilename)
     if len(literatecode) > 0:
-        #log(f"Literate code, {filename}:", literatecode)
         if modulename == None:
-            modulename = os.path.splitext(os.path.basename(filename))[0]
-        module = types.ModuleType(modulename)
-        if parent != None: module.__dict__["parent"] = parent
-        exec(literatecode, rootdict, module.__dict__)
+            modulename = os.path.splitext(os.path.basename(mdfilename))[0]
+        module = types.ModuleType(modulename, "Dynamically-loaded Literate Python code from " + mdfilename)
+        module.__dict__.update(moduleglobals)
+        exec(literatecode, module.__dict__)
 
-        log(f"Loaded {modulename}")
+        # Put parentmodule into module.parent
+        if parentmodule != None:
+            setattr(module, "parent", parentmodule)
 
-        # Cleanup __builtins__ since I don't think I'll ever need them
-        del rootdict['__builtins__']
+        # Invoke any init function present
+        init = getattr(module, "init", None)
+        if init != None: module.init()
 
-        # If the module defines an "init" method, invoke it
-        if getattr(module, "init", None) != None: module.init()
-
-        # If the module defines a "dependencies" list,
-        # iterate and loadmodule() each of those in turn
-        # TODO: I think we should load them into the depending module!
-        if getattr(module, "dependencies", None) != None:
-            # Iterate and invoke
-            for dep in module.dependencies:
-                depfilename = os.path.dirname(filename) + "/" + dep
-                loadmodule(depfilename, modulename + "-" + dep, module)
-
-        # If the module has any "exports", pull them into the rootdict
-        if getattr(module, "exports", None) != None:
-            log(module.__name__,"exported the following symbols to root:",module.exports)
-            for (exportname) in module.exports:
-                rootdict[exportname] = module.exports[exportname]
-        
         return module
     else:
-        warn(f"{filename} has no literate code")
+        warn(f"No literate Python found in {mdfilename}")
         return None
 
+# Load a directory as a "root" module, which means we auto-export
+# (to moduleglobals) some symbols from the top-level module for 
+# convenience, as well as capture the module itself in the top-level
+def loadroot(path : str) -> types.ModuleType:
+    global moduleglobals
+    log("Loading root " + path)
 
+    rootmod = load(path)
+    moduleglobals[rootmod.name] = rootmod
+    moduleglobals['roots'][rootmod.name] = rootmod
+
+    # Now pull exports out too
+    if getattr(rootmod, "exports", None) != None:
+        for item in rootmod.exports:
+            if getattr(rootmod, item.__name__, None) != None:
+                if item.__name__ in moduleglobals.keys():
+                    warn(item.__name__ + " is about to be overwritten!")
+                moduleglobals[item.__name__] = item
+
+    log("Root module " + rootmod.name + " loaded")
+
+# Go through all the root modules, and refactor their module.__dict__
+# to reflect all of what's in moduleglobals?
+def fixuproots() -> None:
+    def fixup(module) -> None:
+        #log("Fixing up " + str(module.__name__))
+        module.__dict__.update(moduleglobals)
+        childmods = getattr(module, "childmods", None)
+        if childmods != None:
+            for childmod in childmods:
+                fixup(childmod)
+
+    # Backport all the rootmodules to other rootmodules
+    for rootmodname in moduleglobals['roots']:
+        rootmod = moduleglobals['roots'][rootmodname]
+        fixup(rootmod)
+
+def litexec(source : str, litlocals : dict[str, object]) -> None:
+    #debug("============ Executing lit Python with moduleglobals = " + dumpfirstlevel(moduleglobals))
+    exec(source, moduleglobals, litlocals)
+    
 
 ##########################
 # Main entrypoint and workhorse
@@ -967,40 +1079,52 @@ def generate(randomlist=[]):
     gender = False
     race = False
 
-    classgen = []
+    classgen = [] # The classes to generate randomly
     for r in randomlist:
         if r.find("Class-") > -1:
             # We're going to generate some class levels
             classgen.append(r)
         elif r == 'Abilities':
-            rootdict['roots']['Abilities'].random(npc)
+            litexec("Abilities.random(npc)", { "npc" : npc })
             abilities = True
-        #elif r == 'Background':
-            #randompick(roots["Backgrounds"]).random(npc)
-            #background = True
+        elif r == 'Background':
+            #litexec("Background.random(npc)", { "npc" : npc })
+            background = True
         elif r == 'Gender': 
             npc.gender = randompick(['Male', 'Female'])
             gender = True
         elif r == 'Race':
-            rootdict['roots']['Races'].random(npc)
+            litexec("Races.random(npc)", { "npc" : npc })
             race = True
         else:
-            shell.output(r + ":", rootdict[r].random())
+            error("Unrecognized root:" + r)
+
+    reqs = ['Abilities', 'Background', 'Gender', 'Race']
+    if abilities: reqs.remove('Abilities')
+    if background: reqs.remove('Background')
+    if gender: reqs.remove('Gender')
+    if race: reqs.remove('Race')
 
     shell.io = oldio
-
-    # Do the interactive bits for whatever hasn't been randomized
-    if not abilities:            
-        (_, abilityfn) = shell.choosefrommap(rootdict['roots']['Abilities'].methods)
-        npc.addabilities(abilityfn())
-    if not gender:
-        npc.gender = shell.choosefromlist(['Male', 'Female'])
-    if not race:
-        (_, racemod) = shell.choosefrommap(rootdict['Races'].modules)
-        npc.setrace(racemod)
-        if getattr(racemod, "subraces", None) != None:
-            (_, subracemod) = shell.choosefrommap(racemod.subraces)
-            npc.setsubrace(subracemod)
+    while len(reqs) > 0:
+        which = shell.choosefromlist(reqs)
+        if which == 'Abilities':
+            (_, abilityfn) = shell.choosefrommap(moduleglobals['roots']['Abilities'].methods)
+            scores = abilityfn()
+            print("Scores: ", scores)
+            npc.addabilities(scores)
+        elif which == 'Background':
+            print("Background!")
+        elif which == 'Gender':
+            npc.gender = shell.choosefromlist(['Male', 'Female'])
+        elif which == 'Race':
+            racemod = shell.choosefromlist(moduleglobals['roots']['Races'].childmods)
+            npc.setrace(racemod)
+            if getattr(racemod, "childmods", None) != None:
+                if len(racemod.childmods) > 0:
+                    subracemod = shell.choosefromlist(racemod.childmods)
+                    npc.setsubrace(subracemod)
+        reqs.remove(which)
 
     # Now randomize some class levels
     shell.io = RandomInput()
@@ -1017,9 +1141,8 @@ def generate(randomlist=[]):
         elif len(parts) == 3:
             print(parts[2],"levels in",parts[1])
             for _ in range(0, int(parts[2])):
-                classmod = rootdict['roots']['Classes'].modules[parts[1]]
+                classmod = moduleglobals['roots']['Classes'].childmods[parts[1]]
                 npc.addclass(classmod)
-                npc.levelup(classmod)
 
     # Now interactively gen some class levels
     shell.io = oldio
@@ -1034,10 +1157,10 @@ def generate(randomlist=[]):
     return npc
 
 def main():
-    global verbose
-    global quiet
     global shell
     global SAVEPY
+
+    logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 
     parser = argparse.ArgumentParser(
         prog='NPCBuilder',
@@ -1054,22 +1177,27 @@ def main():
     # Logging off, on, or a lot?
     if args.verbosity != None:
         if args.verbosity == 'verbose':
-            verbose = True
+            logging.basicConfig(level = logging.DEBUG)
         elif args.verbosity == 'quiet':
-            quiet = True
+            logging.basicConfig(level = logging.WARNING)
+    else:
+        print("Running non-verbose")
+        logging.basicConfig(level = logging.INFO)
 
     # Save the loaded literate Python somewhere (for easier debugging)?
     if args.savepy != None:
         SAVEPY = args.savepy
     
     # Load modules, have them bootstrap in turn
-    loadrootmodule(REPOROOT + "Abilities")
+    loadroot(REPOROOT + "Abilities")
+    loadroot(REPOROOT + "Races")
     #loadrootmodule(REPOROOT + "Backgrounds")
-    #loadrootmodule(REPOROOT + "Classes")
-    #loadrootmodule(REPOROOT + "Equipment")
-    loadrootmodule(REPOROOT + "Feats")
-    #loadrootmodule(REPOROOT + "Races")
+    loadroot(REPOROOT + "Classes")
+    loadroot(REPOROOT + "Equipment")
+    loadroot(REPOROOT + "Feats")
     #loadrootmodule(REPOROOT + "Creatures") # <-- this will be an interesting day
+    fixuproots()
+
 
     if args.nop != None: return
 

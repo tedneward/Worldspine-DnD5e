@@ -1,5 +1,9 @@
 # Races
 
+```
+name = "Races"
+```
+
 "Core" SRD Races
 
 * [Dragonborn](Dragonborn)
@@ -32,6 +36,12 @@ languages = {
                'Primordial','Aquan', 'Auran', 'Ignan', 'Terran',
                'Sylvan', 'Undercommon' ]
 }
+def languagelist(which = None):
+    if which == None:
+        return languages['Common'] | languages['Exotic']
+    else:
+        return languages[which]
+
 def chooselanguage(npc, which='Common'):
     if which == 'All':
         srclist = languages['Common'] | languages['Exotic']
@@ -47,9 +57,11 @@ def chooselanguage(npc, which='Common'):
 exports = { "chooselanguage" : chooselanguage }
 
 def random(npc):
-    (racename, racemod) = randomfrom(modules)
+    racemod = randomfrom(childmods)
 
     print("I chose a",racemod.name,"for you, boss!")
     npc.setrace(racemod)
     npc.race.random(npc) #subrace choice should come in here, if possible/necessary
+
+exports = [ languagelist, chooselanguage ]
 ```

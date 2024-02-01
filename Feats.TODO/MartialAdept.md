@@ -9,11 +9,11 @@ name = 'Martial Adept'
 description = "***Feat: Martial Adept.*** You have martial training that allows you to perform special combat maneuvers."
 def prereq(npc): return True
 def apply(npc):
-    if getattr(npc, "fightingmaneuvers", None) == None:
-        allclasses['Fighter'].choosemaneuver(npc, 1, 'd6')
-    else:
-        npc.superioritydice += 1
-        allclasses['Fighter'].choosemaneuver(npc)
+    #if getattr(npc, "fightingmaneuvers", None) == None:
+    #    Classes['Fighter'].choosemaneuver(npc, 1, 'd6')
+    #else:
+    #    npc.superioritydice += 1
+    #    Classes['Fighter'].choosemaneuver(npc)
 
-    allclasses['Fighter'].choosemaneuver(npc)
+    #Classes['Fighter'].choosemaneuver(npc)
 ```

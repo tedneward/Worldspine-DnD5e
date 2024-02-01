@@ -30,8 +30,8 @@ def apply(npc):
     chosen = choose("Choose a cantrip:", availablecantrips)
     npc.append(CantripCasting(chosen))
 
-    npc.proficiencies.append("Longsword")
-    npc.proficiencies.append("Shortsword")
-    npc.proficiencies.append("Longbow")
-    npc.proficiencies.append("Shortbow")
+    npc.addproficiency("Longsword")
+    npc.addproficiency("Shortsword")
+    npc.addproficiency("Longbow")
+    npc.addproficiency("Shortbow")
 ```

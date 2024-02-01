@@ -50,9 +50,9 @@ You gain proficiency with martial weapons and heavy armor.
 
 ```
     for wpn in weapons['martial-melee'] | weapons['martial-ranged']:
-        npc.proficiencies.append(wpn)
+        npc.addproficiency(wpn)
     for arm in armor['heavy']:
-        npc.proficiencies.append(arm)
+        npc.addproficiency(arm)
 ```
 
 ## Wrath of the Storm

@@ -43,7 +43,7 @@ def apply(npc):
 * **Menacing**. You gain proficiency in the Intimidation skill.
 
 ```
-    npc.proficiencies.append("Intimidation")
+    npc.addproficiency("Intimidation")
 ```
 
 * **Relentless Endurance**. When you are reduced to 0 hit points but not killed outright, you can drop to 1 hit point instead. You can't use this feature again until you finish a long rest.

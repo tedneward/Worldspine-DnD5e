@@ -13,5 +13,5 @@ def apply(npc):
     npc.STR += 2
 
     for arm in Equipment.armor['light'] | Equipment.armor['medium']:
-        npc.proficiencies.append(arm)
+        npc.addproficiency(arm)
 ```

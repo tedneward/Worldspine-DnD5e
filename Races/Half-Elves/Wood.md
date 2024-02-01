@@ -11,10 +11,10 @@ One of your parents was a Wood Elf.
 name = 'Wood'
 description = "***Elvish Heritage: Wood Elf.*** One of your parents was a Wood Elf."
 def apply(npc):
-  npc.proficiencies.append("Longsword")
-  npc.proficiencies.append("Shortsword")
-  npc.proficiencies.append("Longbow")
-  npc.proficiencies.append("Shortbow")
+  npc.addproficiency("Longsword")
+  npc.addproficiency("Shortsword")
+  npc.addproficiency("Longbow")
+  npc.addproficiency("Shortbow")
 
   npc.speed['walking'] = 35
 
