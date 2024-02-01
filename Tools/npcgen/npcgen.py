@@ -42,6 +42,37 @@ class Feature:
         return self.text.replace('\n', '\n>')
 
     def __str__(self):
+        if "{" in self.text:
+            # Grab the module's __dict__ and pass it in as the globals or locals or whatever
+            evalglobals = {
+                "self": self,
+
+                # Our roots-level modules
+                "roots": roots,
+
+                # Our I/O facilities
+                "log": log,
+                "warn": warn,
+                "error": error,
+                "print": shell.output,
+                "choose": shell.choose,
+
+                # Some helper methods
+                "creaturelink": creaturelinkify,
+                "itemlink": itemlinkify,
+                "spelllink": spelllinkify,
+
+                # Utility methods of our own
+                "dieroll": dieroll,
+                "randomfrom": randompick,
+                "randomint": randomint,
+                "randompkg": random,
+            }
+            evallocals = {}
+            self.text = eval('f"' + self.text + '"', evalglobals, evallocals) # pass in mybuiltins as globals?
+        #if "{" in self.uses:
+        #    self.uses = eval('f"' + self.uses + '"')
+
         posttitletext = ""
         if self.recharges == None:
             if self.uses == None:
@@ -58,12 +89,19 @@ class Feature:
             if self.uses == None:
                 posttitletext = f" (Recharges on {self.recharges})"
             else:
-                posttitletext = " ({self.uses}/Recharges on {self.recharges})"
+                posttitletext = f" ({self.uses}/Recharges on {self.recharges})"
         return f"***{self.title}{posttitletext}.*** {self.markdownifytext()}"
 
 class Action(Feature):
     def __init__(self, title, text, uses=None, recharges=None):
         Feature.__init__(self, title, text, uses, recharges)
+
+# This can be innate spellcasting, class-based spellcasting, or PactMagic.
+# Any ability that can cast a spell as an Action is Spellcasting as far as
+# this tool is concerned.
+class Spellcasting(Action):
+    def __init__(self, title):
+        Action.__init__(self, title, "")
 
 class BonusAction(Feature):
     def __init__(self, title, text, uses=None, recharges=None):
@@ -77,7 +115,7 @@ class LairAction(Feature):
     def __init__(self, title, text, uses=None, recharges=None):
         Feature.__init__(self, title, text, uses, recharges)
 
-# Specifically for melee attack Actions; produces text similar to:
+# Specifically for melee attack Actions; produces text like:
 # "***Club.*** *Melee Weapon Attack:* +{proficiency bonus + STRbonus} to hit, 
 # 5ft., one target. Hit: 1d4 + {STRbonus} bludgeoning damage."
 class MeleeAttack(Action):
@@ -87,20 +125,21 @@ class MeleeAttack(Action):
         self.dmgtype = dmgtype 
             # should be one of the recognized types: bludgeoning, piercing, slashing, etc
         self.properties = properties if properties != None else []
-            # light, finesse, two-handed, versatile, etc
+            # finesse is the only one I really care about since it changes up the ability bonus
         self.tohit = 0
         self.reach = "5ft."
 
+    # Take finesse into account here
     def __str__(self):
         if self.npc == None: return self.title
 
         text  = f"***{self.title}.*** *Melee Weapon Attack:* "
         text += f"+{self.npc.STRbonus() + self.npc.proficiencybonus() + self.tohit} to hit, "
-        text += f"range {self.reach}, one target. "
-        text += f"Hit: {self.dmgamt} {self.dmgtype}"
+        text += f"reach {self.reach}, one target. "
+        text += f"Hit: {self.dmgamt} + {self.npc.STRbonus()} {self.dmgtype}"
         return text
 
-# Specifically for ranged attack Actions; produces text similar to:
+# Specifically for ranged attack Actions; produces text like:
 # "***Shortbow.*** *Ranged Weapon Attack:* +{proficiency bonus + DEXbonus} to hit, 
 # range 80/200, one target. Hit: 1d4 + {STRbonus} bludgeoning damage."
 class RangedAttack(Action):
@@ -114,11 +153,12 @@ class RangedAttack(Action):
         self.properties = properties if properties != None else []
             # thrown, ammunition, etc
 
+    # TODO: Factor in ability bonus damage 
     def __str__(self):
         text  = f"***{self.title}.*** *Ranged Weapon Attack:* "
         text += f"+{self.npc.DEXbonus() + self.npc.proficiencybonus() + self.tohit} to hit, "
         text += f"range {self.range}, one target. "
-        text += f"Hit: {self.dmgamt} {self.dmgtype}"
+        text += f"Hit: {self.dmgamt} + {self.npc.DEXbonus()} {self.dmgtype}"
         return text
 
 class StatBlock:
@@ -169,6 +209,8 @@ class StatBlock:
         self.feats = []
 
         self.equipment = []
+
+        self.description = []
 
     ##########################
     # Ability-related methods
@@ -393,9 +435,12 @@ class StatBlock:
         self.equipment.append(equip)
 
         # Let's pull actions out for convenience
-        #gaa = getattr(equip, "getactions", None)
-        #if gaa != None:
+        gaa = getattr(equip, "getactions", None)
+        if gaa != None:
             # This equipment has attack actions so pull 'em out
+            actions = equip.getactions()
+            for action in actions:
+                self.append(action)
 
     ##########################
     # Emitter methods
@@ -419,6 +464,21 @@ class StatBlock:
             else:
                 strs.append(f"{c.name} {classmap[c]}")
         return "/".join(strs)
+
+    # This method is the last step before an emit(), to give the StatBlock a chance
+    # to organize and/or optimize itself.
+    def freeze(self):
+        log("StatBlock",self.name,"frozen in place.")
+
+        # Lint the StatBlock for any warnings
+
+        # Sort lists by alphabetical order
+        self.actions.sort()
+        self.bonusactions.sort()
+        self.reactions.sort()
+        self.lairactions.sort()
+        self.equipment.sort()
+        # Do NOT sort description!
 
     def emitmd(self) -> str:
         linesep = ">___\n"
@@ -501,6 +561,7 @@ class StatBlock:
         if len(self.actions):
             result +=  ">#### Actions\n"
             for action in self.actions:
+                print("About to examine",action.title)
                 result += f">{action}\n"
                 result +=  ">\n"
 
@@ -521,6 +582,18 @@ class StatBlock:
             for action in self.lairactions:
                 result += f">{action}\n"
                 result +=  ">\n"
+
+        if len(self.equipment) > 0:
+            result += ">#### Equipment\n"
+            for equip in self.equipment:
+                result += f">{equip}\n"
+                result +=  ">\n"
+
+        result += ">___\n"
+        result += ">#### Description\n"
+        for desc in self.description:
+            result += f">{desc}\n"
+            result +=  ">\n"
 
         return result
 
@@ -890,41 +963,60 @@ def generate(randomlist=[]):
 
     npc = StatBlock()
 
-    # We need to do a few things before we can start kicking off levels,
-    # but we might want to do them in a variety of different orders
-    reqs = ['Abilities', 'Background', 'Class', 'Gender', 'Race']
-
     # Generate the random bits
     oldio = shell.io
     shell.io = RandomInput()
+
+    abilities = False
+    background = False
+    gender = False
+    race = False
+
+    classgen = []
     for r in randomlist:
         if r == 'Abilities':
             litexec("Abilities.random(npc)", { "npc" : npc })
         elif r == 'Background':
             #randompick(roots["Backgrounds"]).random(npc)
-            shell.output("Background!")
-        elif r == 'Class':
-            shell.output("Class(es)!")
+            background = True
+        elif r.startsWith("Class"):
+            classstr : str = r
+            # Is this a "Class", "Class-Fighter", "Class-12", or "Class-Fighter-12"?
+            parts = classstr.split("-")
+            if len(parts) == 0:
+                # Generate random # of random classes
+                pass
+            elif len(parts) == 1:
+                # Generate random # of level of class *or*
+                # Generate level # of random classes
+                pass
+            elif len(parts) == 2:
+                # Generate parts[2] # levels in parts[1] class
+                pass
         elif r == 'Gender': 
             npc.gender = randompick(['Male', 'Female'])
+            gender = True
         elif r == 'Race':
             litexec("Races.random(npc)", { "npc" : npc })
         else:
             shell.output(r + ":", roots[r].random())
-        reqs.remove(r)
 
-    # Now do the interactive bits
+    reqs = ['Abilities', 'Background', 'Gender', 'Race']
+    if abilities: reqs.remove('Abilities')
+    if background: reqs.remove('Background')
+    if gender: reqs.remove('Gender')
+    if race: reqs.remove('Race')
+
     shell.io = oldio
     while len(reqs) > 0:
         which = shell.choosefromlist(reqs)
         if which == 'Abilities':
             (_, abilityfn) = shell.choosefrommap(moduleglobals['roots']['Abilities'].methods)
-            npc.addabilities(abilityfn())
+            scores = abilityfn()
+            print("Scores: ", scores)
+            npc.addabilities(scores)
         elif which == 'Background':
             print("Background!")
-        elif which == 'Class':
-            classmod = shell.choosefromlist(moduleglobals['roots']['Classes'].childmods)
-            npc.addclass(classmod)
         elif which == 'Gender':
             npc.gender = shell.choosefromlist(['Male', 'Female'])
         elif which == 'Race':
@@ -935,6 +1027,10 @@ def generate(randomlist=[]):
                     subracemod = shell.choosefromlist(racemod.childmods)
                     npc.setsubrace(subracemod)
         reqs.remove(which)
+
+    # Randomly generate classes?
+        
+    # Interactively generate classes
 
     return npc
 

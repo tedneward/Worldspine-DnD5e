@@ -92,8 +92,13 @@ def level1(npc):
     (_, chosen) = choose("Choose a weapon: ", availwpns)
     npc.addequipment(chosen)
 
-    npc.addequipment("Light crossbow and 20 bolts OR two handaxes")
-    npc.addequipment("Dungeoneer's pack, or explorer's pack")
+    chosen = choose("Choose one: ", ['Light crossbow', 'Two handaxes'])
+    if chosen == 'Light crossbow':
+        npc.addequipment(weapons['simple-ranged']['Light Crossbow'])
+    else:
+        npc.addequipment(weapons['simple-melee']['Handaxe'])
+
+    npc.addequipment(choose("Choose one: ", ["Dungeoneer's pack","Explorer's pack"]))
 
     npc.addequipment("Chain mail")
     npc.armorclass['Chain mail'] = 16
@@ -114,7 +119,7 @@ You have a limited well of stamina that you can draw on to protect yourself from
 Once you use this feature, you must finish a short or long rest before you can use it again.
 
 ```
-    npc.append(BonusAction("Second Wind", f"On your turn, you can regain 1d10 + {npc.levels('Fighter')} hit points.", "short rest") )
+    npc.append(BonusAction("Second Wind", "On your turn, you can regain 1d10 + {self.npc.levels('Fighter')} hit points.", "short rest") )
 ```
 
 
@@ -125,7 +130,7 @@ Once you use this feature, you must finish a short or long rest before you can u
 
 ```
 def level2(npc):
-    npc.append(Feature("Action Surge", "On your turn, you can take one additional action on top of your regular action and a possible bonus action.", "short rest", f"{'2/' if self.npc.levels('Fighter') >= 17 else ''}") )
+    npc.append(Feature("Action Surge", "On your turn, you can take one additional action on top of your regular action and a possible bonus action.", "short rest") )
 ```
 
 ## Martial Archetype
@@ -139,7 +144,7 @@ The archetype you choose grants you traits at 3rd level and again at 7th, 10th, 
 def level3(npc):
     # Choose subclass
     (subclassname, subclassmod) = choose("Choose a Martial Archetype:", subclasses)
-    npc.setsubclass(subclassmod)
+    npc.addsubclass(subclassmod)
 ```
 
 ## Ability Score Improvement
@@ -169,7 +174,11 @@ The number of attacks increases to three when you reach 11th level in this class
 
 ```
 def level5(npc):
-    npc.append(Action("Multiattack", f"You can attack {'twice' if self.npc.levels('Fighter') < 11 else 'three times' if self.npc.levels('Fighter') < 20 else 'four times'} whenever you take the Attack action on your turn.") )
+    npc.append(Action("Multiattack", "You can attack twice whenever you take the Attack action on your turn.") )
+def level11(npc):
+    npc.replace(Action("Multiattack", "You can attack three times whenever you take the Attack action on your turn.") )
+def level20(npc):
+    npc.replace(Action("Multiattack", "You can attack four times whenever you take the Attack action on your turn.") )
 ```
 
 ## Indomitable
@@ -181,5 +190,11 @@ You can use this feature twice between long rests starting at 13th level and thr
 
 ```
 def level9(npc):
-    npc.append(Feature("Indomitable", "You can reroll a saving throw that you fail. If you do so, you must use the new roll, and you can't use this feature again until you finish a long rest.", "long rest", "{'' if npc.levels('Fighter') < 13 else '2/' if npc.levels('Fighter') < 17 else '3/'}"))
+    npc.append(Feature("Indomitable", "You can reroll a saving throw that you fail. If you do so, you must use the new roll, and you can't use this feature again until you finish a long rest.", "long rest"))
+def level13(npc):
+    npc.append(Feature("Indomitable", "You can reroll a saving throw that you fail. If you do so, you must use the new roll, and you can't use this feature again until you finish a long rest.", "long rest", "2"))
+def level17(npc):
+    npc.replace(Feature("Action Surge", "On your turn, you can take one additional action on top of your regular action and a possible bonus action.", "short rest", "2") )
+
+    npc.append(Feature("Indomitable", "You can reroll a saving throw that you fail. If you do so, you must use the new roll, and you can't use this feature again until you finish a long rest.", "long rest", "3"))
 ```

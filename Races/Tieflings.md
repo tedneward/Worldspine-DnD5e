@@ -44,13 +44,13 @@ def apply(npc):
     npc.languages.append('Common')
     npc.languages.append('Infernal')
 
-    npc.append(Feature("Infernal Legacy", f"You know the {spelllink('thaumaturgy')} cantrip."))
+    npc.append(Feature("Infernal Legacy", "You know the {spelllink('thaumaturgy')} cantrip."))
 
 def level3(npc):
-    npc.replace("Infernal Legacy", Feature("Infernal Legacy", f"You know the {spelllink('thaumaturgy')} cantrip. You can cast the {spelllink('hellish rebuke')} spell as a 2nd-level spell. You use Charisma as your casting ability for this.", "long rest"))
+    npc.replace(Feature("Infernal Legacy", "You know the {spelllink('thaumaturgy')} cantrip. You can cast the {spelllink('hellish rebuke')} spell as a 2nd-level spell. You use Charisma as your casting ability for this.", "long rest"))
 
 def level5(npc):
-    npc.replace("Infernal Legacy", Feature("Infernal Legacy", f"You know the {spelllink('thaumaturgy')} cantrip. You can cast the {spelllink('hellish rebuke')} spell as a 2nd-level spell. You can cast the {spelllink('darkness')} spell. You use Charisma as your casting ability for these.", "long rest"))
+    npc.replace(Feature("Infernal Legacy", "You know the {spelllink('thaumaturgy')} cantrip. You can cast the {spelllink('hellish rebuke')} spell as a 2nd-level spell. You can cast the {spelllink('darkness')} spell. You use Charisma as your casting ability for these.", "long rest"))
 ```
 
 ```

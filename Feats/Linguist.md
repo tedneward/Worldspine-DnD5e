@@ -12,9 +12,9 @@ def prereq(npc): return True
 def apply(npc):
     npc.INT += 1
 
-    npc.languages.append("CHOOSE")
-    npc.languages.append("CHOOSE")
-    npc.languages.append("CHOOSE")
+    roots['Races'].chooselanguage(npc, 'All')
+    roots['Races'].chooselanguage(npc, 'All')
+    roots['Races'].chooselanguage(npc, 'All')
 
-    npc.defer(lambda npc: npc.traits.append(f"***Encipher.*** You can ably create written ciphers. Others can't decipher a code you create unless you teach them, they succeed on an Intelligence check (DC {npc.INT + npc.proficiencybonus()}), or they use magic to decipher it.") )
+    npc.append(Feature("Encipher", f"You can create written ciphers. Others can't decipher a code you create unless you teach them, they succeed on an Intelligence check (DC {self.npc.INT + self.npc.proficiencybonus()}), or they use magic to decipher it.") )
 ```

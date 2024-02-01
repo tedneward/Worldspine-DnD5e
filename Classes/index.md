@@ -158,6 +158,6 @@ def random():
     print("Picking a class at random from ", modules, " boss!")
     (name, clazz) = randomfrom(modules)
     (name, subclass) = randomfrom(clazz.subclasses)
-    print("I picked a", subrace.name, race.name, "for you, boss!")
+    print("I picked a", subclass.name, clazz.name, "for you, boss!")
     return (clazz, subclass)
 ```

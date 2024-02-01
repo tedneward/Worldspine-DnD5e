@@ -13,5 +13,5 @@ def prereq(npc): return True
 def apply(npc):
     npc.INT += 1
 
-    npc.traits.append("***Keen Mind.*** You always know which way is north, the number of hours left before the next sunrise or sunset, and you can accurately recall anything you have seen or heard within the past month.")
+    npc.append(Feature("Keen Mind", "You always know which way is north, the number of hours left before the next sunrise or sunset, and you can accurately recall anything you have seen or heard within the past month.") )
 ```

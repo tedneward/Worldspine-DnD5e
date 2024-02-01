@@ -215,9 +215,8 @@ def abilityforskill(skillname):
 
 def chooseskill(npc, availableskills = skills): 
     srclist = availableskills
-    for skill in npc.proficiencies:
-        print("Testing to see if",skill,"is in",srclist)
-        if skill in srclist:
+    for skill in srclist:
+        if skill in npc.proficiencies:
             srclist.remove(skill)
     chosen = choose("Choose a skill: ", srclist)
     npc.addproficiency(chosen)

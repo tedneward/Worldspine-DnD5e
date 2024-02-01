@@ -13,7 +13,7 @@ Your weapon attacks score a critical hit on a roll of 19 or 20.
 
 ```
 def level3(npc):
-    npc.traits.append(f"***Improved Critical.*** Your weapon attacks score a critical hit on a roll of {19 if npc.levels('Fighter') < 15 else 18}-20.")
+    npc.append(Feature("Improved Critical", "Your weapon attacks score a critical hit on a roll of 19-20.") )
 ```
 
 ## Remarkable Athlete
@@ -25,7 +25,7 @@ In addition, when you make a running long jump, the distance you can cover incre
 
 ```
 def level7(npc):
-    npc.traits.append("***Remarkable Athlete.*** You can add half your proficiency bonus (rounded up) to any Strength, Dexterity, or Constitution check you make that doesn't already use your proficiency bonus. In addition, when you make a running long jump, the distance you can cover increases by a number of feet equal to your Strength modifier.")
+    npc.append(Feature("Remarkable Athlete", "You can add half your proficiency bonus (rounded up) to any Strength, Dexterity, or Constitution check you make that doesn't already use your proficiency bonus. In addition, when you make a running long jump, the distance you can cover increases by a number of feet equal to your Strength modifier.") )
 ```
 
 ## Additional Fighting Style
@@ -35,13 +35,18 @@ You can choose a second option from the Fighting Style class feature.
 
 ```
 def level10(npc):
-    allclasses['Fighter'].choosestyle(npc)
+    parent.choosestyle(npc)
 ```
 
 ## Superior Critical
 *15th-level Champion feature*
 
 Your weapon attacks score a critical hit on a roll of 18-20.
+
+```
+def level15(npc):
+    npc.append(Feature("Improved Critical", "Your weapon attacks score a critical hit on a roll of 18-20.") )
+```
 
 ## Survivor
 *18th-level Champion feature*
@@ -50,5 +55,5 @@ You attain the pinnacle of resilience in battle. At the start of each of your tu
 
 ```
 def level18(npc):
-    npc.defer(lambda npc: npc.traits.append(f"***Survivor.*** At the start of each of your turns, you regain {5 + npc.CONbonus()} hit points if you have no more than half of your hit points left. You don't gain this benefit if you have 0 hit points."))
+    npc.append(Feature("Survivor", "At the start of each of your turns, you regain {5 + self.npc.CONbonus()} hit points if you have no more than half of your hit points left. You don't gain this benefit if you have 0 hit points."))
 ```

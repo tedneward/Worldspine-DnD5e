@@ -11,6 +11,27 @@
 
 ```
 armor = {}
+
+class Armor:
+    def __init__(self, name, weight, amt, minstrength=0, stealthpenalty=False):
+        self.name = name
+        self.weight = weight
+        self.amt = amt
+        self.minstrength = minstrength
+        self.stealthpenalty = stealthpenalty
+
+    def __str__(self):
+        return self.name + " (" + str(self.weight) + "lb)"
+
+class Shield:
+    def __init__(self, name, weight, bonus, minstrength=0):
+        self.name = name
+        self.weight = weight
+        self.bonus = bonus
+        self.minstrength = 0
+
+    def __str__(self):
+        return self.name + " (" + str(self.weight) + "lb)"
 ```
 
 ## Light Armor
@@ -22,6 +43,14 @@ Name        | Cost | Armor Class | Strength | Stealth | Weight
 [Padded](#padded) | 5 gp | 11 + Dex | - | Disadvantage | 8 lb.
 [Studded leather](#studded-leather) | 45 gp | 12 + Dex | - | - | 13 lb.
 
+```
+armor['light'] = {
+    'Leather armor' : Armor("Leather armor", 10, 11),
+    'Padded armor' : Armor("Padded armor", 8, 11, 0, True), 
+    'Studded leather armor' : Armor("Studded leather armor", 13, 12)
+}
+```
+
 ## Medium Armor
 Medium armor offers more protection than light armor, but it also impairs movement more. If you wear medium armor, you add your Dexterity modifier, to a maximum of +2, to the base number from your armor type to determine your Armor Class.
 
@@ -32,6 +61,19 @@ Name         | Cost | Armor Class | Strength | Stealth | Weight
 [Scale mail](#scale-mail) | 50 gp | 14 + Dex (max 2) | - | Disadvantage | 45 lb.
 [Breastplate](#breastplate) | 400 gp | 14 + Dex (max 2) | - | - | 20 lb.
 [Half plate](#half-plate) | 750 gp | 15 + Dex (max 2) | - | Disadvantage | 40 lb.
+
+```
+armor['medium'] = {
+    'Hide armor' : 12, 
+    'Chain shirt' : 13,
+    'Plated leather' : 13,
+    'Wood' : 13,
+    'Scale mail' : 14, 
+    'Breastplate' : 14, 
+    'Half-plate' : 15,
+    'Kozane' : 15
+}
+```
 
 ## Heavy Armor
 Of all the armor categories, heavy armor offers the best protection. These suits of armor cover the entire body and are designed to stop a wide range of attacks. Only proficient warriors can manage their weight and bulk.
@@ -45,6 +87,16 @@ Name        | Cost | Armor Class | Strength | Stealth | Weight
 [Splint](#splint) | 200 gp | 17 | Str 15 | Disadvantage | 60 lb.
 [Plate](#plate) | 1,500 gp | 18 | Str 15 | Disadvantage | 65 lb.
 
+```
+armor['heavy'] = {
+    'Ring mail' : 14,
+    'Lorica segmentata' : 15,
+    'Chain mail' : 16,
+    'Splint armor' : 17,
+    'Plate armor' : 18
+}
+```
+
 ## Shields
 A shield is often made from wood or metal and is either carried in one hand or strapped to that hand. You can benefit from only one shield at a time.
 
@@ -52,6 +104,11 @@ Name        | Cost | Armor Class | Strength | Stealth | Weight
 ----------- | ---- | ----------- | -------- | ------- | ------
 [Shield](#shield) | 10 gp | +2 | - | - | 6 lb.
 
+```
+armor['shields'] = {
+    'Shield' : Shield("Shield", 6, 2),
+}
+```
 
 #### Breastplate
 This armor consists of a fitted metal chest piece worn with supple leather. Although it leaves the legs and arms relatively unprotected, this armor provides good protection for the wearer’s vital organs while leaving the wearer relatively unencumbered.
@@ -93,40 +150,6 @@ This armor is made of narrow vertical strips of metal riveted to a backing of le
 Made from tough but flexible leather, studded leather is reinforced with close-set rivets or spikes.
 
 ```
-armor = {
-    'light': {
-        'Battle robe' : 11,
-        'Padded armor' : 11, 
-        'Leather armor' : 11,
-        'Leather lamellar' : 12,
-        'Studded leather armor' : 12
-    },
-    'medium': {
-        'Hide armor' : 12, 
-        'Chain shirt' : 13,
-        'Plated leather' : 13,
-        'Wood' : 13,
-        'Scale mail' : 14, 
-        'Breastplate' : 14, 
-        'Half-plate' : 15,
-        'Kozane' : 15
-    },
-    'heavy': {
-        'Ring mail' : 14,
-        'Lorica segmentata' : 15,
-        'Chain mail' : 16,
-        'Splint armor' : 17,
-        'Plate armor' : 18
-    },
-    'shields': {
-        'Buckler' : 1,
-        'Fencing cloak' : 1,
-        'Vambrace' : 1,
-        'Shield' : 2,
-        'Tower shield' : 2
-    }
-}
-
 def init():
     parent.armor = armor
 ```

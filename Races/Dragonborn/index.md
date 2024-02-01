@@ -57,7 +57,8 @@ class BreathWeapon(Action):
         elif npc.levels() < 16: damage = self.dmgtiers[2]
         else: damage = self.dmgtiers[3]
 
-        text  = f"You exhale destructive {self.dmgtype} in a {self.shape}. "
+        text += f"***{self.title} (Recharges on long rest).*** "
+        text += f"You exhale destructive {self.dmgtype} in a {self.shape}. "
         text += f"All creatures in the area must make a {self.save} saving throw "
         text += f"(DC {8 + self.npc.CONbonus() + self.npc.proficiencybonus()}). "
         text += f"A creature takes {damage} {self.dmgtype} damage on a failed save, or half on a successful one."
@@ -72,7 +73,7 @@ class MetallicBreathWeapon(Action):
         self.save = save
 
     def __str__(self):
-        return f"You exhale a 15-foot cone of either Enervating Breath (Each creature in the cone must succeed on a Constitution saving throw or become incapacitated until the start of your next turn) or Repulsion Breath (Each creature in the cone must succeed on a Strength saving throw or be pushed 20 feet away from you and be knocked prone), DC {8 + self.npc.CONbonus() + self.npc.proficiencybonus()}."
+        return "You exhale a 15-foot cone of either Enervating Breath (Each creature in the cone must succeed on a Constitution saving throw or become incapacitated until the start of your next turn) or Repulsion Breath (Each creature in the cone must succeed on a Strength saving throw or be pushed 20 feet away from you and be knocked prone), DC {8 + self.npc.CONbonus() + self.npc.proficiencybonus()}."
 
 def breathweaponaction(shape, dmgtype, save, damagetiers=['2d6','3d6','4d6','5d6']):
     return BreathWeapon(shape, dmgtype, save, damagetiers)
@@ -87,8 +88,6 @@ Dragonborn of chromatic colors are often chaotic, prone to violence, and sometim
 
 * [Black](Black.md)
 * [Blue](Blue.md)
-* [Brown](Brown.md)
-* [Gray](Gray.md)
 * [Green](Green.md)
 * [Red](Red.md)
 * [White](White.md)
@@ -100,7 +99,6 @@ Dragonborn of metallic colors are often law-abiding, slow to anger, and sometime
 * [Copper](Copper.md)
 * [Gold](Gold.md)
 * [Silver](Silver.md)
-* [Steel](Steel.md)
 
 ```
 def random(npc):

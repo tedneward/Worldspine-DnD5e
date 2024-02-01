@@ -4,51 +4,67 @@
 weapons = {}
 
 class Weapon:
-    def __init__(self, name, dmg, dmgtype, properties=[]):
+    def __init__(self, name, weight, dmg, dmgtype, properties=[]):
         self.name = name
+        self.weight = weight
         self.dmg = dmg
         self.dmgtype = dmgtype
-        #self.weight = weight
         self.properties = properties
 
     def findproperty(self, property):
-        for prop in properties:
+        for prop in self.properties:
             if property in prop:
                 return prop
         return None
 
     def getactions(self): pass
 
+    def __str__(self):
+        return f"{self.name} ({self.weight} lb)"
+
 class MeleeWeapon(Weapon):
-    def __init__(self, name, dmg, dmgtype, properties=[]):
-        Weapon.__init__(self, name, dmg, dmgtype, properties)
+    def __init__(self, name, weight, dmg, dmgtype, properties=[]):
+        Weapon.__init__(self, name, weight, dmg, dmgtype, properties)
 
     def getactions(self):
-        # If the weapon has 'versatile', it can be used one- or two-handed
-        # If the weapon has 'reach', it's reach is doubled
-        # If the weapon has 'finesse', it can use either STR or DEX (ugh)
+        # If the weapon has 'finesse', just pass it on to the attack action
+        actions = [ MeleeAttack(self.name, self.dmg, self.dmgtype, self.properties) ]
 
-        return [ 
-            MeleeAttack(self.name, self.dmg, self.dmgtype) 
-        ]
+        # If the weapon has 'two-handed', make note of that in the action description
+        twohanded = self.findproperty('two-handed')
+        if twohanded != None:
+            actions = [ MeleeAttack(self.name + " (Two-Handed)", self.dmg, self.dmgtype, self.properties) ]
+
+        # If the weapon has 'versatile', it can be used one- or two-handed
+        versatile = self.findproperty('versatile')
+        if versatile != None:
+            dmg = versatile[len("versatile "):][1:-1]
+            actions.append(MeleeAttack(self.name + " (Two-Handed)", dmg, self.dmgtype, self.properties))
+
+        # If the weapon has 'reach', it's reach is doubled
+        reach = self.findproperty('reach')
+        if reach != None:
+            actions[0].reach = "10ft"
+
+        return actions
 
 class RangedWeapon(Weapon):
-    def __init__(self, name, range, dmg, dmgtype, properties=[]):
-        Weapon.__init__(self, name, dmg, dmgtype, properties)
+    def __init__(self, name, weight, range, dmg, dmgtype, properties=[]):
+        Weapon.__init__(self, name, weight, dmg, dmgtype, properties)
         self.range = range
 
     def getactions(self):
         return [ RangedAttack(self.name, self.range, self.dmg, self.dmgtype) ]
 
 class ThrowableWeapon(Weapon):
-    def __init__(self, name, range, dmg, dmgtype, properties=[]):
-        Weapon.__init__(self, name, dmg, dmgtype, properties)
+    def __init__(self, name, weight, range, dmg, dmgtype, properties=[]):
+        Weapon.__init__(self, name, weight, dmg, dmgtype, properties)
         self.range = range
 
     def getactions(self):
         return [
-            MeleeAttack(self.name, self.dmg, self.dmgtype),
-            RangedAttack(self.name + " (Thrown)", self.dmg, self.range, self.dmg, self.dmgtype)
+            MeleeAttack(self.name, self.dmg, self.dmgtype, self.properties),
+            RangedAttack(self.name + " (Thrown)", self.range, self.dmg, self.dmgtype)
         ]
 ```
 
@@ -69,16 +85,16 @@ Spear | 1 gp | 1d6 piercing | 3 lb. | Thrown (20/60), versatile (1d8) | ***Spear
 
 ```
 weapons['simple-melee'] = {
-    'Club': MeleeWeapon("Club", '1d4', 'bludgeoning', ['light']),
-    'Dagger': ThrowableWeapon("Dagger", '1d4', 'piercing', ['finesse','light','thrown 20/60']),
-    'Greatclub': MeleeWeapon("Greatclub", '1d8', 'bludgeoning', ['two-handed']),
-    'Handaxe': ThrowableWeapon("Handaxe", '1d6', 'slashing', ['light','thrown 20/60']),
-    'Javelin': ThrowableWeapon("Javelin", '1d6', 'piercing', ['thrown 30/120']),
-    'Light hammer': ThrowableWeapon("Light hammer", '1d4', 'bludgeoning', ['light','thrown 20/60']),
-    'Mace': MeleeWeapon("Mace", '1d6', 'bludgeoning'),
-    'Quarterstaff': MeleeWeapon("Quarterstaff", '1d6', 'bludgeoning', ['versatile (1d8)']),
-    'Sickle': MeleeWeapon("Sickle", '1d4', 'slashing', ['light']),
-    'Spear': ThrowableWeapon("Spear", '1d6', 'piercing', ['thrown 20/60', 'versatile (1d8)']),
+    'Club': MeleeWeapon("Club", "2", '1d4', 'bludgeoning', ['light']),
+    'Dagger': ThrowableWeapon("Dagger", "1", '20/60', '1d4', 'piercing', ['finesse','light','thrown']),
+    'Greatclub': MeleeWeapon("Greatclub", "10", '1d8', 'bludgeoning', ['two-handed']),
+    'Handaxe': ThrowableWeapon("Handaxe", "2", '20/60', '1d6', 'slashing', ['light', 'thrown']),
+    'Javelin': ThrowableWeapon("Javelin", "2", '30/120', '1d6', 'piercing', ['thrown']),
+    'Light hammer': ThrowableWeapon("Light hammer", "2", '20/60', '1d4', 'bludgeoning', ['light','thrown']),
+    'Mace': MeleeWeapon("Mace", "4", '1d6', 'bludgeoning'),
+    'Quarterstaff': MeleeWeapon("Quarterstaff", "4", '1d6', 'bludgeoning', ['versatile (1d8)']),
+    'Sickle': MeleeWeapon("Sickle", "2", '1d4', 'slashing', ['light']),
+    'Spear': ThrowableWeapon("Spear", "3", '20/60', '1d6', 'piercing', ['thrown', 'versatile (1d8)']),
 }
 ```
 
@@ -102,29 +118,29 @@ Scimitar | 25 gp | 1d6 slashing | 3 lb. | Finesse, light |
 Shortsword | 10 gp | 1d6 piercing | 2 lb. | Finesse, light | 
 Trident | 5 gp | 1d6 piercing | 4 lb. | Thrown (20/60), versatile (1d8) | 
 War pick | 5 gp | 1d8 piercing | 2 lb. | — | 
-Warhammer | 15 gp | 1d8 bludgeoning | 2 lb. | Versatile (1d10) | 
+Warhammer | 15 gp | 1d8 bludgeoning | 2 lb. | versatile (1d10) | 
 Whip | 2 gp | 1d4 slashing | 3 lb. | Finesse, reach | 
 
 ```
 weapons['martial-melee'] = {
-    'Battleaxe': MeleeWeapon("Battleaxe", '1d8', 'slashing', ['versatile (1d10)']),
-    'Flail': MeleeWeapon("Flail", '1d8', 'bludgeoning'),
-    'Glaive': MeleeWeapon("Glaive", '1d10', 'slashing', ['heavy', 'reach', 'two-handed']),
-    'Greataxe': MeleeWeapon("Greataxe", '1d12', 'slashing', ['heavy', 'two-handed']),
-    'Greatsword': MeleeWeapon("Greatsword", '2d6', 'slashing', ['heavy', 'two-handed']),
-    'Halberd': MeleeWeapon("Halberd", '1d10', 'slashing', ['heavy', 'reach', 'two-handed']),
-    'Lance': MeleeWeapon("Lance", '1d12', 'piercing', ['reach', 'special']),
-    'Longsword': MeleeWeapon("Longsword", '1d8', 'slashing', ['versatile (1d10)']),
-    'Maul': MeleeWeapon("Maul", '2d6', 'bludgeoning', ['heavy', 'two-handed']),
-    'Morningstar': MeleeWeapon("Morningstar", '1d8', 'piercing'),
-    'Pike': MeleeWeapon("Pike", '1d10', 'piercing', ['heavy', 'reach', 'two-handed']),
-    'Rapier': MeleeWeapon("Rapier", '1d8', 'piercing', ['finesse']),
-    'Scimitar': MeleeWeapon("Scimitar", '1d6', 'slashing', ['finesse', 'light']),
-    'Shortsword': MeleeWeapon("Shortsword", '1d6', 'piercing', ['finesse', 'light']),
-    'Trident': ThrowableWeapon("Trident", '20/60', '1d6', 'piercing', ['versatile (1d8)']),
-    'War pick': MeleeWeapon("War pick", '1d8', 'piercing'),
-    'Warhammer': MeleeWeapon("Warhammer", '1d8', 'bludgeoning', ['versatile (1d10)']),
-    'Whip': MeleeWeapon("Whip", '1d4', 'slashing', ['finesse', 'reach']),
+    'Battleaxe': MeleeWeapon("Battleaxe", "4", '1d8', 'slashing', ['versatile (1d10)']),
+    'Flail': MeleeWeapon("Flail", "2", '1d8', 'bludgeoning'),
+    'Glaive': MeleeWeapon("Glaive", "6", '1d10', 'slashing', ['heavy', 'reach', 'two-handed']),
+    'Greataxe': MeleeWeapon("Greataxe", "7", '1d12', 'slashing', ['heavy', 'two-handed']),
+    'Greatsword': MeleeWeapon("Greatsword", "6", '2d6', 'slashing', ['heavy', 'two-handed']),
+    'Halberd': MeleeWeapon("Halberd", "6", '1d10', 'slashing', ['heavy', 'reach', 'two-handed']),
+    'Lance': MeleeWeapon("Lance", "6", '1d12', 'piercing', ['reach', 'special']),
+    'Longsword': MeleeWeapon("Longsword", "3", '1d8', 'slashing', ['versatile (1d10)']),
+    'Maul': MeleeWeapon("Maul", "10", '2d6', 'bludgeoning', ['heavy', 'two-handed']),
+    'Morningstar': MeleeWeapon("Morningstar", "4", '1d8', 'piercing'),
+    'Pike': MeleeWeapon("Pike", "18", '1d10', 'piercing', ['heavy', 'reach', 'two-handed']),
+    'Rapier': MeleeWeapon("Rapier", "2", '1d8', 'piercing', ['finesse']),
+    'Scimitar': MeleeWeapon("Scimitar", "3", '1d6', 'slashing', ['finesse', 'light']),
+    'Shortsword': MeleeWeapon("Shortsword", "2", '1d6', 'piercing', ['finesse', 'light']),
+    'Trident': ThrowableWeapon("Trident", "4", '20/60', '1d6', 'piercing', ['versatile (1d8)']),
+    'War pick': MeleeWeapon("War pick", "2", '1d8', 'piercing'),
+    'Warhammer': MeleeWeapon("Warhammer", "2", '1d8', 'bludgeoning', ['versatile (1d10)']),
+    'Whip': MeleeWeapon("Whip", "3", '1d4', 'slashing', ['finesse', 'reach']),
 }
 ```
 
@@ -139,13 +155,10 @@ Sling | 1 sp | 1d4 piercing | — | Ammunition, range (30/120) |
 
 ```
 weapons['simple-ranged'] = {
-    'Light Crossbow': RangedAttack("Light Crossbow", '80/320', '1d8', 'piercing', ['ammunition', 'loading', 'two-handed']),
-    'Dagger': RangedAttack("Dagger", '20/60', '1d4', 'piercing', ['finesse','light','thrown']),
-    'Dart': RangedAttack("Dart", '20/60', '1d4', 'piercing', ['finesse', 'thrown']),
-    'Handaxe': RangedAttack("Handaxe", '20/60', '1d6', 'slashing', ['light', 'thrown']),
-    'Shortbow': RangedAttack("Shortbow", '80/320', '1d6', 'piercing', ['ammunition', 'two-handed']),
-    'Sling': RangedAttack("Sling", '30/120', '1d4', 'bludgeoning', ['ammunition']),
-    'Spear': RangedAttack("Spear",'20/60', '1d6', 'piercing', ['thrown']),
+    'Light Crossbow': RangedWeapon("Light Crossbow", "5", '80/320', '1d8', 'piercing', ['ammunition', 'loading', 'two-handed']),
+    'Dart': RangedWeapon("Dart", "1/4", '20/60', '1d4', 'piercing', ['finesse', 'thrown']),
+    'Shortbow': RangedWeapon("Shortbow", "2", '80/320', '1d6', 'piercing', ['ammunition', 'two-handed']),
+    'Sling': RangedWeapon("Sling", "-", '30/120', '1d4', 'bludgeoning', ['ammunition']),
 }
 ```
 
@@ -161,11 +174,11 @@ Net | 1 gp | — | 3 lb. | Special, thrown (5/15) |
 
 ```
 weapons['martial-ranged'] = {
-    'Blowgun': ['1', 'piercing', ['ammunition (range 25/100)', 'loading']],
-    'Hand Crossbow': ['1d6', 'piercing', ['ammunition (range 30/120)', 'light', 'loading']],
-    'Heavy Crossbow': ['1d10', 'piercing', ['ammunition (range 100/400)', 'heavy', 'loading', 'two-handed']],
-    'Longbow': ['1d8', 'piercing', ['ammunition (range 150/600)', 'heavy', 'two-handed']],
-    'Net': ['-', 'special', ['thrown (range 5/15)']]
+    'Blowgun': RangedWeapon("Blowgun", "1", '25/100', '1', 'piercing', ['ammunition', 'loading']),
+    'Hand Crossbow': RangedWeapon("Hand Crossbow", "3", '30/120', '1d6', 'piercing', ['ammunition', 'light', 'loading']),
+    'Heavy Crossbow': RangedWeapon("Heavy Crossbow", "18", '100/400', '1d10', 'piercing', ['ammunition', 'heavy', 'loading', 'two-handed']),
+    'Longbow': RangedWeapon("Longbow", "2", '150/600', '1d8', 'piercing', ['ammunition', 'heavy', 'two-handed']),
+    'Net': RangedWeapon("Net", "3", '5/15', '0', 'special')
 }
 ```
 
