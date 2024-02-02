@@ -11,9 +11,9 @@ def apply(npc):
     miclass = choose("Choose a class: ", ['Bard', 'Cleric', 'Druid', 'Sorcerer', 'Warlock', 'Wizard'])
     ability = 'CHA' if miclass in ['Bard','Sorcerer','Warlock'] else 'WIS' if miclass in ['Cleric', 'Druid'] else 'INT'
 
-    spellcasting = Spellcasting("Magic Initiate", miclass, ability)
-    spellcasting.maxcantripsknown = 2
-    spellcasting.maxspellsknown = 1
-    spellcasting.spellsknown = ["CHOOSE-" + miclass + "-1st-level"]
-    spellcasting.slots[1] = 1
+    spellcasting = InnateCasting("Magic Initiate", ability)
+    spellcasting.atwill.append("CHOOSE-Bard-Cantrip")
+    spellcasting.atwill.append("CHOOSE-Bard-Cantrip")
+    spellcasting.perday[1].append("CHOOSE-Bard-1st-level")
+    npc.append(spellcasting)
 ```

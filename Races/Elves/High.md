@@ -13,16 +13,15 @@
 name = 'High'
 description = "***Subrace: High Elf.***"
 
-class CantripCasting(Action):
+class HighElfCasting(Action):
     def __init__(self, cantrip):
         Action.__init__(self, "Cantrip", "")
         self.cantrip = cantrip
 
     def __str__(self):
-        text  =  "***High Elf Cantrip.*** "
-        text += f"You know {spelllink(self.cantrip)} and can cast it at will. "
-        text += f"**Spell Save DC** {8 + self.npc.proficiencybonus() + self.npc.INTbonus()} "
-        text += f"**Spell Attack Bonus** +{self.npc.proficiencybonus() + self.npc.INTbonus()}."
+        text  = f"**Spell Save DC** {8 + self.npc.proficiencybonus() + self.npc.INTbonus()} "
+        text += f"**Spell Attack Bonus** +{self.npc.proficiencybonus() + self.npc.INTbonus()}. "
+        text += f"You know {spelllink(self.cantrip)} and can cast it at will."
         return text
 
 def apply(npc):
@@ -34,7 +33,7 @@ def apply(npc):
         'ray of frost', 'shocking grasp', 'true strike'
     ]
     chosen = choose("Choose a cantrip:", availablecantrips)
-    npc.append(CantripCasting(chosen))
+    npc.append(HighElfCasting(chosen))
 
     npc.addproficiency("Longsword")
     npc.addproficiency("Shortsword")

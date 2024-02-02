@@ -66,7 +66,7 @@ def apply(npc):
     # TODO: Add these from the roots['Equipment'] weapons?
     npc.addproficiency(Equipment.weapons['martial-melee']['Battleaxe'])
     npc.addproficiency(Equipment.weapons['martial-melee']['Warhammer'])
-    npc.addproficiency(Equipment.weapons['simple-melee']['Hand axe']")
+    npc.addproficiency(Equipment.weapons['simple-melee']['Handaxe'])
     npc.addproficiency(Equipment.weapons['simple-melee']['Light hammer'])
 
     toolchoice = choose("Choose a tool proficiency:", ["Smith's Tools", "Brewer's Supplies", "Mason's Tools"])

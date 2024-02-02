@@ -102,7 +102,7 @@ Dragonborn of metallic colors are often law-abiding, slow to anger, and sometime
 
 ```
 def random(npc):
-    subracemod = randomfrom(subraces)
+    subracemod = randomfrom(childmods)
     print("I choose a",subracemod.name,npc.race.name,"for you, boss!")
     npc.setsubrace(subracemod)
 ```

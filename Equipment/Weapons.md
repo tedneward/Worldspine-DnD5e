@@ -209,10 +209,8 @@ Two-Handed | This weapon requires two hands to use. This property is relevant on
 Versatile | This weapon can be used with one or two hands. A damage value in parentheses appears with the property—the damage when the weapon is used with two hands to make a melee attack.
 
 ```
-exports = { 
-    "Weapon": Weapon,
-    "MeleeWeapon": MeleeWeapon,
-    "RangedWeapon": RangedWeapon,
-    "weapons": weapons 
-}
+def init():
+    parent.weapons = weapons
+
+exports = { Weapon, MeleeWeapon, RangedWeapon }
 ```

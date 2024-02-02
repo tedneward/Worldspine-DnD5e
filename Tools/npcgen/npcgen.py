@@ -14,11 +14,16 @@ import types
 
 SAVEPY = os.getenv('SAVE_PY')
 
-# TODO: Refactor to use Python logging
 def error(*values): logging.error(*values)
-def warn(*values): logging.warn(*values)
+def warn(*values): logging.warning(*values)
 def log(*values): logging.info(*values)
 def debug(*values): logging.debug(*values)
+
+def cardinal(number):
+    if number == 1: return "1st"
+    elif number == 2: return "2nd"
+    elif number == 3: return "3rd"
+    else: return str(number) + "th"
 
 ##########################
 # I/O infrastructure
@@ -32,7 +37,30 @@ class Input:
         # NOP; Expected to be overridden in derived classes
         pass
 
-    def choosefromlist(self, choicelist : list):
+    def choosefromlist(self, inputlist : list):
+        choicelist = []
+
+        if isinstance(inputlist[0], str):
+            choicelist = inputlist.copy()
+        elif getattr(inputlist[0], "name", None) != None:
+            choicemap = {}
+            for item in inputlist:
+                choicemap[item.name] = item
+            (_, choice) = self.choosefrommap(choicemap)
+            return choice
+        elif getattr(inputlist[0], "__name__", None) != None:
+            choicemap = {}
+            for item in inputlist:
+                choicemap[item.__name__] = item
+            (_, choice) = self.choosefrommap(choicemap)
+            return choice
+        elif getattr(inputlist[0], "__str__", None) != None:
+            for item in inputlist:
+                choicelist.append(str(item))
+        else:
+            error("Inputlist does not appear sortable: " + str(inputlist))
+            choicelist = inputlist
+
         choicelist.sort()
         choiceidx = 0
         for c in choicelist:
@@ -152,32 +180,32 @@ ONLINEROOT = "http://worldspine.tedneward.com"
 ##########################
 # Character-related pieces
 class Feature:
-    def __init__(self, title : str, text : str, recharges=None, uses=None):
+    def __init__(self, title : str, text : str, 
+                 recharges : str | None = None, uses : str | None = None):
         self.title = title
         self.text = text
-        self.uses = uses
         self.recharges = recharges
+        self.uses = uses
         self.npc = None # The StatBlock to which this Feature is attached
 
-    def markdownifytext(self):
-        return self.text.replace('\n', '\n>')
+    def evaltext(self): litexec('self.text = f"' + self.text + '"', { "self" : self })
 
     def __str__(self):
-        if "{" in self.text:
-            # Grab the module's __dict__ and pass it in as the globals or locals or whatever
-            litexec('"f' + self.text + '"', { "self" : self })
-        #if "{" in self.uses:
-        #    self.uses = eval('f"' + self.uses + '"')
+        # Prepare text
+        self.evaltext()
+        text = self.text.replace('\n', '\n>')
 
         posttitletext = ""
+        print("Feature " + self.title + " __str__: " + str(self.recharges) + " / " + str(self.uses))
+
         if self.recharges == None:
             if self.uses == None:
                 # At-will
-                posttitletext = ""
+                pass
             else:
                 # It's a 2/day but never recharges?
                 # Pretty sure this isn't a thing
-                warn(self.title, "has uses but no recharges text!")
+                warn(self.title + " has uses but no recharges text!")
                 posttitletext = f"({self.uses})"
         else:
             if self.recharges == "short rest": self.recharges = "short or long rest"
@@ -186,37 +214,112 @@ class Feature:
                 posttitletext = f" (Recharges on {self.recharges})"
             else:
                 posttitletext = f" ({self.uses}/Recharges on {self.recharges})"
-        return f"***{self.title}{posttitletext}.*** {self.markdownifytext()}"
+        return f"***{self.title}{posttitletext}.*** {text}"
 
 class Action(Feature):
-    def __init__(self, title, text, uses=None, recharges=None):
-        Feature.__init__(self, title, text, uses, recharges)
+    def __init__(self, title, text, recharges=None, uses=None):
+        Feature.__init__(self, title, text, recharges, uses)
 
 # This can be innate spellcasting, class-based spellcasting, or PactMagic.
 # I think any sort of psionic or other abilities could fit in here as well.
 # Any ability that can cast a spell as an Action is Casting as far as
 # this tool is concerned.
 class Casting(Action):
-    def __init__(self, title):
-        Action.__init__(self, title, "", recharges="long rest")
+    def __init__(self, title, ability, text="PLACEHOLDER TEXT",):
+        Action.__init__(self, title, text, "long rest")
+        self.ability = ability # TODO: Verify ability is one of INT, WIS, or CHA
+
+    def spellattackbonus(self):
+        return self.npc.proficiencybonus() + self.npc.abilitybonus(self.ability)
+
+    def spellsavedc(self):
+        return 8 + self.npc.proficiencybonus() + self.npc.abilitybonus(self.ability)
+
+    def spellattackanddctext(self):
+        sab = self.spellattackbonus()
+        sdc = self.spellsavedc()
+        return f"**Spell Attack Bonus: +{sab}** **Spell Save DC {sdc}** "
 
 class InnateCasting(Casting):
-    def __init__(self, innatetype):
-        Spellcasting.__init__(self, innatetype + " Spellcasting")
-        self.recharges = None
-        self.perday = {}
+    def __init__(self, innatetype, ability="CHA", text=""):
+        Casting.__init__(self, innatetype + " Casting", ability, text)
+        self.recharges = "long rest"
+        self.perday = {1: [], 3: []}
+        self.atwill = []
 
-class Spellcasting(Casting):
-    def __init__(self, title, classspelllist, ability):
-        Casting.__init__(self, title + " Casting")
-        self.classspelllist = classspelllist
-        self.ability = ability
+    def __str__(self):
+        text  = f"***{self.title}.*** Uses {self.ability}. {self.spellattackanddctext()}\n"
+        text +=  ">\n"
+        if len(self.atwill) > 0:
+            text += f"> * *At will:* {','.join(self.atwill)}\n"
+        if len(self.perday[3]) > 0:
+            text += f"> * *3/day:* {','.join(self.perday[3])}\n"
+        if len(self.perday[1]) > 0:
+            text += f"> * *1/day:* {','.join(self.perday[1])}"
+        # Make sure to leave off the \n on the last line, since it gets added
+        # by the StatBlock's emitMD.
+        return text
+
+# Let's run with the idea that full casters always have the same
+# levels-to-slots table, until proven otherwise. Deviants can always
+# create their own Casting subclass, right?
+class FullSpellcasting(Casting):
+    slottable = {
+        1: [2],
+        2: [3],
+        3: [4,2],
+        4: [],
+        5: [],
+        6: [],
+        7: [],
+        8: [],
+        9: [],
+        10: [],
+        11: [],
+        12: [],
+        13: [],
+        14: [],
+        15: [],
+        16: [],
+        17: [],
+        18: [],
+        19: [],
+        20: [],
+    }
+
+    def __init__(self, classmod, ability):
+        Casting.__init__(self, classmod.name + " Casting", ability)
+        self.classmod = classmod
         self.maxcantripsknown = 0
         self.cantripsknown = []
-        self.slottable = {}
         self.maxspellsknown = 0
-        self.spellsknown = []
-        
+        self.spellsprepared = {1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: [], 8: [], 9: []}
+        self.spellsalwaysprepared = []
+
+    def __str__(self):
+        text = f"Uses {self.ability}. " + self.spellattackanddctext() + " "
+        if self.maxcantripsknown > 0:
+            text += f"{self.maxcantripsknown} cantrips known. "
+        if self.maxspellsknown > 0:
+            text += f"{self.maxspellsknown} spells known. "
+        text += "\n>\n"
+        if len(self.spellsalwaysprepared) > 0:
+            text += f">Spells always prepared: {','.join(self.spellsalwaysprepared)}\n>\n"
+        # Print out slot table
+        if len(self.cantripsknown) > 0:
+            text += f">* *Cantrips*: {','.join(self.cantripsknown)}\n>\n"
+        slots = FullSpellcasting.slottable[self.npc.levels(self.classmod)]
+        for s in range(1,10):
+            if slots[s] > 0:
+                text += f">* *{cardinal(s)}-level ({slots[s]} slots):* \n"
+        text += ">"
+
+        return f"***{self.title}.*** {text}"
+
+class HalfSpellcasting(Casting): pass
+
+# Do I really want to mess around with this?
+class MulticlassSpellcasting(Casting): pass
 
 class BonusAction(Feature):
     def __init__(self, title, text, uses=None, recharges=None):
@@ -400,8 +503,24 @@ class StatBlock:
     # This is a level-up function as a side-effect
     def addclass(self, classmod):
         self.classes.append(classmod)
+        self.levelup(classmod)
 
-        def levelup(mod, level):
+    # Subclasses get leveled up because of the addclass()
+    # call that triggers the levelX() method that causes
+    # the subclass to be selected and added, so all we need
+    # to do is invoke the appropriate levelX() method  in
+    # the just-added subclass
+    def addsubclass(self, subclassmod):
+        parentclass = subclassmod.parent
+        self.subclasses[parentclass] = subclassmod
+
+        everylvlfn = getattr(subclassmod, "everylevel", None)
+        if everylvlfn != None: litexec("fn(self)", { "fn" : everylvlfn, "self": self })
+        levelfn = getattr(subclassmod, "level" + str(self.levels(parentclass)), None)
+        if levelfn != None: litexec("fn(self)", { "fn" : levelfn, "self": self })
+
+    def levelup(self, classmod):
+        def applylevelup(mod, level):
             everylvlfn = getattr(mod, "everylevel", None)
             if everylvlfn != None: litexec("fn(self)", { "fn" : everylvlfn, "self": self })
             levelfn = getattr(mod, "level" + str(level), None)
@@ -410,20 +529,19 @@ class StatBlock:
         # Now that we added the level, invoke the new levelX fn (if present)
         # in race, subrace (if present), class, and subclass (if present)
         totallvls = self.levels()
-        levelup(self.race, totallvls)
-        if self.subrace != None: levelup(self.subrace, totallvls)
+        applylevelup(self.race, totallvls)
+        if self.subrace != None: applylevelup(self.subrace, totallvls)
 
         classlvls = self.levels(classmod)
-        levelup(classmod, classlvls)
+        applylevelup(classmod, classlvls)
         if classmod.name in self.subclasses:
             subclassmod = self.subclasses[classmod.name]
-            levelup(subclassmod, classlvls)
+            applylevelup(subclassmod, classlvls)
 
-        for f in self.feats:
-            childmods = getattr(moduleglobals['roots']['Feats'].childmods)
-            for childmod in childmods:
-                if childmod.name in self.feats:
-                    levelup(childmod, totallvls)
+        childmods = moduleglobals['roots']['Feats'].childmods
+        for childmod in childmods:
+            if childmod.name in self.feats:
+                applylevelup(childmod, totallvls)
     
     def levels(self, clss = None):
         if clss == None: return len(self.classes)
@@ -552,8 +670,11 @@ class StatBlock:
 
         return False
 
-    def addequipment(self, equip):
-        self.equipment.append(equip)
+    def addequipment(self, equip, number=1):
+        if number == 1:
+            self.equipment.append(equip)
+        else:
+            self.equipment.append(f"{number} {equip.name}s ({equip.weight * number} lb)")
 
         # Let's pull actions out for convenience
         gaa = getattr(equip, "getactions", None)
@@ -863,7 +984,14 @@ class RandomInput(Input):
 
     def choosefromlist(self, choicelist : list):
         response = random.randint(0, len(choicelist)-1)
-        self.output("I chose " + choicelist[response])
+        if isinstance(choicelist[0], str):
+            self.output("I chose " + choicelist[response])
+        elif getattr(choicelist[0], "name"):
+            self.output("I chose " + choicelist[response].name)
+        elif getattr(choicelist[0], "__name__"):
+            self.output("I chose " + choicelist[response].__name__)
+        else:
+            self.output("I chose item #" + str(response))
         return choicelist[response]
 
     def choosefrommap(self, choicemap):
@@ -957,7 +1085,7 @@ moduleglobals = {
     "RangedAttack": RangedAttack,
     "Casting": Casting,
     "InnateCasting": InnateCasting,
-    "Spellcasting": Spellcasting,
+    "FullSpellcasting": FullSpellcasting,
 }
 
 # Take a path, and if it's a file, load a singular module.
@@ -1046,7 +1174,7 @@ def loadroot(path : str) -> types.ModuleType:
 # to reflect all of what's in moduleglobals?
 def fixuproots() -> None:
     def fixup(module) -> None:
-        #log("Fixing up " + str(module.__name__))
+        debug("Fixing up " + str(module.__name__))
         module.__dict__.update(moduleglobals)
         childmods = getattr(module, "childmods", None)
         if childmods != None:
@@ -1147,12 +1275,11 @@ def generate(randomlist=[]):
     # Now interactively gen some class levels
     shell.io = oldio
 
-    choice = shell.choose("Add a new level? ", ['Yes', 'No'])
+    choice = shell.choose(f"Add a new level? {npc.classes}", ['Yes', 'No'])
     while (choice == 'Yes'):
-        print(rootdict['Classes'].modules)
-        (_, classmod) = shell.choosefrommap(rootdict['Classes'].modules)
+        classmod = shell.choosefromlist(moduleglobals['roots']['Classes'].childmods)
         npc.addclass(classmod)
-        npc.levelup(npc.levels(classmod))
+        choice = shell.choose(f"Add a new level? {npc.classes}", ['Yes', 'No'])
 
     return npc
 

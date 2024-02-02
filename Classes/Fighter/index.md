@@ -72,17 +72,17 @@ def level1(npc):
     npc.addproficiency("STR")
     npc.addproficiency("CON")
 
-    armor = roots['Equipment'].armor
+    armor = Equipment.armor
     for arm in armor['light'] | armor['medium'] | armor['heavy'] | armor['shields']:
         npc.addproficiency(arm)
 
-    weapons = roots['Equipment'].weapons
+    weapons = Equipment.weapons
     for wpn in weapons['simple-melee'] | weapons['martial-melee'] | weapons['simple-ranged'] | weapons['martial-ranged']:
         npc.addproficiency(wpn)
 
     skills = ['Acrobatics', 'Animal Handling', 'Athletics', 'History', 'Insight', 'Intimidation', 'Perception', 'Survival']
-    roots['Abilities'].chooseskill(npc, skills)
-    roots['Abilities'].chooseskill(npc, skills)
+    Abilities.chooseskill(npc, skills)
+    Abilities.chooseskill(npc, skills)
 
     availwpns = weapons['martial-melee'] | weapons['martial-ranged']
     (_, chosen) = choose("Choose a weapon: ", availwpns)
@@ -96,7 +96,7 @@ def level1(npc):
     if chosen == 'Light crossbow':
         npc.addequipment(weapons['simple-ranged']['Light Crossbow'])
     else:
-        npc.addequipment(weapons['simple-melee']['Handaxe'])
+        npc.addequipment(weapons['simple-melee']['Handaxe'], 2)
 
     npc.addequipment(choose("Choose one: ", ["Dungeoneer's pack","Explorer's pack"]))
 
@@ -110,6 +110,7 @@ def level1(npc):
 You adopt a particular style of fighting as your specialty. Choose one of the [styles](Styles.md) available. You can't take a Fighting Style option more than once, even if you later get to choose again.
 
 ```
+    print(globals().keys())
     choosestyle(npc)
 ```
 
@@ -143,7 +144,7 @@ The archetype you choose grants you traits at 3rd level and again at 7th, 10th, 
 ```
 def level3(npc):
     # Choose subclass
-    (subclassname, subclassmod) = choose("Choose a Martial Archetype:", subclasses)
+    subclassmod = choose("Choose a Martial Archetype:", childmods)
     npc.addsubclass(subclassmod)
 ```
 
@@ -151,9 +152,7 @@ def level3(npc):
 When you reach 4th level, and again at 6th, 8th, 12th, 14th, 16th, and 19th level, you can increase one ability score of your choice by 2, or you can increase two ability scores of your choice by 1. As normal, you can't increase an ability score above 20 using this feature.
 
 ```
-def level4(npc): 
-    print(globals())
-    abilityscoreincrease(npc)
+def level4(npc): abilityscoreincrease(npc)
 def level6(npc): abilityscoreincrease(npc)
 def level8(npc): abilityscoreincrease(npc)
 def level12(npc): abilityscoreincrease(npc)
