@@ -220,11 +220,12 @@ class Action(Feature):
     def __init__(self, title, text, recharges=None, uses=None):
         Feature.__init__(self, title, text, recharges, uses)
 
-# This can be innate spellcasting, class-based spellcasting, or PactMagic.
-# I think any sort of psionic or other abilities could fit in here as well.
-# Any ability that can cast a spell as an Action is Casting as far as
-# this tool is concerned.
 class Casting(Action):
+    """
+    Base class for any Action that can cast a spell: innate spellcasting, 
+    class-based spellcasting, PactMagic, psionics, whatever.
+    """
+
     def __init__(self, title, ability, text="PLACEHOLDER TEXT",):
         Action.__init__(self, title, text, "long rest")
         self.ability = ability # TODO: Verify ability is one of INT, WIS, or CHA
@@ -241,6 +242,10 @@ class Casting(Action):
         return f"**Spell Attack Bonus: +{sab}** **Spell Save DC {sdc}** "
 
 class InnateCasting(Casting):
+    """
+    Those casting abilities that don't follow the usual rules around spell slots.
+    Currently generalized as at-will, 3/day, or 1/day spellcasting.
+    """
     def __init__(self, innatetype, ability="CHA", text=""):
         Casting.__init__(self, innatetype + " Casting", ability, text)
         self.recharges = "long rest"
@@ -260,33 +265,12 @@ class InnateCasting(Casting):
         # by the StatBlock's emitMD.
         return text
 
-# Let's run with the idea that full casters always have the same
-# levels-to-slots table, until proven otherwise. Deviants can always
-# create their own Casting subclass, right?
-class FullSpellcasting(Casting):
-    slottable = {
-        1: [2],
-        2: [3],
-        3: [4,2],
-        4: [],
-        5: [],
-        6: [],
-        7: [],
-        8: [],
-        9: [],
-        10: [],
-        11: [],
-        12: [],
-        13: [],
-        14: [],
-        15: [],
-        16: [],
-        17: [],
-        18: [],
-        19: [],
-        20: [],
-    }
-
+class Spellcasting(Casting):
+    """
+    The root base class for any form of class-based casting, since the
+    difference between a full and half spellcaster appears solely to be
+    the number of slots available at each experience level.
+    """
     def __init__(self, classmod, ability):
         Casting.__init__(self, classmod.name + " Casting", ability)
         self.classmod = classmod
@@ -295,6 +279,9 @@ class FullSpellcasting(Casting):
         self.maxspellsknown = 0
         self.spellsprepared = {1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: [], 8: [], 9: []}
         self.spellsalwaysprepared = []
+
+    # Derived classes must override
+    def slottable(self): return {}
 
     def __str__(self):
         text = f"Uses {self.ability}. " + self.spellattackanddctext() + " "
@@ -308,7 +295,7 @@ class FullSpellcasting(Casting):
         # Print out slot table
         if len(self.cantripsknown) > 0:
             text += f">* *Cantrips*: {','.join(self.cantripsknown)}\n>\n"
-        slots = FullSpellcasting.slottable[self.npc.levels(self.classmod)]
+        slots = self.slottable()[self.npc.levels(self.classmod)]
         for s in range(1,10):
             if slots[s] > 0:
                 text += f">* *{cardinal(s)}-level ({slots[s]} slots):* \n"
@@ -316,10 +303,54 @@ class FullSpellcasting(Casting):
 
         return f"***{self.title}.*** {text}"
 
-class HalfSpellcasting(Casting): pass
+class FullSpellcasting(Spellcasting):
+    def slottable(self):
+        return {
+            1: [2],
+            2: [3],
+            3: [4,2],
+            4: [],
+            5: [],
+            6: [],
+            7: [],
+            8: [],
+            9: [],
+            10: [],
+            11: [],
+            12: [],
+            13: [],
+            14: [],
+            15: [],
+            16: [],
+            17: [],
+            18: [],
+            19: [],
+            20: [],
+        }
 
-# Do I really want to mess around with this?
-class MulticlassSpellcasting(Casting): pass
+class HalfSpellcasting(Spellcasting):
+    def slottable(self):
+        return {
+            1: [0],
+            2: [0],
+            3: [2],
+            4: [3],
+            5: [4,2],
+            6: [],
+            7: [],
+            8: [],
+            9: [],
+            10: [],
+            11: [],
+            12: [],
+            13: [],
+            14: [],
+            15: [],
+            16: [],
+            17: [],
+            18: [],
+            19: [],
+            20: [],        }
 
 class BonusAction(Feature):
     def __init__(self, title, text, uses=None, recharges=None):
@@ -333,10 +364,12 @@ class LairAction(Feature):
     def __init__(self, title, text, uses=None, recharges=None):
         Feature.__init__(self, title, text, uses, recharges)
 
-# Specifically for melee attack Actions; produces text like:
-# "***Club.*** *Melee Weapon Attack:* +{proficiency bonus + STRbonus} to hit, 
-# 5ft., one target. Hit: 1d4 + {STRbonus} bludgeoning damage."
 class MeleeAttack(Action):
+    """
+    Represents a melee attack Action; produces text like:
+    "***Club.*** *Melee Weapon Attack:* +{proficiency bonus + STRbonus} to hit, 
+    5ft., one target. Hit: 1d4 + {STRbonus} bludgeoning damage."
+    """
     def __init__(self, title, dmgamt, dmgtype, properties=None):
         Action.__init__(self, title, "")
         self.dmgamt = dmgamt
@@ -357,10 +390,12 @@ class MeleeAttack(Action):
         text += f"Hit: {self.dmgamt} + {self.npc.STRbonus()} {self.dmgtype}"
         return text
 
-# Specifically for ranged attack Actions; produces text like:
-# "***Shortbow.*** *Ranged Weapon Attack:* +{proficiency bonus + DEXbonus} to hit, 
-# range 80/200, one target. Hit: 1d4 + {STRbonus} bludgeoning damage."
 class RangedAttack(Action):
+    """
+    Specifically for ranged attack Actions; produces text like:
+    "***Shortbow.*** *Ranged Weapon Attack:* +{proficiency bonus + DEXbonus} to hit, 
+    range 80/200, one target. Hit: 1d4 + {STRbonus} bludgeoning damage."
+    """
     def __init__(self, title, range, dmgamt, dmgtype, properties=None):
         Action.__init__(self, title, "")
         self.tohit = 0
@@ -883,6 +918,11 @@ def spelllinkify(name):
     linkdest = name.lower().replace(' ','-').replace("'","")
     return f"[{name}]({ONLINEROOT}/magic/spells/{linkdest}/)"
 
+def iscaster(npc):
+    for act in npc.actions:
+        if isinstance(act, Casting):
+            return True
+    return False
 
 def choosefromlist(self, inputlist : list):
     choicelist = []
@@ -1065,15 +1105,13 @@ moduleglobals = {
     "choose": shell.choose,
 
     # Some helper methods
+    "iscaster": iscaster,
     "creaturelink": creaturelinkify,
     "itemlink": itemlinkify,
     "spelllink": spelllinkify,
-
-    # Utility methods of our own
     "dieroll": dieroll,
     "randomfrom": randompick,
     "randomint": randomint,
-    #"randompkg": random,
 
     # Character-related pieces
     "Feature": Feature,
@@ -1086,6 +1124,7 @@ moduleglobals = {
     "Casting": Casting,
     "InnateCasting": InnateCasting,
     "FullSpellcasting": FullSpellcasting,
+    "HalfSpellcasting": HalfSpellcasting,
 }
 
 # Take a path, and if it's a file, load a singular module.
@@ -1293,12 +1332,12 @@ def main():
         prog='NPCBuilder',
         description='A tool for generating 5th-ed NPCs using PC rules/templates'
 	)
-    parser.add_argument('--verbosity', choices=['quiet', 'verbose'])
-    parser.add_argument('--version', action='version', version='%(prog)s 0.1')
+    parser.add_argument("--nop", help="Do nothing after loading; this is to test the module-loading initialization")
+    parser.add_argument('--randomize', help="List of things to generate randomly ahead of time (interactive only)")
     parser.add_argument('--savepy', help="Which modules to save literate-parsed Python code (into ./Python)")
     parser.add_argument('--scripts', nargs='*', help="A list of files to use as scripted input")
-    parser.add_argument('--randomize', help="List of things to generate randomly ahead of time (interactive only)")
-    parser.add_argument("--nop", help="Do nothing after loading; this is to test the module-loading initialization")
+    parser.add_argument('--verbosity', choices=['quiet', 'verbose'])
+    parser.add_argument('--version', action='version', version='%(prog)s 0.1')
     args = parser.parse_args()
 
     # Logging off, on, or a lot?
@@ -1308,7 +1347,6 @@ def main():
         elif args.verbosity == 'quiet':
             logging.basicConfig(level = logging.WARNING)
     else:
-        print("Running non-verbose")
         logging.basicConfig(level = logging.INFO)
 
     # Save the loaded literate Python somewhere (for easier debugging)?
@@ -1324,7 +1362,6 @@ def main():
     loadroot(REPOROOT + "Feats")
     #loadrootmodule(REPOROOT + "Creatures") # <-- this will be an interesting day
     fixuproots()
-
 
     if args.nop != None: return
 

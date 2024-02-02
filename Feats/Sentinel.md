@@ -10,6 +10,6 @@ name = 'Sentinel'
 description = "***Feat: Sentinel.*** You have mastered techniques to take advantage of every drop in any enemy's guard."
 def prereq(npc): return True
 def apply(npc):
-    npc.traits.append("***Sentinel.*** When you hit a creature with an opportunity attack, the creature's speed becomes 0 for the rest of the turn. Creatures provoke opportunity attacks from you even if they take the Disengage action before leaving your reach.")
-    npc.reactions.append("***Sentinel.*** When a creature within 5 feet of you makes an attack against a target other than you (and that target doesn't have this feat), you can make a melee weapon attack against the attacking creature.")
+    npc.append(Feature("Sentinel", "When you hit a creature with an opportunity attack, the creature's speed becomes 0 for the rest of the turn. Creatures provoke opportunity attacks from you even if they take the Disengage action before leaving your reach.") )
+    npc.append(Reaction("Sentinel", "When a creature within 5 feet of you makes an attack against a target other than you (and that target doesn't have this feat), you can make a melee weapon attack against the attacking creature.") )
 ```
