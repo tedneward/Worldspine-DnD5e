@@ -85,8 +85,9 @@ def choosefeat(npc):
     choosablelist = []
 
     for f in childmods:
-        if f.name not in npc.feats:
-            choosablelist.append(f)
+        log("Examining " + f.name)
+        if f.name not in npc.feats and f.prereq(npc):
+                choosablelist.append(f)
 
     featmod = choose("Pick a Feat: ", choosablelist)
     npc.applyfeat(featmod)
@@ -96,11 +97,6 @@ def choosefeatorasi(npc):
     choice = choose("Take a Feat or an Ability Score Increase? ", ['Ability','Feat'])
     if choice == 'Ability': abilityscoreincrease(npc)
     else: choosefeat(npc)
-
-exports = { 
-    "choosefeatorasi": choosefeatorasi,
-    "choosefeat": choosefeat 
-}
 
 def init(): pass
 

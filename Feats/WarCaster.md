@@ -10,7 +10,8 @@ You have practiced casting spells in the midst of combat, learning techniques th
 ```
 name = 'War Caster'
 description = "***Feat: War Caster.*** You have practiced casting spells in the midst of combat, learning useful techniques."
-def prereq(npc): return iscaster(npc)
+def prereq(npc):
+    return iscaster(npc)
 def apply(npc):
     npc.append(Feature("War Caster: Concentration", "You have advantage on Constitution saving throws that you make to maintain your concentration on a spell when you take damage.") )
     npc.append(Feature("War Caster: Somaticism", "You can perform the somatic components of spells even when you have weapons or a shield in one or both hands.") )

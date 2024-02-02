@@ -6,8 +6,7 @@ When you gain this feat, choose one of the following damage types: acid, cold, f
 ```
 name = 'Elemental Adept'
 description = "***Feat: Elemental Adept.*** You have affinity for spells of elemental power."
-def prereq(npc): 
-    return True #len(npc.spellcasting) > 0
+def prereq(npc): return iscaster(npc)
 def apply(npc):
     element = choose("Choose one: ", ['acid', 'cold', 'fire', 'lightning', 'thunder'])
     npc.append(Feature("Elemental Adept", "Spells you cast ignore resistance to {element}. In addition, when you roll damage for a spell you cast that deals {element} damage, you can treat any 1 on a damage die as a 2.") )

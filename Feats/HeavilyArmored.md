@@ -9,7 +9,11 @@ You have trained to master the use of heavy armor, gaining the following benefit
 ```
 name = 'Heavily Armored'
 description = "***Feat: Heavily Armored.*** You have trained to master the use of heavy armor."
-def prereq(npc): return True
+def prereq(npc): 
+    for arm in Equipment.armor['medium']:
+        if arm in npc.proficiencies:
+            return True
+    return False
 def apply(npc):
     npc.STR += 1
 

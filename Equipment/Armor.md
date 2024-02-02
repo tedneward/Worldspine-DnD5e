@@ -64,14 +64,11 @@ Name         | Cost | Armor Class | Strength | Stealth | Weight
 
 ```
 armor['medium'] = {
-    'Hide armor' : 12, 
-    'Chain shirt' : 13,
-    'Plated leather' : 13,
-    'Wood' : 13,
-    'Scale mail' : 14, 
-    'Breastplate' : 14, 
-    'Half-plate' : 15,
-    'Kozane' : 15
+    'Hide armor' : Armor("Hide", 20, 12), 
+    'Chain shirt' : Armor("Chain shirt", 20, 13),
+    'Scale mail' : Armor("Scale mail", 45, 14), 
+    'Breastplate' : Armor("Leather armor", 20, 14), 
+    'Half-plate' : Armor("Half-plate", 40, 15),
 }
 ```
 
@@ -89,11 +86,10 @@ Name        | Cost | Armor Class | Strength | Stealth | Weight
 
 ```
 armor['heavy'] = {
-    'Ring mail' : 14,
-    'Lorica segmentata' : 15,
-    'Chain mail' : 16,
-    'Splint armor' : 17,
-    'Plate armor' : 18
+    'Ring mail' : Armor("Ring mail", 40, 14),
+    'Chain mail' : Armor("Chain mail", 55, 16),
+    'Splint armor' : Armor("Splint armor", 60, 17),
+    'Plate armor' : Armor("Plate", 65, 18)
 }
 ```
 

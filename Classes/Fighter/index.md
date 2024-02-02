@@ -152,7 +152,7 @@ def level3(npc):
 When you reach 4th level, and again at 6th, 8th, 12th, 14th, 16th, and 19th level, you can increase one ability score of your choice by 2, or you can increase two ability scores of your choice by 1. As normal, you can't increase an ability score above 20 using this feature.
 
 ```
-def level4(npc): abilityscoreincrease(npc)
+def level4(npc): choosefeatorasi(npc) #abilityscoreincrease(npc)
 def level6(npc): abilityscoreincrease(npc)
 def level8(npc): abilityscoreincrease(npc)
 def level12(npc): abilityscoreincrease(npc)
