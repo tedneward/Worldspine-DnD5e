@@ -1350,18 +1350,17 @@ def main():
 
     # Logging off, on, or a lot?
     if args.verbosity != None:
-        if args.verbosity == 'verbose':
+        if args.verbosity == 'quiet':
+            logging.basicConfig(level = logging.ERROR, force=True)
+        elif args.verbosity == 'verbose':
             logging.basicConfig(level = logging.INFO, force=True)
         elif args.verbosity == 'loud':
             logging.basicConfig(level = logging.DEBUG, force=True)
-        elif args.verbosity == 'quiet':
-            logging.basicConfig(level = logging.ERROR, force=True)
     else:
         logging.basicConfig(level = logging.WARNING, force=True)
 
     # Save the loaded literate Python somewhere (for easier debugging)?
-    if args.savepy != None:
-        SAVEPY = args.savepy
+    if args.savepy != None: SAVEPY = args.savepy
     
     # Load modules, have them bootstrap in turn
     loadroot(REPOROOT + "Abilities")
