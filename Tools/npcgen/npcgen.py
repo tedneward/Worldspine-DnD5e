@@ -1023,8 +1023,7 @@ def dieroll(dpattern : str) -> int:
         accum += random.randint(1, int(size))
     return accum + adj
 
-def randomint(start : int, end : int) -> int:
-    return random.randint(start, end)
+def randomint(start : int, end : int) -> int: return random.randint(start, end)
 
 def randompick(src):
     if isinstance(src, list):
@@ -1049,9 +1048,8 @@ def spelllinkify(name):
     return f"[{name}]({ONLINEROOT}/magic/spells/{linkdest}/)"
 
 def iscaster(npc):
-    for act in npc.actions:
-        if isinstance(act, Casting):
-            return True
+    for act in npc.actions: 
+        if isinstance(act, Casting): return True
     return False
 
 ##########################
@@ -1224,7 +1222,7 @@ def fixuproots() -> None:
 
 # Execute literate code using moduleglobals and passed litlocals
 def litexec(source : str, litlocals : dict[str, object]) -> None:
-    #debug("============ Executing lit Python with moduleglobals = " + dumpfirstlevel(moduleglobals))
+    debug("============ Executing lit Python with moduleglobals = " + str(moduleglobals.keys()))
     exec(source, moduleglobals, litlocals)
     
 
@@ -1253,7 +1251,7 @@ def generate(randomlist=[]):
             litexec("Abilities.random(npc)", { "npc" : npc })
             abilities = True
         elif r == 'Background':
-            #litexec("Background.random(npc)", { "npc" : npc })
+            litexec("Background.random(npc)", { "npc" : npc })
             background = True
         elif r == 'Gender': 
             npc.gender = randompick(['Male', 'Female'])
@@ -1280,7 +1278,9 @@ def generate(randomlist=[]):
             print("Scores: ", scores)
             npc.addabilities(scores)
         elif which == 'Background':
-            print("Background!")
+            background = shell.choosefromlist(moduleglobals['roots']['Backgrounds'].childmods)
+            background.apply(npc)
+            npc.description.append(background.description)
         elif which == 'Gender':
             npc.gender = shell.choosefromlist(['Male', 'Female'])
         elif which == 'Race':
@@ -1365,7 +1365,7 @@ def main():
     # Load modules, have them bootstrap in turn
     loadroot(REPOROOT + "Abilities")
     loadroot(REPOROOT + "Races")
-    #loadrootmodule(REPOROOT + "Backgrounds")
+    loadroot(REPOROOT + "Backgrounds")
     loadroot(REPOROOT + "Classes")
     loadroot(REPOROOT + "Equipment")
     loadroot(REPOROOT + "Feats")
