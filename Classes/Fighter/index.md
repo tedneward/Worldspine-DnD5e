@@ -60,7 +60,21 @@ def everylevel(npc): npc.hits('d10')
 
 **Skills**: Choose two skills from Acrobatics, Animal Handling, Athletics, History, Insight, Intimidation, Perception, and Survival
 
-Equipment
+```
+def level1(npc):
+    npc.addproficiency("STR")
+    npc.addproficiency("CON")
+
+    for arm in Equipment.armor['all']: npc.addproficiency(arm)
+
+    for wpn in Equipment.weapons['all']: npc.addproficiency(wpn)
+
+    skills = ['Acrobatics', 'Animal Handling', 'Athletics', 'History', 'Insight', 'Intimidation', 'Perception', 'Survival']
+    chooseskill(npc, skills)
+    chooseskill(npc, skills)
+```
+
+**Equipment**:
 
 * (a) chain mail or (b) leather, longbow, and 20 arrows
 * (a) a martial weapon and a shield or (b) two martial weapons
@@ -68,40 +82,27 @@ Equipment
 * (a) a dungeoneer's pack or (b) an explorer's pack
 
 ```
-def level1(npc):
-    npc.addproficiency("STR")
-    npc.addproficiency("CON")
-
-    armor = Equipment.armor
-    for arm in armor['light'] | armor['medium'] | armor['heavy'] | armor['shields']:
-        npc.addproficiency(arm)
-
-    weapons = Equipment.weapons
-    for wpn in weapons['simple-melee'] | weapons['martial-melee'] | weapons['simple-ranged'] | weapons['martial-ranged']:
-        npc.addproficiency(wpn)
-
-    skills = ['Acrobatics', 'Animal Handling', 'Athletics', 'History', 'Insight', 'Intimidation', 'Perception', 'Survival']
-    Abilities.chooseskill(npc, skills)
-    Abilities.chooseskill(npc, skills)
-
-    availwpns = weapons['martial-melee'] | weapons['martial-ranged']
-    (_, chosen) = choose("Choose a weapon: ", availwpns)
-    npc.addequipment(chosen)
-
-    availwpns = weapons['martial-melee'] | weapons['martial-ranged'] | armor['shields']
-    (_, chosen) = choose("Choose a weapon: ", availwpns)
-    npc.addequipment(chosen)
-
-    chosen = choose("Choose one: ", ['Light crossbow', 'Two handaxes'])
-    if chosen == 'Light crossbow':
-        npc.addequipment(weapons['simple-ranged']['Light Crossbow'])
+    aorb = choose("Choose: ", ['Chain mail', 'Leather armor, longbow and 20 arrows'])
+    if aorb == 'Chain mail':
+        npc.addequipment(Equipment.armor['all']['Chain mail'])
     else:
-        npc.addequipment(weapons['simple-melee']['Handaxe'], 2)
+        npc.addequipment(Equipment.armor['all']['Leather armor'])
+        npc.addequipment(Equipment.weapons['all']['Longbow'])
+
+    (_, chosen) = choose("Choose a weapon: ", Equipment.weapons['martial'])
+    npc.addequipment(chosen)
+
+    avail = Equipment.weapons['martial'] | Equipment.armor['shields']
+    (_, chosen) = choose("Choose a weapon or a shield: ", avail)
+    npc.addequipment(chosen)
+
+    chosen = choose("Choose either: ", ['Light crossbow', 'Two handaxes'])
+    if chosen == 'Light crossbow':
+        npc.addequipment(Equipment.weapons['simple-ranged']['Light Crossbow'])
+    else:
+        npc.addequipment(Equipment.weapons['simple-melee']['Handaxe'], 2)
 
     npc.addequipment(choose("Choose one: ", ["Dungeoneer's pack","Explorer's pack"]))
-
-    npc.addequipment("Chain mail")
-    npc.armorclass['Chain mail'] = 16
 ```
 
 ## Fighting Style
@@ -110,7 +111,6 @@ def level1(npc):
 You adopt a particular style of fighting as your specialty. Choose one of the [styles](Styles.md) available. You can't take a Fighting Style option more than once, even if you later get to choose again.
 
 ```
-    print(globals().keys())
     choosestyle(npc)
 ```
 
@@ -153,12 +153,12 @@ When you reach 4th level, and again at 6th, 8th, 12th, 14th, 16th, and 19th leve
 
 ```
 def level4(npc): choosefeatorasi(npc) #abilityscoreincrease(npc)
-def level6(npc): abilityscoreincrease(npc)
-def level8(npc): abilityscoreincrease(npc)
-def level12(npc): abilityscoreincrease(npc)
-def level14(npc): abilityscoreincrease(npc)
-def level16(npc): abilityscoreincrease(npc)
-def level19(npc): abilityscoreincrease(npc)
+def level6(npc): choosefeatorasi(npc) #abilityscoreincrease(npc)
+def level8(npc): choosefeatorasi(npc) #abilityscoreincrease(npc)
+def level12(npc): choosefeatorasi(npc) #abilityscoreincrease(npc)
+def level14(npc): choosefeatorasi(npc) #abilityscoreincrease(npc)
+def level16(npc): choosefeatorasi(npc) #abilityscoreincrease(npc)
+def level19(npc): choosefeatorasi(npc) #abilityscoreincrease(npc)
 ```
 
 ### Martial Versatility

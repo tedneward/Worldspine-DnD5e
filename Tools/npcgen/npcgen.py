@@ -4,7 +4,6 @@ import argparse
 import os
 import logging
 import random
-import traceback
 import types
 
 # This script parses the markdown files in specified locations
@@ -14,19 +13,12 @@ import types
 
 SAVEPY = os.getenv('SAVE_PY')
 
+##########################
+# I/O infrastructure
 def error(*values): logging.error(*values)
 def warn(*values): logging.warning(*values)
 def log(*values): logging.info(*values)
 def debug(*values): logging.debug(*values)
-
-def cardinal(number):
-    if number == 1: return "1st"
-    elif number == 2: return "2nd"
-    elif number == 3: return "3rd"
-    else: return str(number) + "th"
-
-##########################
-# I/O infrastructure
 
 class Input:
     def output(self, *values):
@@ -37,49 +29,86 @@ class Input:
         # NOP; Expected to be overridden in derived classes
         pass
 
+    def inputavailable(self) -> bool: return False
+
     def choosefromlist(self, inputlist : list):
-        choicelist = []
-
-        if isinstance(inputlist[0], str):
+        def choosefromstringlist(inputlist : list[str]):
             choicelist = inputlist.copy()
-        elif getattr(inputlist[0], "name", None) != None:
-            choicemap = {}
-            for item in inputlist:
-                choicemap[item.name] = item
-            (_, choice) = self.choosefrommap(choicemap)
-            return choice
-        elif getattr(inputlist[0], "__name__", None) != None:
-            choicemap = {}
-            for item in inputlist:
-                choicemap[item.__name__] = item
-            (_, choice) = self.choosefrommap(choicemap)
-            return choice
-        elif getattr(inputlist[0], "__str__", None) != None:
-            for item in inputlist:
-                choicelist.append(str(item))
-        else:
-            error("Inputlist does not appear sortable: " + str(inputlist))
-            choicelist = inputlist
 
-        choicelist.sort()
-        choiceidx = 0
-        for c in choicelist:
-            choiceidx += 1
-            self.output(f'{choiceidx}: {c}')
+            choicelist.sort()
+            choiceidx = 0
+            for c in choicelist:
+                choiceidx += 1
+                self.output(f'{choiceidx}: {c}')
 
-        response = None
-        while response == None:
-            response = self.input()
-            if not response.isnumeric:
-                response = None
-            if int(response) < 1:
-                response = None
-            if int(response) > len(choicelist):
-                response = None
+            response = None
+            while response == None:
+                response = self.input()
 
-        response = int(response) - 1 # Account for z'ero-based 'index
-        self.output("You chose " + choicelist[response])
-        return choicelist[response]
+                if response == 'random':
+                    response = inputlist[random.randint(0,len(inputlist)-1)]
+                elif response.isdigit():
+                    responseidx = int(response) - 1
+                    if responseidx < 1:
+                        response = None
+                    if responseidx > len(choicelist):
+                        response = None
+                    response = choicelist[responseidx]
+                else:
+                    if inputlist.index(response) > -1:
+                        break
+                    self.output("Your response of " + response + " doesn't seem to be in the list")
+                    response = None
+            self.output("You chose " + str(response))
+            return response
+
+        def choosefromitemslist(inputlist : list[object]):
+            name = ""
+            if getattr(inputlist[0], "name", None) != None: name = "name"
+            elif getattr(inputlist[0], "__name__", None) != None: name = "__name__"
+            else:
+                error("inputlist" + str(inputlist) + " has neither a name nor a __name__")
+                return None
+
+            inputmap = {}
+            for item in inputlist:
+                itemname = getattr(item, name, "INVALID NAME")
+                inputmap[itemname] = item
+
+            choicelist = list(inputmap.keys())
+            choicelist.sort()
+
+            choiceidx = 0
+            for c in choicelist:
+                choiceidx += 1
+                self.output(f'{choiceidx}: {c}')
+
+            response = None
+            while response == None:
+                response = self.input()
+
+                if response == 'random': response = inputlist[random.randint(0,len(inputlist)-1)]
+                elif response.isdigit():
+                    responseidx = int(response) - 1
+                    if responseidx < 1:
+                        response = None
+                    if responseidx > len(choicelist):
+                        response = None
+                    response = inputmap[choicelist[responseidx]]
+                else:
+                    if choicelist.index(response) > -1:
+                        response = inputmap[response]
+                        break
+                    else:
+                        self.output("Your response of " + response + " doesn't seem to be in the list")
+                        response = None
+
+            self.output("You chose " + str(response))
+            return response
+
+        # If this is an actual list of string options, proceed
+        if isinstance(inputlist[0], str): return choosefromstringlist(inputlist)
+        elif getattr(inputlist[0], "name", None) != None: return choosefromitemslist(inputlist)
 
     def choosefrommap(self, choicemap):
         keys = list(choicemap.keys())
@@ -91,20 +120,29 @@ class Input:
             self.output(f'{choiceidx}: {k} ({c})')
 
         # Interactive
-        response = None
-        while response == None:
+        while True:
             response = self.input()
-            if not response.isnumeric:
+            if response == 'random':
+                responsekey = keys[random.randint(0, len(keys) - 1)]
+                self.output("You chose " + responsekey)
+                return (responsekey, choicemap[responsekey])
+            elif response.isnumeric():
+                if int(response) < 1:
+                    response = None
+                elif int(response) > len(choicemap):
+                    response = None
+                else:
+                    responseidx = int(response) - 1 # Account for zero-based index
+                    responsekey = keys[responseidx]
+                    self.output("You chose " + responsekey)
+                    return (responsekey, choicemap[responsekey])
+            elif response in keys:
+                responsekey = response
+                self.output("You chose " + responsekey)
+                return (responsekey, choicemap[responsekey])
+            else:
+                self.output("Unrecognized response: " + str(response))
                 response = None
-            if int(response) < 1:
-                response = None
-            if int(response) > len(choicemap):
-                response = None
-
-        responseidx = int(response) - 1 # Account for z'ero-based 'index
-        responsekey = keys[responseidx]
-        self.output("You chose " + str((responsekey, choicemap[responsekey])))
-        return (responsekey, choicemap[responsekey])
 
     def choose(self, prompt, choices=None):
         self.output(prompt)
@@ -122,24 +160,55 @@ class TerminalInput(Input):
 
     def input(self, prompt : str = "") -> str: return input(prompt + " >>> ")
 
+    def inputavailable(self) -> bool: return True
+
 class ScriptedInput(Input):
     def __init__(self, inputfile):
         self.inputfile = inputfile
         self.answers = []
 
-        # TODO Parse inputfile, load answers, capture them.
+        # Parse inputfile, load answers, capture them.
         # Then we can feed each one as input until we run out.
+        scriptfile = open(self.inputfile, 'r')
+        with scriptfile:
+            alltext = scriptfile.readlines()
+            for text in alltext:
+                if text[0] == '#': continue # EOL comment
+                self.answers += text.split(",")
+        
+        log("Scripted input answers: " + str(self.answers))
+
+    def getnextanswer(self) -> str:
+        if len(self.answers) > 0:
+            return self.answers.pop(0)
+        else:
+            error("Ran out of scripted input!!!")
+            raise BaseException("ScriptedInput " + self.inputfile + " ran out of input")
 
     def output(self, *values): print(*values)
 
-    def input(self, prompt : str = "") -> str: return input(prompt + ">>> ")
+    def input(self, prompt : str = "") -> str:
+        response = self.getnextanswer().strip()
+        self.output(prompt, " >>> ", response)
+        return response
+
+    def inputavailable(self) -> bool: return len(self.answers) > 0
 
 class RandomInput(Input):
     def output(self, *values): print(*values)
 
+    def inputavailable(self) -> bool: return True
+
     def choosefromlist(self, choicelist : list):
         response = random.randint(0, len(choicelist)-1)
-        self.output("I chose " + choicelist[response])
+        if isinstance(choicelist[0], str):
+            self.output("I chose " + choicelist[response])
+        elif getattr(choicelist[0], "name"):
+            self.output("I chose " + choicelist[response].name)
+        elif getattr(choicelist[0], "__name__"):
+            self.output("I chose " + choicelist[response].__name__)
+        else:
+            self.output("I chose item #" + str(response))
         return choicelist[response]
 
     def choosefrommap(self, choicemap):
@@ -155,8 +224,21 @@ class RandomInput(Input):
 class Shell:
     def __init__(self, io):
         self.io = io
+        self.iostack = [io]
 
-    def input(self, prompt : str = "") -> str: return self.io.input(prompt)
+    def push(self, io): 
+        self.iostack.insert(0, io)
+        self.io = self.iostack[0]
+
+    def pop(self): 
+        self.iostack.pop(0)
+        self.io = self.iostack[0]
+
+    def input(self, prompt : str = "") -> str: 
+        while not self.io.inputavailable():
+            self.pop()
+
+        return self.io.input(prompt)
 
     def output(self, *values): return self.io.output(*values)
 
@@ -190,13 +272,16 @@ class Feature:
 
     def evaltext(self): litexec('self.text = f"' + self.text + '"', { "self" : self })
 
+    def __lt__(self, obj): return self.title < obj.title
+
+    def __eq__(self, obj): return self.title == obj.title
+
     def __str__(self):
         # Prepare text
         self.evaltext()
         text = self.text.replace('\n', '\n>')
 
         posttitletext = ""
-        print("Feature " + self.title + " __str__: " + str(self.recharges) + " / " + str(self.uses))
 
         if self.recharges == None:
             if self.uses == None:
@@ -749,12 +834,21 @@ class StatBlock:
 
         # Lint the StatBlock for any warnings
 
+        # Go through all the Equipment, look for Armor, set armorclass appropriately
+        # (We should really move this into the getarmorclass() method in emitmd().)
+        for equip in self.equipment:
+            if getattr(equip, "ac", None) != None:
+                self.armorclass[equip.name] = equip.ac
+            elif getattr(equip, "acbonus", None) != None:
+                self.armorclass[equip.name] = equip.acbonus
+
         # Sort lists by alphabetical order
         self.actions.sort()
         self.bonusactions.sort()
         self.reactions.sort()
         self.lairactions.sort()
-        self.equipment.sort()
+        #self.equipment.sort()
+        
         # Do NOT sort description!
 
     def emitmd(self) -> str:
@@ -875,6 +969,12 @@ class StatBlock:
 
 ##########################
 # Some utility methods for use within the literate modules
+def cardinal(number):
+    if number == 1: return "1st"
+    elif number == 2: return "2nd"
+    elif number == 3: return "3rd"
+    else: return str(number) + "th"
+
 def dieroll(dpattern : str) -> int:
     adj = 0
     if dpattern.find("+") > -1:
@@ -923,142 +1023,6 @@ def iscaster(npc):
         if isinstance(act, Casting):
             return True
     return False
-
-def choosefromlist(self, inputlist : list):
-    choicelist = []
-
-    # If this is an actual list of string options, proceed
-    if isinstance(inputlist[0], str):
-        choicelist = inputlist.copy()
-        choicelist.sort()
-        choiceidx = 0
-        for c in choicelist:
-            choiceidx += 1
-            self.output(f'{choiceidx}: {c}')
-
-        # Now capture the response and determine selection
-        response = None
-        while response == None:
-            response = self.input()
-            if not response.isnumeric:
-                response = None
-            if int(response) < 1:
-                response = None
-            if int(response) > len(choicelist):
-                response = None
-
-        response = int(response) - 1 # Account for z'ero-based 'index
-        self.output("You chose " + choicelist[response])
-        return choicelist[response]
-
-    # Otherwise, build out a map and choose from that
-    else:
-        choicemap = {}
-        if getattr(inputlist[0], "name", None) != None:
-            for item in inputlist:
-                choicemap[item.name] = item
-        elif getattr(inputlist[0], "__name__", None) != None:
-            for item in inputlist:
-                choicemap[item.__name__] = item
-        else:
-            warn("We can't figure out what to display")
-            return None
-        (label, choice) = self.choosefrommap(choicemap)
-        return choice
-
-def choosefrommap(self, choicemap):
-    keys = list(choicemap.keys())
-    keys.sort()
-    choiceidx = 0
-    for k in keys:
-        choiceidx += 1
-        c = choicemap[k]
-        self.output(f'{choiceidx}: {k} ({c})')
-
-    # Interactive
-    response = None
-    while response == None:
-        response = self.input()
-        if not response.isnumeric:
-            response = None
-        if int(response) < 1:
-            response = None
-        if int(response) > len(choicemap):
-            response = None
-
-    responseidx = int(response) - 1 # Account for z'ero-based 'index
-    responsekey = keys[responseidx]
-    self.output("You chose " + str((responsekey, choicemap[responsekey])))
-    return (responsekey, choicemap[responsekey])
-
-def choose(self, prompt, choices=None):
-    self.output(prompt)
-    if isinstance(choices, list):
-        return self.choosefromlist(choices)
-    elif isinstance(choices, dict):
-        return self.choosefrommap(choices)
-    elif choices == None:
-        return self.input("")
-    else:
-        error("WTF?!?", choices)
-
-class TerminalInput(Input):
-    def output(self, *values): print(*values)
-
-    def input(self, prompt : str = "") -> str: return input(prompt + " >>> ")
-
-class ScriptedInput(Input):
-    def __init__(self, inputfile):
-        self.inputfile = inputfile
-        self.answers = []
-
-        # TODO Parse inputfile, load answers, capture them.
-        # Then we can feed each one as input until we run out.
-
-    def output(self, *values): print(*values)
-
-    def input(self, prompt : str = "") -> str: return input(prompt + ">>> ")
-
-class RandomInput(Input):
-    def output(self, *values): print(*values)
-
-    def choosefromlist(self, choicelist : list):
-        response = random.randint(0, len(choicelist)-1)
-        if isinstance(choicelist[0], str):
-            self.output("I chose " + choicelist[response])
-        elif getattr(choicelist[0], "name"):
-            self.output("I chose " + choicelist[response].name)
-        elif getattr(choicelist[0], "__name__"):
-            self.output("I chose " + choicelist[response].__name__)
-        else:
-            self.output("I chose item #" + str(response))
-        return choicelist[response]
-
-    def choosefrommap(self, choicemap):
-        keys = list(choicemap.keys())
-        responseidx = random.randint(0, len(keys)-1)
-        responsekey = keys[responseidx]
-        self.output("I chose " + str((responsekey, choicemap[responsekey])))
-        return (responsekey, choicemap[responsekey])
-
-# We need a constant object in place since this gets passed into each of the loaded
-# modules to use as an I/O facility; so we "wrap" the Input object, thus allowing us
-# to replace it without anyone being the wiser.
-class Shell:
-    def __init__(self, io):
-        self.io = io
-
-    def input(self, prompt : str = "") -> str: return self.io.input(prompt)
-
-    def output(self, *values): return self.io.output(*values)
-
-    def choosefromlist(self, choicelist : list): return self.io.choosefromlist(choicelist)
-
-    def choosefrommap(self, choicemap): return self.io.choosefrommap(choicemap)
-
-    def choose(self, prompt, choices=None): return self.io.choose(prompt, choices)
-
-shell = Shell(TerminalInput())
 
 ##########################
 # Module infrastructure
@@ -1225,10 +1189,12 @@ def fixuproots() -> None:
         rootmod = moduleglobals['roots'][rootmodname]
         fixup(rootmod)
 
+# Execute literate code using moduleglobals and passed litlocals
 def litexec(source : str, litlocals : dict[str, object]) -> None:
     #debug("============ Executing lit Python with moduleglobals = " + dumpfirstlevel(moduleglobals))
     exec(source, moduleglobals, litlocals)
     
+
 
 ##########################
 # Main entrypoint and workhorse
@@ -1238,8 +1204,7 @@ def generate(randomlist=[]):
     npc = StatBlock()
 
     # Generate the random bits
-    oldio = shell.io
-    shell.io = RandomInput()
+    shell.push(RandomInput())
 
     abilities = False
     background = False
@@ -1272,7 +1237,8 @@ def generate(randomlist=[]):
     if gender: reqs.remove('Gender')
     if race: reqs.remove('Race')
 
-    shell.io = oldio
+    shell.pop()
+
     while len(reqs) > 0:
         which = shell.choosefromlist(reqs)
         if which == 'Abilities':
@@ -1294,31 +1260,37 @@ def generate(randomlist=[]):
         reqs.remove(which)
 
     # Now randomize some class levels
-    shell.io = RandomInput()
-    for cg in classgen:
-        # We expect Class to look like one of a few flavors:
-        # "Class": random number of levels in a random class/subclass
-        # "Class-(classname)": random number of levels in classname/random-subclass
-        # "Class-(classname)-(level)": level number of levels in classname/random-subclass
-        parts = cg.split('-')
-        if len(parts) == 1:
-            print("Random number of levels in a random class/subclass")
-        elif len(parts) == 2:
-            print("Random number of levels in class/subclass", parts[1])
-        elif len(parts) == 3:
-            print(parts[2],"levels in",parts[1])
-            for _ in range(0, int(parts[2])):
-                classmod = moduleglobals['roots']['Classes'].childmods[parts[1]]
-                npc.addclass(classmod)
+    if len(classgen) > 0:
+        shell.push(RandomInput())
 
-    # Now interactively gen some class levels
-    shell.io = oldio
+        for cg in classgen:
+            # We expect Class to look like one of a few flavors:
+            # "Class": random number of levels in a random class/subclass
+            # "Class-(classname)": random number of levels in classname/random-subclass
+            # "Class-(classname)-(level)": level number of levels in classname/random-subclass
+            parts = cg.split('-')
+            if len(parts) == 1:
+                print("Random number of levels in a random class/subclass")
+            elif len(parts) == 2:
+                print("Random number of levels in class/subclass", parts[1])
+            elif len(parts) == 3:
+                print(parts[2],"levels in",parts[1])
+                for _ in range(0, int(parts[2])):
+                    classmod = moduleglobals['roots']['Classes'].childmods[parts[1]]
+                    npc.addclass(classmod)
 
-    choice = shell.choose(f"Add a new level? {npc.classes}", ['Yes', 'No'])
+        # Now interactively gen some class levels
+        shell.pop()
+
+    choice = "Yes"
+    if npc.levels() > 0:
+        choice = shell.choose(f"Add a new level? (Currently level {npc.levels()})", ['Yes', 'No'])
     while (choice == 'Yes'):
         classmod = shell.choosefromlist(moduleglobals['roots']['Classes'].childmods)
         npc.addclass(classmod)
-        choice = shell.choose(f"Add a new level? {npc.classes}", ['Yes', 'No'])
+        choice = shell.choose(f"Add a new level? (Currently level {npc.levels()})", ['Yes', 'No'])
+
+    npc.freeze()
 
     return npc
 
@@ -1328,26 +1300,31 @@ def main():
 
     logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 
+    print("NPC Generator")
+    print("==============================")
+
     parser = argparse.ArgumentParser(
-        prog='NPCBuilder',
+        prog='NPCGenerator',
         description='A tool for generating 5th-ed NPCs using PC rules/templates'
 	)
     parser.add_argument("--nop", help="Do nothing after loading; this is to test the module-loading initialization")
     parser.add_argument('--randomize', help="List of things to generate randomly ahead of time (interactive only)")
     parser.add_argument('--savepy', help="Which modules to save literate-parsed Python code (into ./Python)")
     parser.add_argument('--scripts', nargs='*', help="A list of files to use as scripted input")
-    parser.add_argument('--verbosity', choices=['quiet', 'verbose'])
+    parser.add_argument('--verbosity', choices=['quiet', 'verbose', 'loud'])
     parser.add_argument('--version', action='version', version='%(prog)s 0.1')
     args = parser.parse_args()
 
     # Logging off, on, or a lot?
     if args.verbosity != None:
         if args.verbosity == 'verbose':
-            logging.basicConfig(level = logging.DEBUG)
+            logging.basicConfig(level = logging.INFO, force=True)
+        elif args.verbosity == 'loud':
+            logging.basicConfig(level = logging.DEBUG, force=True)
         elif args.verbosity == 'quiet':
-            logging.basicConfig(level = logging.WARNING)
+            logging.basicConfig(level = logging.ERROR, force=True)
     else:
-        logging.basicConfig(level = logging.INFO)
+        logging.basicConfig(level = logging.WARNING, force=True)
 
     # Save the loaded literate Python somewhere (for easier debugging)?
     if args.savepy != None:
@@ -1369,12 +1346,12 @@ def main():
     # our PC/NPC, or if we do it interactively.
     if args.scripts != None:
         for script in args.scripts:
-            shell.io = ScriptedInput(script)
+            print("Loading script file", script)
+            shell.push(ScriptedInput(script))
             npc = generate()
             # Write to "{script}.md" file
             print(npc.emitmd())
     else:
-        print("Randomly generating a character's",args.randomize)
         shell.io = TerminalInput()
         npc = None
         if args.randomize != None:

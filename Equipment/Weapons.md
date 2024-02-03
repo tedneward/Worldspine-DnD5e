@@ -19,8 +19,19 @@ class Weapon:
 
     def getactions(self): pass
 
-    def __str__(self):
-        return f"{self.name} ({self.weight} lb)"
+    def getnameorstr(self,obj):
+        if isinstance(obj, Weapon): return obj.name
+        else: return obj
+
+    def __lt__(self, obj): return ((self.name) < self.getnameorstr(obj)) 
+    def __gt__(self, obj): return ((self.name) > self.getnameorstr(obj)) 
+    def __le__(self, obj): return ((self.name) <= self.getnameorstr(obj)) 
+    def __ge__(self, obj): return ((self.name) >= self.getnameorstr(obj)) 
+    def __eq__(self, obj): return (self.name == self.getnameorstr(obj)) 
+  
+    def __repr__(self): return str((self.name, self.weight, self.dmg, self.dmgtype, self.properties))
+        
+    def __str__(self): return f"{self.name} ({self.weight} lb)"
 
 class MeleeWeapon(Weapon):
     def __init__(self, name, weight, dmg, dmgtype, properties=[]):
@@ -190,6 +201,14 @@ Arrows (20) | 1 gp | 1 lb.
 Blowgun needles (50) | 1 gp | 1 lb.
 Crossbow bolts (20) | 1 gp | 1.5 lb.
 Sling bullets (20) | 4 cp | 1.5 lb.
+
+```
+weapons['martial'] = weapons['martial-melee'] | weapons['martial-ranged']
+weapons['simple'] = weapons['simple-melee'] | weapons['simple-ranged']
+weapons['melee'] = weapons['simple-melee'] | weapons['martial-melee']
+weapons['ranged'] = weapons['simple-ranged'] | weapons['martial-ranged']
+weapons['all'] = weapons['simple'] | weapons['martial']
+```
 
 ## Weapon Properties
 Many weapons have special properties related to their use, as shown in the Weapons tables above.

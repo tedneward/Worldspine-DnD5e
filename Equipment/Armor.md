@@ -13,21 +13,22 @@
 armor = {}
 
 class Armor:
-    def __init__(self, name, weight, amt, minstrength=0, stealthpenalty=False):
+    def __init__(self, name, weight, ac, minstrength=0, stealthpenalty=False):
         self.name = name
         self.weight = weight
-        self.amt = amt
+        self.ac = ac
         self.minstrength = minstrength
         self.stealthpenalty = stealthpenalty
 
-    def __str__(self):
-        return self.name + " (" + str(self.weight) + "lb)"
+    def __repr__(self): return str((self.name, self.weight, self.ac, self.minstrength, self.stealthpenalty))
+
+    def __str__(self): return self.name + " (" + str(self.weight) + "lb)"
 
 class Shield:
-    def __init__(self, name, weight, bonus, minstrength=0):
+    def __init__(self, name, weight, acbonus, minstrength=0):
         self.name = name
         self.weight = weight
-        self.bonus = bonus
+        self.acbonus = acbonus
         self.minstrength = 0
 
     def __str__(self):
@@ -146,6 +147,8 @@ This armor is made of narrow vertical strips of metal riveted to a backing of le
 Made from tough but flexible leather, studded leather is reinforced with close-set rivets or spikes.
 
 ```
+armor['all'] = armor['light'] | armor['medium'] | armor['heavy'] | armor['shields']
+
 def init():
     parent.armor = armor
 ```

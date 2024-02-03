@@ -64,10 +64,10 @@ def apply(npc):
     npc.append(Feature("Stonecunning", "Whenever you make an Intelligence (History) check related to the origin of stonework, it is considered proficient in the History skill and add doubles its proficiency bonus to the check."))
 
     # TODO: Add these from the roots['Equipment'] weapons?
-    npc.addproficiency(Equipment.weapons['martial-melee']['Battleaxe'])
-    npc.addproficiency(Equipment.weapons['martial-melee']['Warhammer'])
-    npc.addproficiency(Equipment.weapons['simple-melee']['Handaxe'])
-    npc.addproficiency(Equipment.weapons['simple-melee']['Light hammer'])
+    npc.addproficiency(Equipment.weapons['melee']['Battleaxe'].name)
+    npc.addproficiency(Equipment.weapons['melee']['Warhammer'].name)
+    npc.addproficiency(Equipment.weapons['melee']['Handaxe'].name)
+    npc.addproficiency(Equipment.weapons['melee']['Light hammer'].name)
 
     toolchoice = choose("Choose a tool proficiency:", ["Smith's Tools", "Brewer's Supplies", "Mason's Tools"])
     npc.addproficiency(toolchoice)
