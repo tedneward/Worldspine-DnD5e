@@ -6,9 +6,9 @@ name = 'Tough'
 description = "***Feat: Tough.*** You are harder to kill."
 def prereq(npc): return True
 def apply(npc):
-    print("Taking this feat at level " + str(npc.levels()))
+    debug("Taking this feat at level " + str(npc.levels()))
     npc.hitpoints += npc.levels() * 2
 def everylevel(npc): 
-    print("Adding 2 hit points for a new level")
+    debug("Adding 2 hit points for a new level")
     npc.hitpoints += 2
 ```

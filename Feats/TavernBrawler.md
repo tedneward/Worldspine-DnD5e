@@ -11,7 +11,7 @@ name = 'Tavern Brawler'
 description = "***Feat: Tavern Brawler.*** You are accustomed to the rough-and-tumble fighting using whatever weapons happen to be at hand."
 def prereq(npc): return True
 def apply(npc):
-    chooseability(npc, ['STR', 'CON'])
+    abilityscoreincrease(npc, ['STR','DEX'])
 
     npc.addproficiency("Improvised weapons")
 

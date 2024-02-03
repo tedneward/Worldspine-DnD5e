@@ -9,6 +9,6 @@ name = 'Resilient'
 description = "***Feat: Resilient.*** You are harder to kill than most."
 def prereq(npc): return True
 def apply(npc):
-    ability = chooseability(npc)
+    ability = abilityscoreincrease(npc)
     npc.addproficiency(ability)
 ```

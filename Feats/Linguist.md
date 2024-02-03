@@ -16,5 +16,5 @@ def apply(npc):
     chooselanguage(npc, 'All')
     chooselanguage(npc, 'All')
 
-    npc.append(Feature("Encipher", f"You can create written ciphers. Others can't decipher a code you create unless you teach them, they succeed on an Intelligence check (DC {self.npc.INT + self.npc.proficiencybonus()}), or they use magic to decipher it.") )
+    npc.append(Feature("Encipher", "You can create written ciphers. Others can't decipher a code you create unless you teach them, they succeed on an Intelligence check (DC {self.npc.INT + self.npc.proficiencybonus()}), or they use magic to decipher it.") )
 ```

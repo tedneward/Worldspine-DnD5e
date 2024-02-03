@@ -13,5 +13,5 @@ description = "***Lightfoot Halfling.***"
 ```
 def apply(npc):
     npc.CHA += 1
-    npc.traits.append("***Naturally Stealthy.*** You can attempt to hide even when you are obscured only by a creature that is at least one size larger than you.")
+    npc.append(Feature("Naturally Stealthy", "You can attempt to Hide even when you are obscured only by a creature that is at least one size larger than you.") )
 ```

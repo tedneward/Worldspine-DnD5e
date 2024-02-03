@@ -16,7 +16,7 @@ def prereq(npc):
     return False
 
 def apply(npc):
-    chooseability(npc, ['STR', 'DEX'])
+    abilityscoreincrease(npc, ['STR','DEX'])
 
     for arm in Equipment.armor['medium'] | Equipment.armor['shields']:
         npc.addproficiency(arm)

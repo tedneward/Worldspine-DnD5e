@@ -16,11 +16,11 @@ class Armor:
     def __init__(self, name, weight, ac, minstrength=0, stealthpenalty=False):
         self.name = name
         self.weight = weight
-        self.ac = ac
+        self.armorclass = ac
         self.minstrength = minstrength
         self.stealthpenalty = stealthpenalty
 
-    def __repr__(self): return str((self.name, self.weight, self.ac, self.minstrength, self.stealthpenalty))
+    def __repr__(self): return str((self.name, self.weight, self.armorclass, self.minstrength, self.stealthpenalty))
 
     def __str__(self): return self.name + " (" + str(self.weight) + "lb)"
 

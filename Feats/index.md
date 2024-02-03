@@ -87,7 +87,7 @@ def choosefeat(npc):
     for f in childmods:
         log("Examining " + f.name)
         if f.name not in npc.feats and f.prereq(npc):
-                choosablelist.append(f)
+            choosablelist.append(f)
 
     featmod = choose("Pick a Feat: ", choosablelist)
     npc.applyfeat(featmod)

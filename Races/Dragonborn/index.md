@@ -41,13 +41,13 @@ def apply(npc):
     npc.languages.append('Draconic')
 
 class BreathWeapon(Action):
-    def __init__(self, shape, dmgtype, save, dmgtiers, title="Breath Weapon"):
+    def __init__(self, shape, dmgtype, save, damagetiers=['2d6','3d6','4d6','5d6'], title="Breath Weapon"):
         Action.__init__(self,title, "")
         self.recharges = "long rest"
         self.shape = shape
         self.dmgtype = dmgtype
         self.save = save
-        self.dmgtiers = dmgtiers
+        self.dmgtiers = damagetiers
     
     def __str__(self):
         uses = self.npc.proficiencybonus()
@@ -67,18 +67,11 @@ class BreathWeapon(Action):
 class MetallicBreathWeapon(Action):
     def __init__(self):
         Action.__init__(self,"Metallic Breath Weapon", "")
+        self.text = "You exhale a 15-foot cone of either Enervating Breath (Each creature in the cone must succeed on a Constitution saving throw or become incapacitated until the start of your next turn) or Repulsion Breath (Each creature in the cone must succeed on a Strength saving throw or be pushed 20 feet away from you and be knocked prone), DC {8 + self.npc.CONbonus() + self.npc.proficiencybonus()}."
         self.recharges = "long rest"
-        self.shape = shape
-        self.dmgtype = type
-        self.save = save
 
-    def __str__(self):
-        return "You exhale a 15-foot cone of either Enervating Breath (Each creature in the cone must succeed on a Constitution saving throw or become incapacitated until the start of your next turn) or Repulsion Breath (Each creature in the cone must succeed on a Strength saving throw or be pushed 20 feet away from you and be knocked prone), DC {8 + self.npc.CONbonus() + self.npc.proficiencybonus()}."
-
-def breathweaponaction(shape, dmgtype, save, damagetiers=['2d6','3d6','4d6','5d6']):
-    return BreathWeapon(shape, dmgtype, save, damagetiers)
-def metallicbreathweaponaction():
-    return MetallicBreathWeapon()
+def breathweaponaction(shape, dmgtype, save): return BreathWeapon(shape, dmgtype, save)
+def metallicbreathweaponaction(): return MetallicBreathWeapon()
 ```
 
 ## Draconic Ancestry

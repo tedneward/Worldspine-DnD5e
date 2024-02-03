@@ -9,7 +9,7 @@ name = 'Lightly Armored'
 description = "***Feat: Lightly Armored.*** You have trained to master the use of light armor."
 def prereq(npc): return True
 def apply(npc):
-    chooseability(npc, ['STR','DEX'])
+    abilityscoreincrease(npc, ['STR','DEX'])
 
     for arm in Equipment.armor['light']:
         npc.addproficiency(arm)

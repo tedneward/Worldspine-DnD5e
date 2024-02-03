@@ -310,10 +310,15 @@ class Feature:
         self.uses = uses
         self.npc = None # The StatBlock to which this Feature is attached
 
-    def evaltext(self): litexec('self.text = f"' + self.text + '"', { "self" : self })
+    def apply(self): pass
+
+    def evaltext(self): 
+        litexec('self.text = f"' + self.text + '"', { "self" : self, "npc" : self.npc })
 
     def __lt__(self, obj): return self.title < obj.title
-
+    def __gt__(self, obj): return self.title > obj.title
+    def __le__(self, obj): return self.title <= obj.title
+    def __ge__(self, obj): return self.title >= obj.title
     def __eq__(self, obj): return self.title == obj.title
 
     def __str__(self):
@@ -333,7 +338,8 @@ class Feature:
                 warn(self.title + " has uses but no recharges text!")
                 posttitletext = f"({self.uses})"
         else:
-            if self.recharges == "short rest": self.recharges = "short or long rest"
+            if self.recharges == "short rest": 
+                self.recharges = "short or long rest"
 
             if self.uses == None:
                 posttitletext = f" (Recharges on {self.recharges})"
@@ -341,9 +347,28 @@ class Feature:
                 posttitletext = f" ({self.uses}/Recharges on {self.recharges})"
         return f"***{self.title}{posttitletext}.*** {text}"
 
+class UnarmoredDefense(Feature):
+    def __init__(self, ability1, ability2="DEX", shieldok=True):
+        Feature.__init__(self, "Unarmored Defense", None)
+        self.ability1 = ability1
+        self.ability2 = ability2
+        self.shieldok = shieldok
+
+    def apply(self):
+        self.naturalac = 10 + self.npc.abilitybonus(self.ability1) + self.npc.abilitybonus(self.ability2)
+        self.npc.armorclass["Natural Armor"] = self.naturalac
+
+        self.text = f"While you are not wearing any armor, your armor class equals {self.naturalac}."
+        if self.shieldok:
+            self.text += " You can use a shield and still gain this benefit."
+
 class Action(Feature):
     def __init__(self, title, text, recharges=None, uses=None):
         Feature.__init__(self, title, text, recharges, uses)
+
+class Multiattack(Action):
+    def __init__(self, times="twice"):
+        Action.__init__(self, "Multiattack", "You can attack " + times + ", instead of once, whenever you take the Attack action on your turn.")
 
 class Casting(Action):
     """
@@ -537,8 +562,10 @@ class RangedAttack(Action):
         text += f"+{self.npc.DEXbonus() + self.npc.proficiencybonus() + self.tohit} to hit, "
         text += f"range {self.range}, one target. "
         text += f"Hit: {self.dmgamt} + {self.npc.DEXbonus()} {self.dmgtype}"
-        return text
+        return text        
 
+##########################
+# The NPC Stat Block
 class StatBlock:
     def __init__(self):
         self.name = "(Name)"
@@ -662,6 +689,10 @@ class StatBlock:
         else:
             return self.profbonus
 
+    def addbackground(self, backgroundmod):
+        backgroundmod.apply(self)
+        self.description.append(backgroundmod.description)
+
     # This is a level-up function as a side-effect
     def addclass(self, classmod):
         self.classes.append(classmod)
@@ -679,13 +710,10 @@ class StatBlock:
         self.subclasses[parentclass] = subclassmod
         self.description.append(subclassmod.description)
 
-        everylvlfn = getattr(subclassmod, "everylevel", None)
-        if everylvlfn != None: litexec("fn(self)", { "fn" : everylvlfn, "self": self })
-        levelfn = getattr(subclassmod, "level" + str(self.levels(parentclass)), None)
-        if levelfn != None: litexec("fn(self)", { "fn" : levelfn, "self": self })
-
     def levelup(self, classmod):
+        debug("Leveling up: " + classmod.name)
         def applylevelup(mod, level):
+            debug("Applying levelup to " + mod.name + " at level " + str(level))
             everylvlfn = getattr(mod, "everylevel", None)
             if everylvlfn != None: litexec("fn(self)", { "fn" : everylvlfn, "self": self })
             levelfn = getattr(mod, "level" + str(level), None)
@@ -699,8 +727,9 @@ class StatBlock:
 
         classlvls = self.levels(classmod)
         applylevelup(classmod, classlvls)
-        if classmod.name in self.subclasses:
-            subclassmod = self.subclasses[classmod.name]
+        print("SUBCLASSES: ", self.subclasses)
+        if classmod in self.subclasses:
+            subclassmod = self.subclasses[classmod]
             applylevelup(subclassmod, classlvls)
 
         childmods = moduleglobals['roots']['Feats'].childmods
@@ -724,8 +753,19 @@ class StatBlock:
         self.feats.append(featmod.name)
         litexec("fn(self)", { "fn" : featmod.apply, "self": self })
 
+    def addexpertise(self, proficiency):
+        if proficiency in moduleglobals['Abilities'].skills:
+            self.expertises.append(proficiency)
+        else:
+            warn("Unrecognized expertise: " + proficiency)
+
     def addproficiency(self, proficiency):
-        if proficiency in ['STR','DEX','CON','INT','WIS','CHA']:
+        if proficiency == None:
+            error("CANNOT ADD None AS A PROFICIENCY!")
+        elif proficiency in ['STR','DEX','CON','INT','WIS','CHA']:
+            if proficiency in self.proficiencies:
+                warn("Double-proficient in " + proficiency + " saving throws!")
+
             # It's a saving throw -- track separately in the future?
             self.proficiencies.append(proficiency)
         elif proficiency in self.proficiencies:
@@ -762,6 +802,7 @@ class StatBlock:
     def getproficiencies(self):
         profs = []
         for p in self.proficiencies:
+            debug("Examining proficiency " + p)
             if p in ['STR','DEX','CON','INT','WIS','CHA']: continue
             if p in moduleglobals['Abilities'].skills: continue
             profs.append(p)
@@ -874,11 +915,27 @@ class StatBlock:
     # This method is the last step before an emit(), to give the StatBlock a chance
     # to organize and/or optimize itself.
     def freeze(self):
-        log("StatBlock" + self.name + "frozen in place.")
-
         # Lint the StatBlock for any warnings
+        debug("StatBlock.armorclass=" + str(self.armorclass))
+        debug("StatBlock.proficiencies=" + str(self.proficiencies))
+        debug("StatBlock.expertises=" + str(self.expertises))
+
+        # apply() all the Features we have
+        for feature in self.traits:
+            if isinstance(feature, str):
+                warn("Feature is a string!" + feature)
+            feature.apply()
+        for feature in self.actions:
+            feature.apply()
+        for feature in self.bonusactions:
+            feature.apply()
+        for feature in self.reactions:
+            feature.apply()
+        for feature in self.lairactions:
+            feature.apply()
 
         # Sort lists by alphabetical order
+        self.languages.sort()
         self.traits.sort()
         self.actions.sort()
         self.bonusactions.sort()
@@ -886,6 +943,8 @@ class StatBlock:
         self.lairactions.sort()
         # equipment doesn't really need to be sorted
         # Do NOT sort description!
+
+        log("StatBlock" + self.name + "frozen in place.")
 
     def emitmd(self) -> str:
         linesep = ">___\n"
@@ -902,10 +961,16 @@ class StatBlock:
             def getarmorclass():
                 result = []
                 ac = 10
+
+                for (acname, acvalue) in self.armorclass.items():
+                    if acvalue > 10: ac = acvalue
+                    else: ac += acvalue
+                    result.append(f"{acname} ({acvalue})")
+
                 for equip in self.equipment:
-                    if getattr(equip, "ac", None) != None:
-                        ac = equip.ac
-                        result.append(f'{equip.name} ({equip.ac})')
+                    if getattr(equip, "armorclass", None) != None:
+                        ac = equip.armorclass
+                        result.append(f'{equip.name} ({equip.armorclass})')
                     elif getattr(equip, "acbonus", None) != None:
                         ac += equip.acbonus
                         result.append(f'{equip.name} ({equip.acbonus})')
@@ -978,8 +1043,8 @@ class StatBlock:
 
         if len(self.reactions):
             result +=  ">#### Reactions\n"
-            for action in self.reactions:
-                result += f">{action}\n"
+            for reaction in self.reactions:
+                result += f">{reaction}\n"
                 result +=  ">\n"
 
         if len(self.lairactions):
@@ -1112,7 +1177,9 @@ moduleglobals = {
 
     # Character-related pieces
     "Feature": Feature,
+    "UnarmoredDefense": UnarmoredDefense,
     "Action": Action,
+    "Multiattack": Multiattack,
     "Reaction": Reaction,
     "BonusAction": BonusAction,
     "LairAction": LairAction,
@@ -1143,11 +1210,14 @@ def loaddir(path : str,
     # but with each one having a "parent" symbol that references
     # the index.md-based module
     setattr(module, "childmods", [])
+    dependencies = getattr(module, "dependencies", [])
+    log(module.name + " has dependencies on " + str(dependencies))
     for f_or_d in os.listdir(path):
         if f_or_d == 'index.md': continue
 
         childmod = load(path + '/' + f_or_d,module,modulename + "-" + f_or_d)
-        module.childmods.append(childmod)
+        if f_or_d not in dependencies:
+            module.childmods.append(childmod)
 
     return module
 
@@ -1256,7 +1326,7 @@ def generate(randomlist=[]):
             litexec("Abilities.random(npc)", { "npc" : npc })
             abilities = True
         elif r == 'Background':
-            litexec("Background.random(npc)", { "npc" : npc })
+            litexec("Backgrounds.random(npc)", { "npc" : npc })
             background = True
         elif r == 'Gender': 
             npc.gender = randompick(['Male', 'Female'])
@@ -1307,15 +1377,27 @@ def generate(randomlist=[]):
             # "Class-(classname)": random number of levels in classname/random-subclass
             # "Class-(classname)-(level)": level number of levels in classname/random-subclass
             parts = cg.split('-')
+            classmod = randompick(moduleglobals['roots']['Classes'].childmods)
+            levels = random.randint(1, 20)
             if len(parts) == 1:
                 print("Random number of levels in a random class/subclass")
             elif len(parts) == 2:
                 print("Random number of levels in class/subclass", parts[1])
+                for cm in moduleglobals['roots']['Classes'].childmods:
+                    if cm.name == parts[1]:
+                        classmod = cm
+                        break
             elif len(parts) == 3:
                 print(parts[2],"levels in",parts[1])
-                for _ in range(0, int(parts[2])):
-                    classmod = moduleglobals['roots']['Classes'].childmods[parts[1]]
-                    npc.addclass(classmod)
+                levels = int(parts[2])
+                for cm in moduleglobals['roots']['Classes'].childmods:
+                    if cm.name == parts[1]:
+                        classmod = cm
+                        break
+
+            for l in range(1, levels+1):
+                print(f"Level {l}: Adding a level of " + classmod.name)
+                npc.addclass(classmod)
 
         # Now interactively gen some class levels
         shell.pop()

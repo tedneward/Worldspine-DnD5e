@@ -33,27 +33,28 @@ Level|Proficiency Bonus|Rages|Rage Damage|Features
 20th |+6|Unlimited|+4|[Primal Champion](#primal-champion)
 
 ```
+# Rages: [Rages, Rage Damage]
 rages = {
     1: [2, "+2"],
     2: [2, "+2"],
-    3:
-    4:
-    5:
-    6:
-    7:
-    8:
-    9:
-    10:
-    11:
-    12:
-    13:
-    14:
-    15:
-    16:
-    17:
-    18:
-    19:
-    20:
+    3: [3, "+2"],
+    4: [3, "+2"],
+    5: [3, "+2"],
+    6: [4, "+2"],
+    7: [4, "+2"],
+    8: [4, "+2"],
+    9: [4, "+3"],
+    10:[4, "+3"],
+    11:[4, "+3"],
+    12:[5, "+3"],
+    13:[5, "+3"],
+    14:[5, "+3"],
+    15:[5, "+3"],
+    16:[5, "+4"],
+    17:[6, "+4"],
+    18:[6, "+4"],
+    19:[6, "+4"],
+    20:["Unlimited", "+4"],
 }
 ```
 
@@ -66,6 +67,8 @@ rages = {
 
 ```
 def everylevel(npc): npc.hits('d12')
+
+def level1(npc):
 ```
 
 ### Proficiencies
@@ -80,17 +83,15 @@ def everylevel(npc): npc.hits('d12')
 **Skills**: Choose two from Animal Handling, Athletics, Intimidation, Nature, Perception, and Survival
 
 ```
-def level1(npc):
-    for arm in armor['light'] | armor['medium'] | armor['shields']:
+    for arm in Equipment.armor['light'] | Equipment.armor['medium'] | Equipment.armor['shields']:
         npc.addproficiency(arm)
-    for wpn in weapons['simple-melee'] | weapons['simple-ranged'] | weapons['martial-melee'] | weapons['martial-ranged']:
-        npc.addproficiency(wpn)
+    for wpn in Equipment.weapons['all']: npc.addproficiency(wpn)
 
-    npc.proficiencies.append("STR")
-    npc.proficiencies.append("CON")
+    npc.addproficiency("STR")
+    npc.addproficiency("CON")
 
-    roots['Abilities'].chooseskill(npc, ['Animal Handling','Athletics','Intimidation','Nature','Perception','Survival'])
-    roots['Abilities'].chooseskill(npc, ['Animal Handling','Athletics','Intimidation','Nature','Perception','Survival'])
+    chooseskill(npc, ['Animal Handling','Athletics','Intimidation','Nature','Perception','Survival'])
+    chooseskill(npc, ['Animal Handling','Athletics','Intimidation','Nature','Perception','Survival'])
 ```
 
 ### Equipment
@@ -101,10 +102,10 @@ You start with the following equipment, in addition to the equipment granted by 
 * An explorer's pack and four javelins
 
 ```
-    #npc.equipment.append("Greataxe OR any martial melee weapon")
-    #npc.equipment.append("Two handaxes OR any simple weapon")
-    #npc.equipment.append("Four javelins")
-    #npc.equipment.append("An explorer's pack")
+    npc.addequipment("Greataxe OR any martial melee weapon")
+    npc.addequipment("Two handaxes OR any simple weapon")
+    npc.addequipment("Four javelins")
+    npc.addequipment("An explorer's pack")
 ```
 
 ## Rage
@@ -125,7 +126,37 @@ Your rage lasts for 1 minute. It ends early if you are knocked unconscious or if
 Once you have raged the number of times shown for your barbarian level in the Rages column of the Barbarian table, you must finish a long rest before you can rage again.
 
 ```
-    npc.bonusactions.append(BonusAction("Rage", "" ({2 if npc.levels(name) < 3 else 3 if npc.levels(name) < 6 else 4 if npc.levels(name) < 12 else 5 if npc.levels(name) < 17 else 6}/Recharges on long rest).*** Your rage lasts for 1 minute. {'It ends early if you fall unconscious or if your turn ends and you have not attacked a hostile creature since your last turn or taken damage since then.' if npc.levels(name) < 15 else 'It ends early if you fall unconscious.'} You can end your rage on your turn as a bonus action. {'' if npc.levels(name) < 7 else ' You can move up to half your speed as part of this bonus action. '}If you aren't wearing heavy armor, you gain the following benefits: You have advantage on Strength checks and Strength saving throws; When you make a melee weapon attack using Strength, you gain a +{2 if npc.levels(name) < 9 else 3 if npc.levels(name) < 16 else 4} bonus to the damage roll; You have resistance to bludgeoning, piercing, and slashing damage.") )
+    class Rage(BonusAction):
+        def __init__(self):
+            BonusAction.__init__(self, "Rage", None, "long rest")
+        
+        def __str__(self):
+            npclevels = self.npc.levels("Barbarian")
+            numrages = rages[npclevels][0]
+            ragedmg = rages[npclevels][1]
+
+            if npclevels < 20:
+                self.uses = numrages
+            else:
+                self.recharges = None
+
+            self.text = f"You enter into a rage. While raging, you have advantage on Strength checks and Strength saving throws; when you make a melee weapon attack using Strength, you gain a {ragedmg} bonus to damage; and you have resistance to bludgeoning, piercing, and slashing damage. Your rage lasts for 1 minute."
+
+            self.text += " If you are able to cast spells, you can't cast them or concentrate on them while raging."
+
+            if npclevels < 15: 
+                self.text += " It ends early if you fall unconscious or if your turn ends and you have not attacked a hostile creature since your last turn or taken damage since then."
+            else: 
+                self.text += " It ends early if you fall unconscious."
+
+            self.text += " You can end your rage on your turn as a bonus action."
+
+            if npclevels >= 7:
+                self.text += " You can move up to half your speed as part of this bonus action."
+
+            return BonusAction.__str__(self)
+
+    npc.append(Rage())
 ```
 
 ## Unarmored Defense
@@ -134,10 +165,7 @@ Once you have raged the number of times shown for your barbarian level in the Ra
 While you are not wearing any armor, your armor class equals 10 + your Dexterity modifier + your Constitution modifier. You can use a shield and still gain this benefit.
 
 ```
-    def unarmoreddefense(npc): 
-        npc.armorclass['Unarmored Defense'] = 10 + npc.DEXbonus() + npc.CONbonus()
-
-    npc.defer(lambda npc: unarmoreddefense(npc))
+    npc.append(UnarmoredDefense("CON"))
 ```
 
 ## Survival Instincts
@@ -150,9 +178,9 @@ Your proficiency bonus is doubled for any ability check you make that uses eithe
 ```
 def level2(npc):
     skill = choose("Choose a Survival Instinct: ", ['Animal Handling', 'Medicine', 'Nature', 'Perception', 'Survival'])
-    npc.expertises.append(skill)
+    npc.addexpertise(skill)
     skill = choose("Choose a Survival Instinct: ", ['Animal Handling', 'Medicine', 'Nature', 'Perception', 'Survival'])
-    npc.expertises.append(skill)
+    npc.addexpertise(skill)
 ```
 
 ## Reckless Attack
@@ -161,7 +189,21 @@ def level2(npc):
 You can throw aside all concern for defense to attack with fierce desperation. When you make your first attack on your turn, you can decide to attack recklessly. Doing so gives you advantage on melee weapon attack rolls using Strength during this turn, but attack rolls against you have advantage until your next turn.
 
 ```
-    npc.actions.append("***Reckless Attack.*** When you make your first attack on your turn, you can decide to attack recklessly. Doing so gives you advantage on melee weapon attack rolls using Strength during this turn, but attack rolls against you have advantage until your next turn.")
+    npc.append(Action("Reckless Attack", "When you make your first attack on your turn, you can decide to attack recklessly. Doing so gives you advantage on melee weapon attack rolls using Strength during this turn, but attack rolls against you have advantage until your next turn.") )
+```
+
+## Primal Path
+At 3rd level, you choose a path that shapes the nature of your rage:
+
+* [Berserker](./Berserker.md)
+* [Totem Warrior](./TotemWarrior.md)
+
+Your choice grants you features at 3rd level and again at 6th, 10th, and 14th levels.
+
+```
+def level3(npc):
+    # Choose subclass
+    npc.addsubclass(choose("Choose a Primal Path:", childmods))
 ```
 
 ## Primal Knowledge
@@ -170,44 +212,21 @@ You can throw aside all concern for defense to attack with fierce desperation. W
 When you reach 3rd level and again at 10th level, you gain proficiency in one skill of your choice from the list of skills available to barbarians at 1st level.
 
 ```
-def level3(npc):
     chooseskill(npc, ['Animal Handling','Athletics','Intimidation','Nature','Perception','Survival'])
-```
 
-## Primal Path
-At 3rd level, you choose a path that shapes the nature of your rage:
-
-* [Ancestral Guardian](./AncestralGuardian.md)
-* [Beast](./Beast.md)
-* [Berserker](./Berserker.md)
-* [Blood Drinker](./BloodDrinker.md)
-* [Dead](./Dead.md)
-* [Depths](./Depths.md)
-* [Dragon](./Dragon.md)
-* [Rage Mage](./RageMage.md)
-* [Storm Herald](./StormHerald.md)
-* [Totem Warrior](./TotemWarrior.md)
-* [Were-Beast](./Werebeast.md)
-* [Wild Magic](./WildMagic.md)
-* [Zealot](./Zealot.md)
-
-Your choice grants you features at 3rd level and again at 6th, 10th, and 14th levels.
-
-```
-    (_, subclass) = choose("Choose a Primal Path: ", subclasses)
-    npc.subclasses[allclasses[name]] = subclass
-    npc.description.append(subclass.description)
+def level10(npc):
+    chooseskill(npc, ['Animal Handling','Athletics','Intimidation','Nature','Perception','Survival'])
 ```
 
 ## Ability Score Improvement
 When you reach 4th level, and again at 8th, 12th, 16th, and 19th level, you can increase one ability score of your choice by 2, or you can increase two ability scores of your choice by 1. As normal, you can't increase an ability score above 20 using this feature.
 
 ```
-def level4(npc): abilityscoreimprovement(npc)
-def level8(npc): abilityscoreimprovement(npc)
-def level12(npc): abilityscoreimprovement(npc)
-def level16(npc): abilityscoreimprovement(npc)
-def level19(npc): abilityscoreimprovement(npc)
+def level4(npc): choosefeatorasi(npc)
+def level8(npc): choosefeatorasi(npc)
+def level12(npc): choosefeatorasi(npc)
+def level16(npc): choosefeatorasi(npc)
+def level19(npc): choosefeatorasi(npc)
 ```
 
 ## Extra Attack
@@ -217,7 +236,7 @@ You can attack twice, instead of once, whenever you take the Attack action on yo
 
 ```
 def level5(npc):
-    npc.actions.append("***Multiattack.*** You can attack twice, instead of once, whenever you take the Attack action on your turn.")
+    npc.append(Multiattack())
 ```
 
 ## Instinctive Pounce
@@ -226,7 +245,7 @@ def level5(npc):
 When a creature ends its turn within 15 feet of you, you can use your reaction to move up to half your speed to a space closer to the creature. This movement doesn't provoke opportunity attacks.
 
 ```
-    npc.reactions.append("***Instinctive Pounce.*** When a creature ends its turn within 15 feet of you, you move up to half your speed to a space closer to the creature. This movement doesn't provoke opportunity attacks.")
+    npc.append(Reaction("Instinctive Pounce", "When a creature ends its turn within 15 feet of you, you move up to half your speed to a space closer to the creature. This movement doesn't provoke opportunity attacks.") )
 ```
 
 ## Feral Instinct
@@ -238,7 +257,7 @@ Additionally, if you are surprised at the beginning of combat and aren't incapac
 
 ```
 def level7(npc):
-    npc.traits.append("***Feral Instinct.*** You have advantage on initiative rolls. Additionally, if you are surprised at the beginning of combat and aren't incapacitated, you can act normally on your first turn, but only if you enter your rage before doing anything else on that turn.")
+    npc.append(Feature("Feral Instinct", "You have advantage on initiative rolls. Additionally, if you are surprised at the beginning of combat and aren't incapacitated, you can act normally on your first turn, but only if you enter your rage before doing anything else on that turn.") )
 ```
 
 ## Instinctive Pounce
@@ -254,8 +273,20 @@ Beginning at 9th level, you can roll one additional weapon damage die when deter
 This increases to two additional dice at 13th level and three additional dice at 17th level.
 
 ```
-def level9(npc):
-    npc.defer(lambda npc: npc.traits.append(f"***Brutal Critical.*** You roll {'one' if npc.levels(name) < 13 else 'two' if npc.levels(name) < 17 else 'three'} additional weapon damage {'die' if npc.levels(name) < 13 else 'dice'} when determining the extra damage for a critical hit with a melee attack.") )
+class BrutalCritical(Feature):
+    def __init__(self):
+        Feature.__init__(self, "Brutal Critical", "")
+    
+    def __str__(self):
+        npclevels = self.npc.levels("Barbarian")
+        if npclevels < 13:
+            return f"***Brutal Critical.*** You roll one additional weapon damage die when determining the extra damage for a critical hit with a melee attack."
+        elif npclevels < 17:
+            return f"***Brutal Critical.*** You roll two additional weapon damage dice when determining the extra damage for a critical hit with a melee attack."
+        else:
+            return f"***Brutal Critical.*** You roll three additional weapon damage dice when determining the extra damage for a critical hit with a melee attack."
+
+def level9(npc): npc.append(BrutalCritical())
 ```
 
 ## Relentless Rage
@@ -267,7 +298,7 @@ Each time you use this feature after the first, the DC increases by 5. When you 
 
 ```
 def level11(npc):
-    npc.traits.append("***Relentless Rage (Resets on short or long rest).*** If you drop to 0 hit points while you're raging and don't die outright, you can make a DC 10 Constitution saving throw. If you succeed, you drop to 1 hit point instead. Each time you use this feature after the first, the DC increases by 5.")
+    npc.append(Feature("Relentless Rage", "If you drop to 0 hit points while you're raging and don't die outright, you can make a DC 10 Constitution saving throw. If you succeed, you drop to 1 hit point instead. Each time you use this feature after the first, the DC increases by 5.", "short rest") )
 ```
 
 ## Persistent Rage
@@ -282,7 +313,7 @@ If your total for a Strength check is less than your Strength score, you can use
 
 ```
 def level18(npc):
-    npc.traits.append("***Indomitable Might.*** If your total for a Strength check is less than your Strength score, you can use that score in place of the total.")
+    npc.append(Feature("Indomitable Might", "If your total for a Strength check is less than your Strength score, you can use that score in place of the total.") )
 ```
 
 ## Primal Champion

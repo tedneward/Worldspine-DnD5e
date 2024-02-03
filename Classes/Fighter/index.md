@@ -10,7 +10,8 @@ Some fighters feel drawn to use their training as adventurers. The dungeon delvi
 ```
 name = 'Fighter'
 description = "***Class: Fighter.*** Questing knights, conquering overlords, royal champions, elite foot soldiers, hardened mercenaries, and bandit kings — as fighters, they all share an unparalleled mastery with weapons and armor, and a thorough knowledge of the skills of combat. And they are well acquainted with death, both meting it out and staring it defiantly in the face."
-dependencies = ['Styles.md']
+
+dependencies = [ 'Styles.md' ]
 ```
 
 Level|Proficiency Bonus|traits

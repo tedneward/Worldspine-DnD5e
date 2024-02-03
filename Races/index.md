@@ -36,20 +36,22 @@ languages = {
                'Primordial','Aquan', 'Auran', 'Ignan', 'Terran',
                'Sylvan', 'Undercommon' ]
 }
-def languagelist(which = None):
-    if which == None:
+def languagelist(which = 'All'):
+    if which == 'All':
         return languages['Common'] | languages['Exotic']
     else:
         return languages[which]
 
 def chooselanguage(npc, which='Common'):
+    srclist = []
     if which == 'All':
-        srclist = languages['Common'] | languages['Exotic']
+        srclist = languages['Common'] + languages['Exotic']
     else:
         srclist = languages[which]
 
     for lang in npc.languages:
-        srclist.remove(lang)
+        if lang in srclist:
+            srclist.remove(lang)
 
     chosen = choose("Choose a language: ", srclist)
     npc.languages.append(chosen)

@@ -9,7 +9,7 @@ name = 'Weapon Master'
 description = "***Feat: Weapon Master.*** You have practiced extensively with a variety of weapons."
 def prereq(npc): return True
 def apply(npc):
-    chooseability(npc, ['STR', 'DEX'])
+    abilityscoreincrease(npc, ['STR','DEX'])
 
     for _ in range(0, 4):
         wpn = choose("Choose a weapon proficiency: ", Equipment.weapons['martial-melee'] | Equipment.weapons['martial-ranged'] | Equipment.weapons['simple-melee'] | Equipment.weapons['simple-ranged'])

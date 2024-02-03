@@ -165,19 +165,39 @@ Characters are often able to increase one or more of their ability scores one or
 Normally, no ability score can be increased beyond 20.
 
 ```
+def chooseability(abilities=['STR', 'DEX', 'CON', 'INT', 'WIS', 'CHA']):
+    return choose("Choose an ability score: ", abilities)
+
 def abilityscoreincrease(npc, abilities=['STR', 'DEX', 'CON', 'INT', 'WIS', 'CHA']):
     chosen = choose("Choose an ability score to increase: ", abilities)
     if npc.getability(chosen) >= 20:
         warn("Increasing ability score",chosen,"takes it beyond 20!")
     npc.setability(chosen, npc.getability(chosen) + 1)
+    return chosen
 ```
 
 
 ## Skills
 Skills are proficiencies that add to a character's ability check or save.
 
-* Acrobatics (DEX):
-* ...
+* Acrobatics' : 'DEX', 
+* Animal Handling' : 'WIS', 
+* Arcana' : 'INT', 
+* Athletics' : 'STR',
+* Deception' : 'CHA', 
+* History' : 'INT', 
+* Insight' : 'WIS', 
+* Intimidation' : 'CHA', 
+* Investigation' : 'INT',
+* Medicine' : 'WIS', 
+* Nature' : 'INT', 
+* Perception' : 'WIS', 
+* Performance' : 'CHA', 
+* Persuasion' : 'CHA',
+* Religion' : 'INT', 
+* Sleight of Hand' : 'DEX', 
+* Stealth' : 'DEX', 
+* Survival' : 'WIS'
 
 ```
 # All the skills that players may use to affect their ability checks
@@ -233,5 +253,5 @@ def random(npc):
 ```
 
 ```
-exports = [ abilityscoreincrease, skilllist, abilityforskill, chooseskill ]
+exports = [ chooseability, abilityscoreincrease, skilllist, abilityforskill, chooseskill ]
 ```

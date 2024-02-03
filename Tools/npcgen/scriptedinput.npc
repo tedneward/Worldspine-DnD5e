@@ -1,4 +1,4 @@
-Abilities,Average,Gender,Female,Race,Dwarf,random,Mountain,Background,random,Fighter,random,random,random,random,random,random,random,random,Yes
-Fighter,Yes
-Fighter,Champion,Yes
-Fighter,Feat,random,No
+Abilities,Average,Gender,Female,Race,Dwarf,random,Mountain,Background,Criminal,Barbarian,random,random,Yes
+Barbarian,random,random,Yes
+Barbarian,Berserker,random,Yes
+Barbarian,Feat,Resilient,random,No

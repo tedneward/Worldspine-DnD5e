@@ -86,9 +86,7 @@ def level1(npc):
 While you are wearing no armor and not wielding a shield, your AC equals 10 + your Dexterity modifier + your Wisdom modifier.
 
 ```
-    def acadjust(npc):
-        npc.armorclass['Unarmored Defense'] = (10 + npc.WISbonus())
-    npc.defer(lambda npc: acadjust(npc))
+    npc.append(UnarmoredDefense("WIS", False))
 ```
 
 ## Martial Arts
