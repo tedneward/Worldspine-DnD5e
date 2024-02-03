@@ -144,8 +144,7 @@ The archetype you choose grants you traits at 3rd level and again at 7th, 10th, 
 ```
 def level3(npc):
     # Choose subclass
-    subclassmod = choose("Choose a Martial Archetype:", childmods)
-    npc.addsubclass(subclassmod)
+    npc.addsubclass(choose("Choose a Martial Archetype:", childmods))
 ```
 
 ## Ability Score Improvement

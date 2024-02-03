@@ -62,6 +62,43 @@ class Input:
             self.output("You chose " + str(response))
             return response
 
+        def choosefrommodulelist(inputlist : list[object]):
+            inputmap = {}
+            for mod in inputlist:
+                if getattr(mod, "name", None) != None:
+                    inputmap[mod.name] = mod
+
+            choicelist = list(inputmap.keys())
+            choicelist.sort()
+
+            choiceidx = 0
+            for c in choicelist:
+                choiceidx += 1
+                self.output(f'{choiceidx}: {c}')
+
+            response = None
+            while response == None:
+                response = self.input()
+
+                if response == 'random': response = inputlist[random.randint(0,len(inputlist)-1)]
+                elif response.isdigit():
+                    responseidx = int(response) - 1
+                    if responseidx < 1:
+                        response = None
+                    if responseidx > len(choicelist):
+                        response = None
+                    response = inputmap[choicelist[responseidx]]
+                else:
+                    if choicelist.index(response) > -1:
+                        response = inputmap[response]
+                        break
+                    else:
+                        self.output("Your response of " + response + " doesn't seem to be in the list")
+                        response = None
+
+            self.output("You chose " + str(response))
+            return response
+
         def choosefromitemslist(inputlist : list[object]):
             name = ""
             if getattr(inputlist[0], "name", None) != None: name = "name"
@@ -108,7 +145,10 @@ class Input:
 
         # If this is an actual list of string options, proceed
         if isinstance(inputlist[0], str): return choosefromstringlist(inputlist)
+        elif isinstance(inputlist[0], types.ModuleType): return choosefrommodulelist(inputlist)
         elif getattr(inputlist[0], "name", None) != None: return choosefromitemslist(inputlist)
+        else:
+            print("It's not a str or a named thing?!?")
 
     def choosefrommap(self, choicemap):
         keys = list(choicemap.keys())
@@ -701,7 +741,6 @@ class StatBlock:
         return saves
 
     def getskills(self):
-        # What about expertises?!?
         skills = []
         for p in self.expertises:
             if p not in moduleglobals['Abilities'].skills: continue
@@ -830,25 +869,17 @@ class StatBlock:
     # This method is the last step before an emit(), to give the StatBlock a chance
     # to organize and/or optimize itself.
     def freeze(self):
-        log("StatBlock",self.name,"frozen in place.")
+        log("StatBlock" + self.name + "frozen in place.")
 
         # Lint the StatBlock for any warnings
 
-        # Go through all the Equipment, look for Armor, set armorclass appropriately
-        # (We should really move this into the getarmorclass() method in emitmd().)
-        for equip in self.equipment:
-            if getattr(equip, "ac", None) != None:
-                self.armorclass[equip.name] = equip.ac
-            elif getattr(equip, "acbonus", None) != None:
-                self.armorclass[equip.name] = equip.acbonus
-
         # Sort lists by alphabetical order
+        self.traits.sort()
         self.actions.sort()
         self.bonusactions.sort()
         self.reactions.sort()
         self.lairactions.sort()
-        #self.equipment.sort()
-        
+        # equipment doesn't really need to be sorted
         # Do NOT sort description!
 
     def emitmd(self) -> str:
@@ -866,14 +897,13 @@ class StatBlock:
             def getarmorclass():
                 result = []
                 ac = 10
-                for (actext, acnum) in self.armorclass.items():
-                    if acnum > 8:
-                        # Only armor itself is ever a value 10+
-                        ac = acnum
-                        result.append(f'{actext} ({acnum})')
-                    else:
-                        ac += acnum
-                        result.append(f'{actext} (+{acnum})')
+                for equip in self.equipment:
+                    if getattr(equip, "ac", None) != None:
+                        ac = equip.ac
+                        result.append(f'{equip.name} ({equip.ac})')
+                    elif getattr(equip, "acbonus", None) != None:
+                        ac += equip.acbonus
+                        result.append(f'{equip.name} ({equip.acbonus})')
                 if self.DEXbonus() != 0:
                     ac += self.DEXbonus()
                     result.append(f'DEX ({self.DEXbonus():+g})')
@@ -1141,11 +1171,14 @@ def loadmodule(mdfilename : str,
 
         # Put parentmodule into module.parent
         if parentmodule != None:
+            log("Setting " + modulename + ".parent to " + parentmodule.name)
             setattr(module, "parent", parentmodule)
 
         # Invoke any init function present
         init = getattr(module, "init", None)
-        if init != None: module.init()
+        if init != None: 
+            log("Invoking " + modulename + ".init()")
+            module.init()
 
         return module
     else:

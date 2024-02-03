@@ -1,1 +1,4 @@
-Abilities,Average,Gender,Female,Race,Dwarf,random,Mountain,Background,Fighter,random,random,random,random,random,random,random,random,No
+Abilities,Average,Gender,Female,Race,Dwarf,random,Mountain,Background,Fighter,random,random,random,random,random,random,random,random,Yes
+Fighter,Yes
+Fighter,Champion,Yes
+Fighter,Feat,random,No
