@@ -621,11 +621,13 @@ class StatBlock:
         if self.race != None: warn("Replacing",self.race.name,"with",racemod.name,"!")
         self.race = racemod
         litexec("racemod.apply(self)", { "racemod" : racemod, "self": self })
+        self.description.append(self.race.description)
 
     def setsubrace(self, subracemod):
         if self.subrace != None: warn("Replacing",self.subrace.name,"with",subracemod.name,"!")
         self.subrace = subracemod
         litexec("subracemod.apply(self)", { "subracemod" : subracemod, "self": self })
+        self.description.append(self.subrace.description)
 
     ##########################
     # Class-related methods
@@ -663,6 +665,8 @@ class StatBlock:
     # This is a level-up function as a side-effect
     def addclass(self, classmod):
         self.classes.append(classmod)
+        if self.levels(classmod) == 1:
+            self.description.append(classmod.description)
         self.levelup(classmod)
 
     # Subclasses get leveled up because of the addclass()
@@ -673,6 +677,7 @@ class StatBlock:
     def addsubclass(self, subclassmod):
         parentclass = subclassmod.parent
         self.subclasses[parentclass] = subclassmod
+        self.description.append(subclassmod.description)
 
         everylvlfn = getattr(subclassmod, "everylevel", None)
         if everylvlfn != None: litexec("fn(self)", { "fn" : everylvlfn, "self": self })

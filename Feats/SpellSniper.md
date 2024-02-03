@@ -10,9 +10,9 @@ You have learned techniques to enhance your attacks with certain kinds of spells
 ```
 name = 'Spell Sniper'
 description = "***Feat: Spell Sniper.*** You have learned techniques to enhance your attacks with certain kinds of spells."
-def prereq(npc): return len(npc.spellcasting) > 0
+def prereq(npc): return iscaster(npc)
 def apply(npc):
-    npc.traits.append("***Spell Sniper.*** When you cast a spell that requires you to make an attack roll, the spell's range is doubled. Your ranged spell attacks ignore half cover and three-quarters cover.")
+    npc.append(Feature("Spell Sniper", "When you cast a spell that requires you to make an attack roll, the spell's range is doubled. Your ranged spell attacks ignore half cover and three-quarters cover.") )
     spelllist = choose("Choose ", ['Bard', 'Cleric', 'Druid', 'Sorcerer', 'Warlock', 'Wizard'])
     ability = ""
     if spelllist == 'Bard' or spelllist == 'Sorcerer' or spelllist == 'Warlock':
@@ -21,6 +21,7 @@ def apply(npc):
         ability = 'INT'
     else:
         ability = 'WIS'
-    spellcasting = innatecaster(npc, ability, name)
+    spellcasting = InnateCaster("Martial Adept", ability)
     spellcasting.cantripsknown.append(f"CHOOSE-{spelllist}")
+    npc.append(spellcasting)
 ```
