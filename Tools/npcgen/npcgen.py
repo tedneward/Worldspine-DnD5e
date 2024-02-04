@@ -1084,7 +1084,7 @@ class StatBlock:
 
 ##########################
 # Some utility methods for use within the literate modules
-def generatemarkovname(exemplars):
+def generatemarkovname(exemplars : list[str]) -> str:
     def markov_name(chain):
         parts = select_link(chain, 'parts')
         names = []
@@ -1162,7 +1162,16 @@ def generatemarkovname(exemplars):
     chain = construct_chain(exemplars)
     return markov_name(chain)    
 
-def cardinal(number):
+def findmodule(root : str, name : str) -> types.ModuleType | None:
+    global moduleglobals
+
+    log("Looking for " + name + " in " + root)
+    for mod in moduleglobals['roots'][root].childmods:
+        if getattr(mod, "name", None) != None and mod.name == name:
+            return mod
+    return None
+
+def cardinal(number : int) -> str:
     if number == 1: return "1st"
     elif number == 2: return "2nd"
     elif number == 3: return "3rd"
@@ -1198,19 +1207,19 @@ def randompick(src):
         error("What the heck is src here?", src)
         return None
 
-def creaturelinkify(name):
+def creaturelinkify(name : str) -> str:
     linkdest = name.lower().replace(' ','-').replace("'","")
     return f"[{name}]({ONLINEROOT}/creatures/{linkdest}/)"
 
-def itemlinkify(name):
+def itemlinkify(name : str) -> str:
     linkdest = name.lower().replace(' ','-').replace("'","")
     return f"[{name}]({ONLINEROOT}/magic/items/{linkdest}/)"
 
-def spelllinkify(name):
+def spelllinkify(name : str) -> str:
     linkdest = name.lower().replace(' ','-').replace("'","")
     return f"[{name}]({ONLINEROOT}/magic/spells/{linkdest}/)"
 
-def iscaster(npc):
+def iscaster(npc : StatBlock) -> bool:
     for act in npc.actions: 
         if isinstance(act, Casting): return True
     return False
@@ -1262,6 +1271,7 @@ moduleglobals = {
 
     # Some helper methods
     "generatemarkovname": generatemarkovname,
+    "findmodule": findmodule,
     "iscaster": iscaster,
     "creaturelink": creaturelinkify,
     "itemlink": itemlinkify,
@@ -1557,6 +1567,9 @@ def main():
 
     if args.nop != None: return
 
+    # At some point in the future, maybe write the output to
+    # a file named according to the npc.name ?
+
     # Examine command line, let's see if we need to script-generate
     # our PC/NPC, or if we do it interactively.
     if args.scripts != None:
@@ -1564,9 +1577,14 @@ def main():
             print("Loading script file", script)
             shell.push(ScriptedInput(script))
             npc = generate()
-            # Write to "{script}.md" file
-            print(npc.emitmd())
+
+            with open(f"{script}.md", "w") as outfile:
+                outfile.write(npc.emitmd())
+            #print(npc.emitmd())
     else:
+        # FIXME: This seems broken, and I think it has to do with
+        # the RandomInput() being pushed on top of it almost immediately.
+        # Fix later.
         if args.incap != None:
             shell.push(CaptureInput(args.incap[0]))
         else:
@@ -1576,8 +1594,11 @@ def main():
             npc = generate(args.randomize.split(','))
         else:
             npc = generate()
+
         # Write to "output.md"
-        print(npc.emitmd())
+        with open(f"output.md", "w") as outfile:
+            outfile.write(npc.emitmd())
+        #print(npc.emitmd())
 
 if __name__ == '__main__':
 	main()

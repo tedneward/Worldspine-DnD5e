@@ -61,3 +61,32 @@ def random(npc):
     print("I choose a",subracemod.name,npc.race.name,"for you, boss!")
     npc.setsubrace(subracemod)
 ```
+
+## Physical Attributes
+
+### Height
+
+```
+def get_height(npc):
+    pass
+```
+
+### Weight
+
+```
+def get_weight(npc):
+    pass
+```
+
+## Half-Elf Names
+Half-elves use either human or elven naming conventions. As if to emphasize that they don’t really fit in to either society, half-elves raised among humans are often given elven names, and those raised among elves often take human names.
+
+```
+def get_name(npc):
+    if randomint(0,1) == 0:
+        log("Half-Elf took a human name")
+        return findmodule("Races", "Human").get_name(npc)
+    else:
+        log("Half-Elf took an elf name")
+        return findmodule("Races", "Elf").get_name(npc)
+```

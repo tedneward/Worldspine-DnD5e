@@ -93,7 +93,7 @@ d8| Personality Trait
         "The best way to get me to do something is to tell me I can't do it.",
         "I blow up at the slightest insult."
     ]
-    npc.description.append(f"***Personality Trait.*** {randompick(traits)}")
+    npc.description.append(f"***Personality Trait.*** {randomfrom(traits)}")
 ```
 
 d6| Ideal

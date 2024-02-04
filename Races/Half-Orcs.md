@@ -70,11 +70,36 @@ def random(npc): pass
 ```
 
 ## Half-Orc Names
-
+Half-orcs usually have names appropriate to the culture in which they were raised. A half-orc who wants to fit in among humans might trade an orc name for a human name. Some half-orcs with human names decide to adopt a guttural orc name because they think it makes them more intimidating.
 
 **Male Orc Names:** Dench, Feng, Gell, Henk, Holg, Imsh, Keth, Krusk, Mhurren, Ront, Shump, Thokk
 
 **Female Orc Names:** Baggi, Emen, Engong, Kansif, Myev, Neega, Ovak, Ownka, Shautha, Sutha, Vola, Volen, Yevelda
+
+```
+def get_name(npc):
+    def firstname():
+        male_names = [ 
+            'Dench', 'Feng', 'Gell', 'Henk', 'Holg', 
+            'Imsh', 'Keth', 'Krusk', 'Mhurren', 'Ront', 
+            'Shump', 'Thokk' ]
+
+        female_names = [ 
+            'Baggi', 'Emen', 'Engong', 'Kansif', 'Myev', 
+            'Neega', 'Ovak', 'Ownka', 'Shautha', 'Sutha', 
+            'Vola', 'Volen', 'Yevelda' 
+        ]
+
+    def lastname():
+        family_names = ["Brushgather", "Goodbarrel", "Greenbottle", "Highhill", "Hilltopple", "Leagallow", "Lightleaf", "Lightgage", "Goodleaf", "Tealeaf", "Thorngage", "Tosscobble", "Tossleaf", "Underbough", "Underhill"]
+
+    if randomint(0,1) == 0:
+        log("Half-Orc took a human name")
+        return findmodule("Races", "Humans").get_name(npc)
+    else:
+        # Go with something more orcish
+        return "(No name yet)"
+```
 
 
 ## Sample names (from https://www.roll4.net/generators/dd-name-generators/dnd-half-orc-name-generator)

@@ -58,33 +58,52 @@ def generateweight():
     pass
 ```
 
-## Names
-Human names span the gamut, often taking on cultural overtones, societal influences, and/or historical signficance.
+## Human Names
+Having so much more variety than other cultures, humans as a whole have no typical names. Some human parents give their children names from other languages, such as Dwarvish or Elvish (pronounced more or less correctly), but most parents give names that are linked to their region’s culture or to the naming traditions of their ancestors.
 
-Most humans have the typical surname/familyname pair, but some take on a singular nym for effect.
+The material culture and physical characteristics of humans can change wildly from region to region. In the Forgotten Realms, for example, the clothing, architecture, cuisine, music, and literature are different in the northwestern lands of the Silver Marches than in distant Turmish or Impiltur to the east — and even more distinctive in far-off Kara-Tur. Human physical characteristics, though, vary according to the ancient migrations of the earliest humans, so that the humans of the Silver Marches have every possible variation of coloration and features.
 
 ```
 # From https://www.roll4.net/generators/dd-name-generators/dnd-human-name-generator
-def generate_name(npc, gender):
-    female_firstnames = [
-        'Ustice','Ey','Pari','Cora','Ulia','Lla','La','Hali','Zoe','Jeanor','Ypri',
-        'Charle','Zie','Ker','Xaris','Ta','Premila'
-    ]
-    male_firstnames = [
-        'Pert','Quincy','Son','Junter','Jonald','Ver','Xan','Eonald','Oinn','Hannon',
-        'Isdel','Del','Yer','Ylis','Yaelan','Arker','Wan','Adler','Camen','Caseer',
-        'Premilan','Ulan','Xaris','Tayler','Lyn'
-    ]
+def get_name(npc):
+    def firstname():
+        female_names = [
+            'Ustice','Ey','Pari','Cora','Ulia','Lla','La','Hali','Zoe','Jeanor','Ypri',
+            'Charle','Zie','Ker','Xaris','Ta','Premila'
+        ]
+        male_names = [
+            'Pert','Quincy','Son','Junter','Jonald','Ver','Xan','Eonald','Oinn','Hannon',
+            'Isdel','Del','Yer','Ylis','Yaelan','Arker','Wan','Adler','Camen','Caseer',
+            'Premilan','Ulan','Xaris','Tayler','Lyn'
+        ]
+        if npc.gender=='Female': return generatemarkovname(female_names)
+        else: return generatemarkovnames(male_names)
     
-    last_names = [
-        'We','Ynn','Mpson','Va','Wang','Aross','Barrin','Yncano','Guerre','Krajas',
-        'Ser','Guerra','An','Pez','Pruz','Ussen','Corte','Ton','Ubbott','Na','Gers',
-        'Quinn','Crosby','Sam','Rince','Ke','Quez','Quinne','Goosethorn',
-        'Winterscreamer','Snakewing','Icestriker','Camelcrawl','Fallseeker',
-        'Oathbreak','Jaguarscreamer','Crocchaser','Windhold','Tigerwind',
-        'Tigerbone','Lionbone','Bearwind','Starlove','Lightforge','Morningbinder',
-        'Cranepunch','Wolfguts'
-    ]
+    def lastname():
+        if randomint(0,1) == 0:
+            # Markov-generated name
+            last_names = [
+                'We','Ynn','Mpson','Va','Wang','Aross','Barrin','Yncano','Guerre','Krajas',
+                'Ser','Guerra','An','Pez','Pruz','Ussen','Corte','Ton','Ubbott','Na','Gers',
+                'Quinn','Crosby','Sam','Rince','Ke','Quez','Quinne','Goosethorn'
+            ]
+            return generatemarkovname(last_names)
+        else:
+            # Two-parter name
+            prenouns = [
+                'winter','snake','ice','camel','fall',
+                'oath','jaguar','croc','wind','tiger',
+                'lion','bear','star','light','morning',
+                'crane','wolf'
+            ]
+            postnouns = [
+                'screamer','wing','striker','crawl','seeker',
+                'break','chaser','hold','wind','bone','love',
+                'forge','binder','punch','guts'
+            ]
+            part1 = prenouns[randomint(0, len(prenouns)-1)].capitalize()
+            part2 = verbs[randomint(0, len(verbs)-1)]
+            return f"{part1}{part2}"
 
-    return (random(female_firstnames) if gender == 'female' else random(male_firstnames)) + random(last_names) 
+    return f"{firstname()} {lastname()}" 
 ```

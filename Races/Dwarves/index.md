@@ -187,13 +187,13 @@ def get_name(npc):
         verbs = [
             'breaker','smiter','hewer','slasher','stealer','smasher'
         ]
-        if random.randint(0,1) == 0:
-            part1 = prenouns[random.randint(0, len(prenouns)-1)].capitalize()
-            part2 = postnouns[random.randint(0, len(postnouns)-1)]
+        if randomint(0,1) == 0:
+            part1 = prenouns[randomint(0, len(prenouns)-1)].capitalize()
+            part2 = postnouns[randomint(0, len(postnouns)-1)]
             return f"{part1}{part2}"
         else:
-            part1 = prenouns[random.randint(0, len(prenouns)-1)].capitalize()
-            part2 = verbs[random.randint(0, len(verbs)-1)]
+            part1 = prenouns[randomint(0, len(prenouns)-1)].capitalize()
+            part2 = verbs[randomint(0, len(verbs)-1)]
             return f"{part1}{part2}"
     return f"{firstname()} {lastname()}"
 ```

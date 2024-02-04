@@ -70,5 +70,36 @@ Male Infernal Names: Akmenos, Amnon, Barakas, Damakos, Ekemon, Iados, Kairon, Le
 
 Female Infernal Names: Akta, Anakis, Bryseis, Criella, Damaia, Ea, Kallista, Lerissa, Makaria, Nemeia, Orianna, Phelaia, Rieta
 
-“Virtue” Names: Art, Carrion, Chant, Creed, Despair, Excellence, Fear, Glory, Hope, Ideal, Music, Nowhere, Open, Poetry, Quest, Random, Reverence, Sorrow, Temerity, Torment, Weary
+"Virtue" Names: Art, Carrion, Chant, Creed, Despair, Excellence, Fear, Glory, Hope, Ideal, Music, Nowhere, Open, Poetry, Quest, Random, Reverence, Sorrow, Temerity, Torment, Weary
 
+```
+def get_name(npc):
+    choice = randomint(0, 2)
+    if choice == 0:
+        # Some other name; let's assume human for simplicity
+        return findmodule("Races", "Humans").get_name(npc)
+    elif choice == 1:
+        # Infernal heritage
+        male_names = [
+            "Akmenos", "Amnon", "Barakas", "Damakos", "Ekemon", 
+            "Iados", "Kairon", "Leucis", "Melech", "Mordai", 
+            "Morthos", "Pelaios", "Skamos", "Therai"
+        ]
+        female_names = [
+            "Akta", "Anakis", "Bryseis", "Criella", "Damaia", 
+            "Ea", "Kallista", "Lerissa", "Makaria", "Nemeia", 
+            "Orianna", "Phelaia", "Rieta"
+        ]
+        if npc.gender == 'Female': return generatemarkovname(female_names)
+        else: return generatemarkovname(male_names)
+    elif choice == 2:
+        # Virtue names
+        virtue_names = [
+            'Art', 'Carrion', 'Chant', 'Creed', 'Despair', 
+            'Excellence', 'Fear', 'Glory', 'Hope', 'Ideal', 
+            'Music', 'Nowhere', 'Open', 'Poetry', 'Quest', 
+            'Random', 'Reverence', 'Sorrow', 'Temerity', 
+            'Torment', 'Weary'
+        ]
+        return virtue_names[randomint(0, len(virtue_names) - 1)]
+```

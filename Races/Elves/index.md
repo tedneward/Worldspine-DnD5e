@@ -133,13 +133,13 @@ def get_name(npc):
         else: return generatemarkovname(female_names)
 
     def lastname():
-        if random.randint(0,1) == 0:
+        if randomint(0,1) == 0:
             familynames = [
                 'Amakiir', 'Amastacia', 'Galanodel', 'Holimion', 
                 'Ilphelkiir', 'Liadon', 'Meliamne', 'Nailo', 
                 'Siannodel', 'Xiloscient'
             ]
-            return generatemarkovname(fmailynames)
+            return generatemarkovname(familynames)
         else:
             # Elvish translated names are two-parters
             prenouns = [
@@ -152,8 +152,8 @@ def get_name(npc):
                 'whisper','wind','breeze',
                 'heel',
             ]
-            part1 = prenouns[randint(0, len(prenouns)-1)].capitalize()
-            part2 = postnouns[randint(0, len(postnouns)-1)]
+            part1 = prenouns[randomint(0, len(prenouns)-1)].capitalize()
+            part2 = postnouns[randomint(0, len(postnouns)-1)]
             return f"{part1}{part2}"
 
     return f"{firstname()} {lastname()}"
