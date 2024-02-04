@@ -1,9 +1,9 @@
 # Druidic Circle: Circle of the Land
-The Circle of the Land is made up of mystics and sages who safeguard ancient knowledge and rites through a vast oral tradition. These druids meet within sacred circles of trees or standing stones to whisper primal secrets in Druidic. The circle's wisest members preside as the chief priests of communities that venerate nature as the primal force in the world, and serve as advisors to the numerous provincial and city leaders, particularly among the [Hordes](/Races/Hordes.md). As a member of this circle, your magic is influenced by the land where you were initiated into the circle's mysterious rites.
+The Circle of the Land is made up of mystics and sages who safeguard ancient knowledge and rites through a vast oral tradition. These druids meet within sacred circles of trees or standing stones to whisper primal secrets in Druidic. The circle’s wisest members preside as the chief priests of communities that hold to the Old Faith and serve as advisors to the rulers of those folk. As a member of this circle, your magic is influenced by the land where you were initiated into the circle’s mysterious rites.
 
 ```
 name = 'Circle of the Land'
-description = "***Druidic Circle: Circle of the Land.*** The Circle of the Land is made up of mystics and sages who safeguard ancient knowledge and rites through a vast oral tradition. These druids meet within sacred circles of trees or standing stones to whisper primal secrets in Druidic. As a member of this circle, your magic is influenced by the land where you were initiated into the circle's ways."
+description = "***Druidic Circle: Circle of the Land.*** The Circle of the Land is made up of mystics and sages who safeguard ancient knowledge and rites through a vast oral tradition. These druids meet within sacred circles of trees or standing stones to whisper primal secrets in Druidic. The circle’s wisest members preside as the chief priests of communities that hold to the Old Faith and serve as advisors to the rulers of those folk. As a member of this circle, your magic is influenced by the land where you were initiated into the circle’s mysterious rites."
 ```
 
 ## Bonus Cantrip
@@ -13,8 +13,7 @@ You learn one additional druid cantrip of your choice.
 
 ```
 def level2(npc):
-    def boostcantrips(npc): npc.spellcasting['Druid'].maxcantripsknown += 1
-    npc.defer(lambda npc: boostcantrips(npc) )
+    npc.find("Druid Spellcasting").maxcantripsknown += 1
 ```
 
 ## Natural Recovery
@@ -25,7 +24,7 @@ You can regain some of your magical energy by sitting in meditation and communin
 For example, when you are a 4th-level druid, you can recover up to two levels worth of spell slots. You can recover either a 2nd-level slot or two 1st-level slots.
 
 ```
-    npc.defer(lambda npc: npc.traits.append(f"***Natural Recovery (Recharges on long rest).*** During a short rest, you can recover up to {(npc.levels('Druid') + 1) // 2} total spell slots of less than 6th level.") )
+    npc.append(Feature("Natural Recovery","During a short rest, you can recover up to {(npc.levels('Druid') + 1) // 2} total spell slots of less than 6th level.", "long rest") )
 ```
 
 ## Circle Spells
@@ -44,33 +43,23 @@ Once you gain access to a circle spell, you always have it prepared, and it does
         'Swamp' : swampcirclespells, 
         'Underdark' : underdarkcirclespells
     }
-    (_, circlespells) = choose("Choose your Land: ", choices)
-
-    def circlespellsforlevel(npc):
-        results = []
-        if npc.levels(baseclass.name) >= 3: results += circlespells[3]
-        if npc.levels(baseclass.name) >= 5: results += circlespells[5]
-        if npc.levels(baseclass.name) >= 7: results += circlespells[7]
-        if npc.levels(baseclass.name) >= 9: results += circlespells[9]
-        npc.spellcasting[baseclass.name].spellsalwaysprepared += results
-
-    npc.defer(lambda npc: circlespellsforlevel(npc))
+    (land, circlespells) = choose("Choose your Land: ", choices)
+    npc.find("Druid Spellcasting").addspellspreparedtable(circlespells)
+    npc.description.append("***Circle of the Land: " + land + ".***")
 ```
 
 **Arctic**
 
-Druid Level|	Circle Spells
+Druid Level| Circle Spells
 ---------- | --------------
-3rd	|Hold Person, Ice Beam
-5th	|Sleet Storm, Slow
-7th	|Freedom of Movement, Ice Storm
-9th	|Commune with Nature, Cone of Cold
-
-Artic regions will be found only in southernmost [Dradehalia](../../Nations/Dradehalia.md) or [Chidia](../../Geography/Chidia.md).
+3rd	| [hold person](../../Magic/Spells/hold-person.md), [spike growth](../../Magic/Spells/spike-growth.md)
+5th	| [sleet storm](../../Magic/Spells/sleet-storm.md), [slow](../../Magic/Spells/slow.md)
+7th	| [freedom of movement](../../Magic/Spells/freedom-of-movement.md), [ice storm](../../Magic/Spells/ice-storm.md)
+9th	| [commune with nature](../../Magic/Spells/commune-with-nature.md), [cone of cold](../../Magic/Spells/cone-of-cold.md)
 
 ```
 arcticcirclespells = {
-    3: ['hold person', "ice beam"],
+    3: ['hold person', 'spike growth'],
     5: ['slow', 'sleet storm'],
     7: ['freedom of movement', 'ice storm'],
     9: ['commune with nature', 'cone of cold']
@@ -79,14 +68,12 @@ arcticcirclespells = {
 
 **Coast**
 
-Druid Level|	Circle Spells
+Druid Level| Circle Spells
 ---------- | --------------
-3rd	|Mirror Image, [misty step](https://www.dndbeyond.com/spells/misty-step)
-5th	|Water Breathing, Water Walk
-7th	|Control Water, Freedom of Movement
-9th	|Conjure Elemental, Scrying
-
-Many coastal Druids of the Land are found within the [*al'meara*](../../Cultures/AlUma.md). Many [Sea Reavers](../../Organizations/MercCompanies/SeaReavers.md) also have druids of this Circle on their decks.
+3rd	| [mirror image](../../Magic/Spells/mirror-image.md), [misty step](../../Magic/Spells/misty-step.md)
+5th	| [water breathing](../../Magic/Spells/water-breathing.md), [water walk](../../Magic/Spells/water-walk.md)
+7th	| [control water](../../Magic/Spells/control-water.md), [freedom of movement](../../Magic/Spells/freedom-of-movement.md)
+9th	| [conjure elemental](../../Magic/Spells/conjure-elemental.md), [scrying](../../Magic/Spells/scrying.md)
 
 ```
 coastcirclespells = {
@@ -99,14 +86,12 @@ coastcirclespells = {
 
 **Desert**
 
-Druid Level|	Circle Spells
+Druid Level| Circle Spells
 ---------- | --------------
-3rd | Blur, Silence
-5th | Create Food and Water, Protection from Energy
-7th | Blight, Hallucinatory Terrain
-9th | Insect Plague, Wall of Stone
-
-While Azgaarnoth lacks the traditional sweeping-dunes-of-sand deserts, the parched tundras of southernmost Dradehalia are the same low-moisture deserts, and druids of these lands feel kinship to those of sand.
+3rd | [blur](../../Magic/Spells/blur.md), [silence](../../Magic/Spells/silence.md)
+5th | [create food and water](../../Magic/Spells/create-food-and-water.md), [protection from energy](../../Magic/Spells/protection-from-energy.md)
+7th | [blight](../../Magic/Spells/blight.md), [hallucinatory terrain](../../Magic/Spells/hallucinatory-terrain.md)
+9th | [insect plague](../../Magic/Spells/insect-plague.md), [wall of stone](../../Magic/Spells/wall-of-stone.md)
 
 ```
 desertcirclespells = {
@@ -119,12 +104,12 @@ desertcirclespells = {
 
 **Forest**
 
-Druid Level|	Circle Spells
+Druid Level| Circle Spells
 ---------- | --------------
-3rd	|Barkskin, Spider Climb
-5th	|Call Lightning, Plant Growth
-7th	|Divination, Freedom of Movement
-9th	|Commune with Nature, Tree Stride
+3rd	| barkskin, spider climb
+5th	| call lightning, plant growth
+7th	| divination, freedom of movement
+9th	| commune with nature, tree stride
 
 ```
 forestcirclespells = {
@@ -137,14 +122,12 @@ forestcirclespells = {
 
 **Grassland**
 
-Druid Level|	Circle Spells
+Druid Level| Circle Spells
 ---------- | --------------
-3rd	|Invisibility, Pass Without Trace
-5th	|Daylight, Haste
-7th	|Divination, Freedom of Movement
-9th	|Dream, Insect Plague
-
-Grassland areas include the [Ravenlands](../../Geography/Ravenlands.md), most of [Al'Uma](../../Geography/AlUma.md), and [Yithia](../../Geography/Yithia.md). Parts of [Dradehalia](../../Geography/Dradehalia.md) are also grassland, though colder than the regions further north.
+3rd	| Invisibility, Pass Without Trace
+5th	| Daylight, Haste
+7th	| Divination, Freedom of Movement
+9th	| Dream, Insect Plague
 
 ```
 grasslandcirclespells = {
@@ -164,8 +147,6 @@ Druid Level|	Circle Spells
 7th	|Stone Shape, Stoneskin
 9th	|Passwall, Wall of Stone
 
-The Daws mountains represent most of the mountainous regions in Azgaarnoth.
-
 ```
 mountaincirclespells = {
     3: ['spider climb', 'spike growth'],
@@ -184,8 +165,6 @@ Druid Level|	Circle Spells
 7th	|Freedom of Movement, Locate Creature
 9th	|Insect Plague, Scrying
 
-Swamps abound in [Yithia](../../Geography/Yithia.md), and in southeatern [Liria](../../Nations/Liria.md).
-
 ```
 swampcirclespells = {
     3: ['darkness', "melf's acid arrow"],
@@ -197,7 +176,7 @@ swampcirclespells = {
 
 **Underdark**
 
-Druid Level|	Circle Spells
+Druid Level| Circle Spells
 ---------- | --------------
 3rd	|Spider Climb, Web
 5th	|Gaseous Form, Stinking Cloud
@@ -224,7 +203,7 @@ In addition, you have advantage on saving throws against plants that are magical
 
 ```
 def level6(npc):
-    npc.traits.append("***Land's Stride.*** Moving through nonmagical difficult terrain costs you no extra movement. You can also pass through nonmagical plants without being slowed by them and without taking damage from them if they have thorns, spines, or a similar hazard. In addition, you have advantage on saving throws against plants that are magically created or manipulated to impede movement, such as those created by the Entangle spell.")
+    npc.append(Feature("Land's Stride", "Moving through nonmagical difficult terrain costs you no extra movement. You can also pass through nonmagical plants without being slowed by them and without taking damage from them if they have thorns, spines, or a similar hazard. In addition, you have advantage on saving throws against plants that are magically created or manipulated to impede movement, such as those created by the Entangle spell.") )
 ```
 
 ## Nature's Ward
@@ -234,6 +213,7 @@ You can't be charmed or frightened by elementals or fey, and you are immune to p
 
 ```
 def level10(npc):
+    npc.append(Feature("Nature's Ward", "You can't be charmed or frightened by elementals or fey."))
     npc.damageimmunities.append('poison')
     npc.conditionimmunities.append('poisoned')
     npc.conditionimmunities.append('diseased')
@@ -245,3 +225,8 @@ def level10(npc):
 Creatures of the natural world sense your connection to nature and become hesitant to attack you. When a beast or plant creature attacks you, that creature must make a Wisdom saving throw against your druid spell save DC. On a failed save, the creature must choose a different target, or the attack automatically misses. On a successful save, the creature is immune to this effect for 24 hours.
 
 The creature is aware of this effect before it makes its attack against you.
+
+```
+def level14(npc):
+    npc.append(Feature("Nature's Sanctuary", "Creatures of the natural world sense your connection to nature and become hesitant to attack you. When a beast or plant creature attacks you, that creature must make a Wisdom saving throw (DC {self.npc.find('Druid Spellcasting').spellsavedc()}). On a failed save, the creature must choose a different target, or the attack automatically misses. On a successful save, the creature is immune to this effect for 24 hours. The creature is aware of this effect before it makes its attack against you."))
+```

@@ -462,7 +462,7 @@ class Spellcasting(Casting):
         if self.maxcantripsknown > 0:
             text += f"{self.maxcantripsknown} cantrips known. "
         elif len(self.cantripstable) > 0:
-            text += f"{self.cantripstable[npclevels]} cantrips known. "
+            text += f"{self.cantripstable[npclevels] + self.maxcantripsknown} cantrips known. "
 
         if self.maxspellsknown > 0:
             text += f"{self.maxspellsknown} spells known. "
@@ -478,7 +478,7 @@ class Spellcasting(Casting):
             text += f">Spells always prepared: {','.join(self.spellsalwaysprepared)}\n>\n"
 
         # Print out slot table
-        if len(self.cantripsknown) > 0 or len(self.cantripstable) > 0:
+        if len(self.cantripsknown) > 0 or len(self.cantripstable) > 0 or self.maxcantripsknown > 0:
             text += f">* *Cantrips*: {','.join(self.cantripsknown)}\n"
         slots = self.slottable()[self.npc.levels(self.classname)]
         for s in range(0,len(slots)):
@@ -520,6 +520,7 @@ class DivineSpellcasting(FullSpellcasting):
     """This is used for both Cleric and Druid classes. WIS-based."""
     def __init__(self, classname, cantriptable):
         FullSpellcasting.__init__(self, classname, "WIS", cantriptable)
+        self.domaintable = None
 
     def addspellspreparedtable(self, domaintable):
         self.domaintable = domaintable
@@ -530,9 +531,10 @@ class DivineSpellcasting(FullSpellcasting):
         self.maxspellsprepared = npclevels + self.npc.WISbonus()
 
         # Set up always-prepared spells
-        for level in self.domaintable:
-            if level <= npclevels:
-                self.spellsalwaysprepared += self.domaintable[level]
+        if self.domaintable != None:
+            for level in self.domaintable:
+                if level <= npclevels:
+                    self.spellsalwaysprepared += self.domaintable[level]
 
 class HalfSpellcasting(Spellcasting):
     def slottable(self):
@@ -824,6 +826,8 @@ class StatBlock:
             warn("Unrecognized expertise: " + proficiency)
 
     def addproficiency(self, proficiency):
+        global moduleglobals
+
         if proficiency == None:
             error("CANNOT ADD None AS A PROFICIENCY!")
         elif proficiency in ['STR','DEX','CON','INT','WIS','CHA']:
@@ -832,9 +836,12 @@ class StatBlock:
 
             # It's a saving throw -- track separately in the future?
             self.proficiencies.append(proficiency)
+        elif isinstance(proficiency, moduleglobals['roots']['Equipment'].Weapon):
+            log("The proficiency is a Weapon instance")
+            self.proficiencies.append(proficiency.name)
         elif proficiency in self.proficiencies:
             self.expertises.append(proficiency)
-        elif proficiency in moduleglobals['Abilities'].skills:
+        elif proficiency in moduleglobals['roots']['Abilities'].skills:
             # It's a skill -- track separately?
             self.proficiencies.append(proficiency)
         else:
@@ -922,6 +929,39 @@ class StatBlock:
                 results.append(f)
         return results
     
+    def remove(self, featuretitle : str) -> bool:
+        log("remove() Looking for " + featuretitle)
+        for f in self.traits:
+            debug("Looking at " + f.title)
+            if featuretitle in f.title:
+                self.traits.remove(f)
+                return True
+
+        for f in self.actions:
+            debug("Looking at " + f.title)
+            if featuretitle in f.title:
+                self.actions.remove(f)
+                return True
+
+        for f in self.bonusactions:
+            debug("Looking at " + f.title)
+            if featuretitle in f.title:
+                self.bonusactions.remove(f)
+                return True
+
+        for f in self.reactions:
+            debug("Looking at " + f.title)
+            if featuretitle in f.title:
+                self.reactions.remove(f)
+                return True
+
+        for f in self.lairactions:
+            debug("Looking at " + f.title)
+            if featuretitle in f.title:
+                self.lairactions.remove(f)
+                return True
+                
+
     def replace(self, feature : Feature) -> bool:
         def replacebytype(srclist, feature):
             for f in srclist:

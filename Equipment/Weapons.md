@@ -231,6 +231,9 @@ Versatile | This weapon can be used with one or two hands. A damage value in par
 ```
 def init():
     parent.weapons = weapons
+    parent.Weapon = Weapon
+    parent.MeleeWeapon = MeleeWeapon
+    parent.RangedWeapon = RangedWeapon
 
-exports = { Weapon, MeleeWeapon, RangedWeapon }
+exports = [ Weapon, MeleeWeapon, RangedWeapon ]
 ```
