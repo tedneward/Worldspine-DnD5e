@@ -10,5 +10,6 @@ description = "***Feat: Durable.*** You are hardy and resilient."
 def prereq(npc): return True
 def apply(npc):
     npc.CON += 1
-    npc.append(Feature("Durable", "When you roll a Hit Die to regain hit points, the minimum number of hit points you regain from the roll equals twice your Constitution modifier (minimum of 2).") )
+    print("Appending Durable")
+    npc.append(Feature("Durable", "When you roll a Hit Die to regain hit points, the minimum number of hit points you regain from the roll is {self.npc.CONbonus() * 2}.") )
 ```

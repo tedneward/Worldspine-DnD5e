@@ -1,55 +1,45 @@
->### Paela Underbough
->*Small Female humanoid (Lightfoot Halfling) Cleric (Life) 20, any Lawful*
+>### Art Wolfbreak
+>*Medium Female humanoid/abyssal (Tiefling) Cleric (Life) 20, any Chaotic*
 >___
 >- **Armor Class** 15 (Leather armor (11),Shield (2),DEX (+2))
->- **Hit Points** 156 (20d8 + 40)
->- **Speed** 25 ft
+>- **Hit Points** 134 (20d8 + 20)
+>- **Speed** 30 ft
 >___
 >|**STR**|**DEX**|**CON**|**INT**|**WIS**|**CHA**|
 >|:-:|:-:|:-:|:-:|:-:|:-:|
->|10 (+0)|15 (+2)|15 (+2)|8 (-1)|11 (+0)|15 (+2)|
+>|14 (+2)|15 (+2)|13 (+1)|18 (+4)|8 (-1)|15 (+2)|
 >___
 >- **Proficiency Bonus** +7
->- **Saving Throws** CHA +9,WIS +7
+>- **Saving Throws** CHA +9,WIS +6
 >- **Damage Vulnerabilities** 
->- **Damage Resistances** 
+>- **Damage Resistances** fire
 >- **Damage Immunities** 
 >- **Condition Immunities** 
->- **Skills** History +6,Insight +7,Persuasion +9,Religion +6
->- **Proficiencies** Breastplate,Chain mail,Chain shirt,Club,Dagger,Dart,Gaming set,Greatclub,Half-plate,Handaxe,Hide armor,Javelin,Leather armor,Light crossbow,Light hammer,Mace,Padded armor,Plate armor,Quarterstaff,Ring mail,Scale mail,Shield,Shortbow,Sickle,Sling,Spear,Splint armor,Studded leather armor
->- **Senses** passive Perception 10
->- **Languages** Common,Elvish,Halfling
+>- **Skills** Deception +9,Persuasion +9,Religion +11,Stealth +9
+>- **Proficiencies** Blowgun,Breastplate,Chain mail,Chain shirt,Club,Dagger,Dart,Flail,Gaming set,Greatclub,Half-plate,Handaxe,Hide armor,Javelin,Leather armor,Light crossbow,Light hammer,Longsword,Mace,Padded armor,Plate armor,Quarterstaff,Ring mail,Scale mail,Shield,Shortbow,Sickle,Sling,Spear,Splint armor,Studded leather armor,Thieves' tools
+>- **Senses** darkvision 60,passive Perception 9
+>- **Languages** Common,Infernal
 >___
 >***Blessed Healer.*** When you cast a spell of 1st level or higher that restores hit points to a creature other than you, you regain hit points equal to 2 + the spell's level.
 >
->***Brave.*** You have advantage on saving throws against being frightened.
+>***Channel Divinity (3/Recharges on short or long rest).*** See below for details on each use of your Channel Divinity feature. Creatures that must save against any of your Channel Divinity features do so at DC 14
 >
->***Channel Divinity (3/Recharges on short or long rest).*** See below for details on each use of your Channel Divinity feature. Creatures that must save against any of your Channel Divinity features do so at DC 15
+>***Criminal Contact.*** You have a reliable and trustworthy contact who acts as your liaison to a network of other criminals. You know how to get messages to and from your contact, even over great distances; specifically, you know the local messengers, corrupt caravan masters, and seedy sailors who can deliver messages for you.
 >
 >***Disciple of Life.*** Whenever you use a spell of 1st level or higher to restore hit points to a creature, the creature regains additional hit points equal to 2 + the spell's level.
 >
->***Halfling Nimbleness.*** You can move through the space of any creature that is of a size larger than yours.
+>***Heavy Armor Master.*** While you are wearing heavy armor, bludgeoning, piercing, and slashing damage that you take from nonmagical weapons is reduced by 3.
 >
->***Lucky.*** When you roll a 1 on the d20 for an attack roll, ability check, or saving throw, you can reroll the die and must use the new roll.
->
->***Naturally Stealthy.*** You can attempt to Hide even when you are obscured only by a creature that is at least one size larger than you.
->
->***Position of Privilege.*** Thanks to your noble birth, people are inclined to think the best of you. You are welcome in high society, and people assume you have the right to be wherever you are. The common folk make every effort to accommodate you and avoid your displeasure, and other people of high birth treat you as a member of the same social sphere. You can secure an audience with a local noble if you need to.
->
->***Savage Attacker.*** Once per turn when you roll damage for a melee weapon attack, you can reroll the weapon's damage dice and use either total.
+>***Infernal Legacy (Recharges on long rest).*** You know the [thaumaturgy](http://worldspine.tedneward.com/magic/spells/thaumaturgy/) cantrip. You can cast the [hellish rebuke](http://worldspine.tedneward.com/magic/spells/hellish-rebuke/) spell as a 2nd-level spell. You can cast the [darkness](http://worldspine.tedneward.com/magic/spells/darkness/) spell. You use Charisma as your casting ability for these.
 >
 >***Supreme Healing.*** When you would normally roll one or more dice to restore hit points with a spell, you instead use the highest number possible for each die.
->
->***War Caster: Concentration.*** You have advantage on Constitution saving throws that you make to maintain your concentration on a spell when you take damage.
->
->***War Caster: Somaticism.*** You can perform the somatic components of spells even when you have weapons or a shield in one or both hands.
 >
 >#### Actions
 >***Channel Divinity: Preserve Life.*** You present your holy symbol and evoke healing energy that can restore 100 hit points equal to five times your cleric level. Choose any creatures within 30 feet of you, and divide those hit points among them. This feature can restore a creature to no more than half of its hit point maximum. You can't use this feature on an undead or a construct.
 >
 >***Channel Divinity: Turn Undead.*** You can use one of your uses of Channel Divinity to turn undead. Each undead that can see or hear you within 30 feet of you must make a Wisdom saving throw. If the creature fails its saving throw, if it is a CR of 4 or lower it is destroyed; otherwise it is turned for 1 minute or until it takes any damage. A turned creature must spend its turns trying to move as far away from you as it can, and it can't willingly move to a space within 30 feet of you. It also can't take reactions. For its action, it can use only the Dash action or try to escape from an effect that prevents it from moving. If there's nowhere to move, the creature can use the Dodge action.
 >
->***Cleric Spellcasting.*** Uses WIS. **Spell Attack Bonus: +7** **Spell Save DC 15**  5 cantrips known. 20 spells prepared. 
+>***Cleric Spellcasting.*** Uses WIS. **Spell Attack Bonus: +6** **Spell Save DC 14**  5 cantrips known. 19 spells prepared. 
 >
 >Spells always prepared: bless,cure wounds,lesser restoration,spiritual weapon,beacon of hope,revivify,death ward,guardian of faith,mass cure wounds,raise dead
 >
@@ -71,22 +61,15 @@
 >
 >***Light Crossbow.*** *Ranged Weapon Attack:* +9 to hit, range 80/320, one target. Hit: 1d8 + 2 piercing
 >
->***Mace.*** *Melee Weapon Attack:* +7 to hit, reach 5ft., one target. Hit: 1d6 + 0 bludgeoning
+>***Mace.*** *Melee Weapon Attack:* +9 to hit, reach 5ft., one target. Hit: 1d6 + 2 bludgeoning
 >
 >#### Bonus Actions
 >***Channel Divinity: Harness Divine Power.*** You can expend a use of your Channel Divinity to regain one expended spell slot, the level of which can be no higher than 4.
 >
->#### Reactions
->***Defensive Parry.*** When you are wielding a finesse weapon with which you are proficient and another creature hits you with a melee attack, you can add +7 to your AC for that attack, potentially causing the attack to miss you.
->
->***War Caster: Opportunity Cast.*** When a hostile creature's movement provokes an opportunity attack from you, you can cast a spell at the creature, rather than making an opportunity attack. The spell must have a casting time of 1 action and must target only that creature. This does not count against your ability to cast a spell during your turn.
->
 >#### Equipment
->A set of fine clothes
+>Crowbar
 >
->A signet ring
->
->A scroll of pedigree
+>Set of dark common clothes including a hood
 >
 >Mace (4 lb)
 >
@@ -102,19 +85,19 @@
 >
 >___
 >#### Description
->***Race: Halfling.*** Halflings are the archetypal small race, and have made beloved thieves and trackers and hosts for millennia.
+>***Race: Tiefling.*** Tieflings are derived from human bloodlines, and in the broadest possible sense, they still look human. However, their infernal heritage has left a clear imprint on their appearance. Tieflings have large horns that take any of a variety of shapes: some have curling horns like a ram, others have straight and tall horns like a gazelle's, and some spiral upward like an antelopes' horns. They have thick tails, four to five feet long, which lash or coil around their legs when they get upset or nervous. Their canine teeth are sharply pointed, and their eyes are solid colors — black, red, white, silver, or gold — with no visible sclera or pupil. Their skin tones cover the full range of human coloration, but also include various shades of red. Their hair, cascading down from behind their horns, is usually dark, from black or brown to dark red, blue, or purple.
 >
->***Lightfoot Halfling.***
+>***Criminal Specialty: Blackmailer.***
 >
->***Personality Trait.*** No one could doubt by looking at my regal bearing that I am a cut above the unwashed masses.
+>***Personality Trait.*** The best way to get me to do something is to tell me I can't do it.
 >
->***Ideal: Responsibility.*** It is my duty to respect the authority of those above me, just as those below me must respect mine.
+>***Ideal: Freedom.*** Chains are meant to be broken, as are those who would forge them.
 >
->***Bond.*** The common folk must see me as a hero of the people.
+>***Bond.*** I will become the greatest thief that ever lived.
 >
->***Flaw.*** By my words and actions, I often bring shame to my family.
+>***Flaw.*** When faced with a choice between money and my friends, I usually choose the money.
 >
->***Background: Noble.*** You understand wealth, power, and privilege. You carry a noble title, and your family owns land, collects taxes, and wields significant political influence. You might be a pampered aristocrat unfamiliar with work or discomfort, a former merchant just elevated to the nobility, or a disinherited scoundrel with a disproportionate sense of entitlement. Or you could be an honest, hard-working landowner who cares deeply about the people who live and work on your land, keenly aware of your responsibility to them.
+>***Background: Criminal.*** You are an experienced criminal with a history of breaking the law. You have spent a lot of time among other criminals and still have contacts within the criminal underworld. You're far closer than most people to the world of murder, theft, and violence that pervades the underbelly of civilization, and you have survived up to this point by flouting the rules and regulations of society.
 >
 >***Class: Cleric.*** Clerics are intermediaries between the mortal world and the distant planes of the gods. As varied as the gods they serve, clerics strive to embody the handiwork of their deities. No ordinary priest, a cleric is imbued with divine magic.
 >
