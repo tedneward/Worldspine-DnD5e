@@ -106,7 +106,7 @@ def random(npc):
 
 ### Weight
 
-## Names
+## Dragonborn Names
 Dragonborn have personal names given at birth, but they put their clan names first as a mark of honor. A childhood name or nickname is often used among clutchmates as a descriptive term or a term of endearment. The name might recall an event or center on a habit.
 
 **Male Names:** Arjhan, Balasar, Bharash, Donaar, Ghesh, Heskan, Kriv, Medrash, Mehen, Nadarr, Pandjed, Patrin, Rhogar, Shamash, Shedinn, Tarhun, Torinn
@@ -116,6 +116,43 @@ Dragonborn have personal names given at birth, but they put their clan names fir
 **Childhood Names:** Climber, Earbender, Leaper, Pious, Shieldbiter, Zealous
 
 **Clan Names:** Clethtinthiallor, Daardendrian, Delmirev, Drachedandion, Fenkenkabradon, Kepeshkmolik, Kerrhylon, Kimbatuul, Linxakasendalor, Myastan, Nemmonis, Norixius, Ophinshtalajiir, Prexijandilin, Shestendeliath, Turnuroth, Verthisathurgiesh, Yarjerit
+
+```
+def get_name(npc, gender):
+    def firstname():
+        male_names = [
+            'Arjhan', 'Balasar', 'Bharash', 'Donaar', 'Ghesh', 'Heskan', 
+            'Kriv', 'Medrash', 'Mehen', 'Nadarr', 'Pandjed', 'Patrin', 
+            'Rhogar', 'Shamash', 'Shedinn', 'Tarhun', 'Torinn'
+        ]
+        female_names = [
+            'Akra', 'Biri', 'Daar', 'Farideh', 'Harann', 'Havilar', 
+            'Jheri', 'Kava', 'Korinn', 'Mishann', 'Nala', 'Perra', 
+            'Raiann', 'Sora', 'Surina', 'Thava', 'Uadjit'
+        ]
+        if npc.gender == 'Male': return generatemarkovname(male_names)
+        else: return generatemarkovname(female_names)
+
+    def lastname():
+        clannames = [
+            'Clethtinthiallor', 
+            'Daardendrian', 'Delmirev', 'Drachedandion', 
+            'Fenkenkabradon', 
+            'Kepeshkmolik', 'Kerrhylon', 'Kimbatuul', 
+            'Linxakasendalor', 
+            'Myastan', 
+            'Nemmonis', 'Norixius', 
+            'Ophinshtalajiir',
+            'Prexijandilin', 
+            'Shestendeliath', 
+            'Turnuroth', 
+            'Verthisathurgiesh', 
+            'Yarjerit'
+        ]
+        return generatemarkovname(clannames)
+
+    return f"{firstname()} {lastname()}"
+```
 
 ## Sample Dragonborn names (from https://www.roll4.net/generators/dd-name-generators/dragonborn-name-generator)
 Worqir Narnok

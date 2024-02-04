@@ -665,6 +665,12 @@ class StatBlock:
         self.race = racemod
         litexec("racemod.apply(self)", { "racemod" : racemod, "self": self })
         self.description.append(self.race.description)
+        if getattr(self.race, "get_name", None) != None:
+            self.name = self.race.get_name(self)
+        #if getattr(self.race, "get_height", None) != None:
+        #    self.description.append(f"***Height.*** {self.race.get_height(self)}")
+        #if getattr(self.race, "get_weight", None) != None:
+        #    self.description.append(f"***Weight.*** {self.race.get_weight(self)}")
 
     def setsubrace(self, subracemod):
         if self.subrace != None: warn("Replacing",self.subrace.name,"with",subracemod.name,"!")

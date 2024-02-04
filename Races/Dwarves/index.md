@@ -90,41 +90,82 @@ def random(npc):
 
 ### Height
 
+```
+def get_height(npc):
+    pass
+```
+
 ### Weight
 
-## Names
+```
+def get_weight(npc):
+    pass
+```
+
+## Dwarf Names
+A dwarf’s name is granted by a clan elder, in accordance with tradition. Every proper dwarven name has been used and reused down through the generations. A dwarf’s name belongs to the clan, not to the individual. A dwarf who misuses or brings shame to a clan name is stripped of the name and forbidden by law to use any dwarven name in its place.
+
+**Male Names:** Adrik, Alberich, Baern, Barendd, Brottor, Bruenor, Dain, Darrak, Delg, Eberk, Einkil, Fargrim, Flint, Gardain, Harbek, Kildrak, Morgran, Orsik, Oskar, Rangrim, Rurik, Taklinn, Thoradin, Thorin, Tordek, Traubon, Travok, Ulfgar, Veit, Vondal
+
+**Female Names:** Amber, Artin, Audhild, Bardryn, Dagnal, Diesa, Eldeth, Falkrunn, Finellen, Gunnloda, Gurdis, Helja, Hlin, Kathra, Kristryd, Ilde, Liftrasa, Mardred, Riswynn, Sannl, Torbera, Torgga, Vistra
+
+**Clan Names:** Balderk, Battlehammer, Brawnanvil, Dankil, Fireforge, Frostbeard, Gorunn, Holderhek, Ironfist, Loderr, Lutgehr, Rumnaheim, Strakeln, Torunn, Ungart
 
 ```
-def generate_name(npc, gender):
-    def generate_firstname():
-        names = [
-            'Alaron', 'Aldrek', 'Ardo',
-            'Barazak', 'Balur', 'Bombur', 'Bofur', 'Bnar',
+def get_name(npc):
+    def firstname():
+        male_names = [
+            'Adrik', 'Alaron', 'Alberich', 'Aldrek', 'Ardo',
+            'Baern', 'Barendd', 'Brottor', 'Bruenor', 'Barazak', 
+            'Balur', 'Bombur', 'Bofur', 'Bnar',
             'Chakrir', 'Carnir', 'Cadmael',
-            'Dendirsyr', 'Dorn', 'Dophensus',
-            'Erwid', 'Erli', 'Ednir',
-            'Farsben', 'Fili', 'Fordreth', 'Fenzig',
-            'Gadaric', 'Gimli', 'Graflyn', 'Gunder', 'Goltan', 'Grimn', 'Grisbane',
-            'Haldrik', 'Heimoc', 'Helsbid', 'Helwright', 'Hoskuld',
+            'Dain', 'Darrak', 'Delg', 'Dendirsyr', 'Dorn', 'Dophensus',
+            'Eberk', 'Einkil','Erwid', 'Erli', 'Ednir',
+            'Fargrim', 'Flint', 'Farsben', 'Fili', 'Fordreth', 'Fenzig',
+            'Gardain', 'Gadaric', 'Gimli', 'Graflyn', 'Gunder', 
+            'Goltan', 'Grimn', 'Grisbane',
+            'Harbek', 'Haldrik', 'Heimoc', 'Helsbid', 'Helwright', 'Hoskuld',
             'Kalhor', 'Karsten', 'Kenth', 'Kili', 'Kulderik', 'Kellan', 'Kardnyr', 'Krael',
-            'Kall',
+            'Kall', 'Kildrak',
             'Lornir', 'Lorik', 'Laron',
-            'Maarik', 'Meli', 'Mostyr',
+            'Maarik', 'Meli', 'Mostyr', 'Morgran',
             'Nomir',
-            'Ostrin',
-            'Ryonn',
+            'Ostrin', 'Orsik', 'Oskar',
+            'Ryonn', 'Rangrim', 'Rurik',
+            'Taklinn', 'Thoradin', 'Tordek', 'Traubon', 'Travok',
             'Thorin', 'Thordrik', 'Thorstyr', 'Thaladan', 'Tomir',
-            'Valamar', 'Valdan',
+            'Ulfgar',
+            'Valamar', 'Valdan', 'Veit', 'Vondal'
         ]
-        return generate_name(names)
+        female_names = [
+            'Amber', 'Artin', 'Audhild', 
+            'Bardryn', 
+            'Dagnal', 'Diesa', 
+            'Eldeth', 
+            'Falkrunn', 'Finellen', 
+            'Gunnloda', 'Gurdis', 
+            'Helja', 'Hlin', 
+            'Ilde', 
+            'Kathra', 'Kristryd', 
+            'Liftrasa', 
+            'Mardred', 
+            'Riswynn', 
+            'Sannl', 
+            'Torbera', 
+            'Torgga', 
+            'Vistra'
+        ]
+        if npc.gender == 'Male': return generatemarkovname(male_names)
+        else: return generatemarkovname(female_names)
 
-    def generate_lastname():
+    def lastname():
         # Dwarven lastnames are often two-parters
         prenouns = [
             'strong', 'steady', 'barren',
             'mountain','hill','cliff','range','mine','crag','storm','root',
             'sword', 'spear', 'axe', 'hammer',
             'two', 'three', 'four',
+            'battle','war',
             'shaft', 'haft',
             'wolf', 'bear', 'tiger', 'rat', 'troll', 'dragon',
             'eagle','raven','hawk','hen',
@@ -135,16 +176,16 @@ def generate_name(npc, gender):
         ]
         postnouns = [
             'mountain','hill','cliff','range','mine','crag','storm','root',
-            'gates',
-            'sword', 'spear', 'axe', 'hammer', 'shield',
-            'hand','tongue', 'skull', 'blood', 'fist',
+            'gates','shaft','tower',
+            'sword','spear','axe','hammer', 'shield',
+            'hand','tongue','skull','blood', 'fist',
             'talon','claw','beak','hawk',
-            'borne', 'heim', 'bane',
+            'borne','heim','bane','battle',
             'pants','vest','tunic','shirt',
             'smith','shadow',
         ]
         verbs = [
-            'breaker','smiter','hewer','slasher','stealer'
+            'breaker','smiter','hewer','slasher','stealer','smasher'
         ]
         if random.randint(0,1) == 0:
             part1 = prenouns[random.randint(0, len(prenouns)-1)].capitalize()
@@ -154,5 +195,5 @@ def generate_name(npc, gender):
             part1 = prenouns[random.randint(0, len(prenouns)-1)].capitalize()
             part2 = verbs[random.randint(0, len(verbs)-1)]
             return f"{part1}{part2}"
-    return f"{generate_firstname()} {generate_lastname()}"
+    return f"{firstname()} {lastname()}"
 ```

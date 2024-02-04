@@ -110,11 +110,11 @@ d6| Ideal
         ["Honor", "I don't steal from others in the trade.", "Lawful"],
         ["Freedom", "Chains are meant to be broken, as are those who would forge them.", "Chaotic"],
         ["Charity", "I steal from the wealthy so that I can help people in need.", "Good"],
-        ["Greed", "I will do whatever it takes to become wealthy.", "Evil"]
+        ["Greed", "I will do whatever it takes to become wealthy.", "Evil"],
         ["People", "I'm loyal to my friends, not to any ideals, and everyone else can take a trip down the Styx for all I care.", "Neutral"],
         ["Redemption", "There's a spark of good in everyone.", "Good"]
     ]
-    ideal = randompick(ideals)
+    ideal = randomfrom(ideals)
     npc.description.append(f"***Ideal: {ideal[0]}.*** {ideal[1]}")
     npc.alignment = "any " + ideal[2]
 ```
