@@ -219,7 +219,7 @@ The path to true lichdom is something only the most powerful mind flayer mages c
 >___
 >***Magic Resistance.*** The illithilich has advantage on saving throws against spells and other magical effects.
 >
->***Undead Nature.*** A illithilich doesn’t require air, food, drink, or sleep.
+>***Undead Nature.*** A illithilich doesn't require air, food, drink, or sleep.
 >
 >***Legendary Resistance (3/Day).*** If the illithilich fails a saving throw, it can choose to succeed instead.
 >
@@ -245,7 +245,7 @@ The path to true lichdom is something only the most powerful mind flayer mages c
 >
 >* *Cantrips (at will):* mage hand, prestidigitation, ray of frost
 >* *1st level (4 slots):* detect magic, magic missile, shield, thunderwave
->* *2nd level (3 slots):* detect thoughts, invisibility, Melf’s acid arrow, mirror image
+>* *2nd level (3 slots):* detect thoughts, invisibility, Melf's acid arrow, mirror image
 >* *3rd level (3 slots):* animate dead, counterspell, dispel magic, fireball
 >* *4th level (3 slots):* blight, dimension door
 >* *5th level (3 slots):* cloudkill, scrying
@@ -265,13 +265,13 @@ The path to true lichdom is something only the most powerful mind flayer mages c
 >
 
 ### A illithilich's Lair
-A illithilich often haunts the abode it favored in life, such as a lonely tower, a haunted ruin, or an academy of black magic. Alternatively, some liches construct secret tombs filled with powerful guardians and traps.Everything about a lich’s lair reflects its keen mind and wicked cunning, including the magic and mundane traps that secure it. Undead, constructs, and bound demons lurk in shadowy recesses, emerging to destroy those who dare to disturb the lich’s work.A lich encountered in its lair has a challenge rating of 22 (41,000 XP).
+A illithilich often haunts the abode it favored in life, such as a lonely tower, a haunted ruin, or an academy of black magic. Alternatively, some liches construct secret tombs filled with powerful guardians and traps.Everything about a lich's lair reflects its keen mind and wicked cunning, including the magic and mundane traps that secure it. Undead, constructs, and bound demons lurk in shadowy recesses, emerging to destroy those who dare to disturb the lich's work.A lich encountered in its lair has a challenge rating of 22 (41,000 XP).
 
 #### Lair Actions
-On initiative count 20 (losing initiative ties), the lich can take a lair action to cause one of the following magical effects; the lich can’t use the same effect two rounds in a row:
+On initiative count 20 (losing initiative ties), the lich can take a lair action to cause one of the following magical effects; the lich can't use the same effect two rounds in a row:
 
 * The illithilich rolls a d8 and regains a spell slot of that level or lower. If it has no spent spell slots of that level or lower, nothing happens.
-* The illithilich targets one creature it can see within 30 feet of it. A crackling cord of negative energy tethers the illithilich to the target. Whenever the illithilich takes damage, the target must make a DC 18 Constitution saving throw. On a failed save, the illithilich takes half the damage (rounded down), and the target takes the remaining damage. This tether lasts until initiative count 20 on the next round or until the illithilich or the target is no longer in the lich’s illithilich.
+* The illithilich targets one creature it can see within 30 feet of it. A crackling cord of negative energy tethers the illithilich to the target. Whenever the illithilich takes damage, the target must make a DC 18 Constitution saving throw. On a failed save, the illithilich takes half the damage (rounded down), and the target takes the remaining damage. This tether lasts until initiative count 20 on the next round or until the illithilich or the target is no longer in the lich's illithilich.
 * The illithilich calls forth the spirits of creatures that died in its illithilich. These apparitions materialize and attack one creature that the illithilich can see within 60 feet of it. The target must succeed on a DC 18 Constitution saving throw, taking 52 (15d6) necrotic damage on a failed save, or half as much damage on a success. The apparitions then disappear.
 
 ---

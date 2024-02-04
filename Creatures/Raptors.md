@@ -169,7 +169,7 @@ Some of the mightest of raptors, greater giant eagles are masters of mountain ae
 >- **Languages** Giant Eagle,Auran,Common
 >- **Challenge** 4
 >___
->***Flyby.*** The eagle doesn’t provoke opportunity attacks when it flies out of an enemy's reach.
+>***Flyby.*** The eagle doesn't provoke opportunity attacks when it flies out of an enemy's reach.
 >
 >***Keen Sight.*** The eagle has advantage on Wisdom (Perception) checks that rely on sight.
 >

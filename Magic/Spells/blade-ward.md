@@ -6,4 +6,4 @@ ___
 - **Components:** V, S
 - **Duration:** Instantaneous
 ---
-You trace a sigil of warding, imposing Disadvantage on the creature’s attack roll against you.
+You trace a sigil of warding, imposing Disadvantage on the creature's attack roll against you.

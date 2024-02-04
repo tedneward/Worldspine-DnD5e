@@ -6,7 +6,7 @@ Kenku are feathered humanoids that wander the world as vagabonds, driven by gree
 ### History
 The kenku once served a mysterious, powerful entity on another plane of existence, the same that created the Hordes (or so it is said). Some believe they were minions of Grazz't, while others say that they were scouts and explorers for the Wind Dukes of Aaqa. Whatever the truth, according to legend, the kenku betrayed their master soon after they came with the Hordes to Azgaarnoth. Unable to resist the lure of a beautiful sparkling treasure, the kenku plotted to steal the item and escape to the Material Plane.
 
-Unfortunately for the kenku, their master discovered their plan before they could enact it. Enraged, the entity imposed three dreadful curses upon them. First, the kenku’s beloved wings withered and fell away from their bodies, leaving them bound to the earth. Second, because their ingenuity and skill had turned toward scheming against their patron, the spark of creativity was torn from their souls. Finally, to ensure that the kenku could never divulge any secrets, their master took away their voices. Once the entity was satisfied that they had been sufficiently punished, the kenku were set loose on the Material Plane.
+Unfortunately for the kenku, their master discovered their plan before they could enact it. Enraged, the entity imposed three dreadful curses upon them. First, the kenku's beloved wings withered and fell away from their bodies, leaving them bound to the earth. Second, because their ingenuity and skill had turned toward scheming against their patron, the spark of creativity was torn from their souls. Finally, to ensure that the kenku could never divulge any secrets, their master took away their voices. Once the entity was satisfied that they had been sufficiently punished, the kenku were set loose on the Material Plane.
 
 Since then, the kenku have wandered the world. They settle in places that accept them, usually bleak cities that have fallen on hard times and are overrun with crime.
 
@@ -27,7 +27,7 @@ Kenku speak to one another in much the same way. Because they are adept at inter
 ### Perfect Imitators
 Kenku can copy existing items with exceptional skill, allowing them to become excellent artisans and scribes. They can copy books, make replicas of objects, and otherwise thrive in situations where they can produce large numbers of identical items. Few kenku find this work satisfying, since their quest for the freedom of flight makes them ill-suited to settle into a routine.
 
-For this reason, many kenku make an easy living serving as messengers, spies, and lookouts for thieves’ guilds, bandits, and other criminal cartels. A network of kenku can relay a bird call or similar noise across the city, alerting their allies to the approach of a guard patrol or signaling a prime opportunity for a robbery. Since kenku can precisely reproduce any sound, the messages they carry rarely suffer degradation or shifts in meaning. Human messengers might switch words or phrases and garble a message inadvertently, but the kenku produce perfect copies of whatever they hear. A kenku who learns of clever schemes and plans devised by other creatures can put them to use. The kenku lack the talent to improvise or alter a plan, but a wise Master sets multiple plans in motion at once, confident that underlings can follow orders to the letter.
+For this reason, many kenku make an easy living serving as messengers, spies, and lookouts for thieves' guilds, bandits, and other criminal cartels. A network of kenku can relay a bird call or similar noise across the city, alerting their allies to the approach of a guard patrol or signaling a prime opportunity for a robbery. Since kenku can precisely reproduce any sound, the messages they carry rarely suffer degradation or shifts in meaning. Human messengers might switch words or phrases and garble a message inadvertently, but the kenku produce perfect copies of whatever they hear. A kenku who learns of clever schemes and plans devised by other creatures can put them to use. The kenku lack the talent to improvise or alter a plan, but a wise Master sets multiple plans in motion at once, confident that underlings can follow orders to the letter.
 
 By the same token, kenku have no ability to invent new ideas or create new things. At best, they can only combine existing things together, but even then it can only be in service to an idea that has already been had by another.
 
@@ -184,7 +184,7 @@ Certain kenku enter into monastic orders and learn their ways to an astonishing 
 >#### Actions
 >***Multiattack.*** The kenku can make two attacks (Unarmed Strike, Shortsword, and/or Shortbow).
 >
->***Unarmed Strike.*** Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 11 (1d6 + 7) bludgeoning damage. These are magical for purposes of resistances and immunities. If the kenku is holding a kensei melee weapon, it can use it to defend itself. It gains a +2 bonus to AC until the start of its next turn, while the weapon is in its hand and it isn’t incapacitated.
+>***Unarmed Strike.*** Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 11 (1d6 + 7) bludgeoning damage. These are magical for purposes of resistances and immunities. If the kenku is holding a kensei melee weapon, it can use it to defend itself. It gains a +2 bonus to AC until the start of its next turn, while the weapon is in its hand and it isn't incapacitated.
 >
 >***Shortsword.*** Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 11 (1d6 + 7) piercing damage. These are magical for purposes of resistances and immunities.
 >
@@ -203,7 +203,7 @@ Certain kenku enter into monastic orders and learn their ways to an astonishing 
 >
 >***Quickened Healing.*** The kenku can spend 2 ki points, and recover 1d6 + 3 hit points.
 >
->***Path of the Kensei: Ranged weapon.*** The kenku can use a bonus action on its turn to  make its ranged attacks with a kensei weapon more deadly. When it does so, any target it hits with a ranged attack using a kensei weapon takes an extra 1d4 damage of the weapon’s type. It retains this benefit until the end of the current turn.
+>***Path of the Kensei: Ranged weapon.*** The kenku can use a bonus action on its turn to  make its ranged attacks with a kensei weapon more deadly. When it does so, any target it hits with a ranged attack using a kensei weapon takes an extra 1d4 damage of the weapon's type. It retains this benefit until the end of the current turn.
 >
 >#### Reactions
 >***Deflect Missiles.*** The kenku can deflect or catch the missile when it is hit by a ranged attack. The damage it takes from the attack is reduced by 1d10 + 12. If the damage is reduced to 0 and the missile is small enough to hold in one free hand (and the kenku has a free hand), the kenku catches the missle, and can spend 1 ki point to make a ranged attack (range 20/60) using the weapon or ammunition it just caught, as part of the same reaction. This attack is made at a +7 to hit.

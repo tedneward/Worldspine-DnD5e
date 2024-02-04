@@ -15,7 +15,7 @@ You gain a second breath weapon. When you take the Attack action on your turn, y
 * Enervating Breath. Each creature in the cone must succeed on a Constitution saving throw or become incapacitated until the start of your next turn.
 * Repulsion Breath. Each creature in the cone must succeed on a Strength saving throw or be pushed 20 feet away from you and be knocked prone.
   
-Once you use your Metallic Breath Weapon, you can’t do so again until you finish a long rest.
+Once you use your Metallic Breath Weapon, you can't do so again until you finish a long rest.
 
 ```
 name = 'Silver'

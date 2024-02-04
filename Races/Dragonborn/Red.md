@@ -10,7 +10,7 @@ You have resistance to fire.
 ### Chromatic Warding
 *5th-level Red Dragonborn feature*
 
-As an action, you can channel your draconic energy to protect yourself. For 1 minute, you become immune to fire damage. Once you use this trait, you can’t do so again until you finish a long rest.
+As an action, you can channel your draconic energy to protect yourself. For 1 minute, you become immune to fire damage. Once you use this trait, you can't do so again until you finish a long rest.
 
 ```
 name = 'Red'

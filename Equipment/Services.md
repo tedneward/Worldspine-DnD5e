@@ -13,14 +13,14 @@ Hireling, Skilled | 2 gp per day
 Hireling, Untrained | 2 sp per day
 Messenger | 2 cp per mile
 Road or gate toll | 1 cp
-Ship’s passage | 1 sp per mile
+Ship's passage | 1 sp per mile
 
 Skilled hirelings include anyone hired to perform a service that involves a proficiency (including weapon, tool, or skill): an artisan, scribe, guide, and so on. The pay shown is a minimum; some expert hirelings require more pay. 
 
 Untrained hirelings are hired for menial work that requires no particular skill and can include laborers, porters, maids, and similar workers.
 
 ## Spellcasting Services
-People who are able to cast spells don’t fall into the category of ordinary hirelings. As a rule, the higher the level of the desired spell, the harder it is to find someone who can cast it and the more it costs. In general, spellcasting services are available in one of two ways: either the spellcaster is hired to be part of the staff, much as a guard signs on to a caravan or a mercenary to a company, or an individual spell (or spells) can be bought from an organization that offers such singular options.
+People who are able to cast spells don't fall into the category of ordinary hirelings. As a rule, the higher the level of the desired spell, the harder it is to find someone who can cast it and the more it costs. In general, spellcasting services are available in one of two ways: either the spellcaster is hired to be part of the staff, much as a guard signs on to a caravan or a mercenary to a company, or an individual spell (or spells) can be bought from an organization that offers such singular options.
 
 Most commonly, spellcasting services are available from wizards and clerics. Some druids might (if their deity permits) be available for agricultural spellcasting assitance, and sometimes a sorcerer will rent themselves out if the job is clear, well-defined, and within their range of spells. Pale masters will almost never be interested in "selling" a spell or service, shamans may offer their services to locals but only under specific circumstances, and warlocks are generally only willing to offer their arcane services if it advances the cause of their patron.
 

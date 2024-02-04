@@ -10,7 +10,7 @@ You have resistance to cold.
 ### Chromatic Warding
 *5th-level White Dragonborn feature*
 
-As an action, you can channel your draconic energy to protect yourself. For 1 minute, you become immune to cold damage. Once you use this trait, you can’t do so again until you finish a long rest.
+As an action, you can channel your draconic energy to protect yourself. For 1 minute, you become immune to cold damage. Once you use this trait, you can't do so again until you finish a long rest.
 
 ```
 name = 'White'

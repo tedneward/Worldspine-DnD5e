@@ -220,6 +220,6 @@ Underdark, Urban
 >#### Reactions
 >***Duelist's Defense.*** You add your Intelligence bonus to your AC against a single attack.
 >
->***Riposte.*** When you use your Duelist’s Defense ability and an opponent misses, you may make an immediate attack against your attacker as part of your reaction.
+>***Riposte.*** When you use your Duelist's Defense ability and an opponent misses, you may make an immediate attack against your attacker as part of your reaction.
 >
 

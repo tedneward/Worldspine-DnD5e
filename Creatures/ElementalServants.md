@@ -3,7 +3,7 @@ Powerful magic can bind an elemental spirit into a material template that define
 
 > Jump to: [Galeb Duhr](#galeb-duhr) | [Invisible Stalker](#invisible-stalker) | [Magmin](#magmin) | [Sand Assassin](#sand-assassin) | [Water Weird](#water-weird)
 
-***Elemental Nature.*** An elemental servant doesn’t require air, food, drink, or sleep.
+***Elemental Nature.*** An elemental servant doesn't require air, food, drink, or sleep.
 
 ---
 
@@ -58,11 +58,11 @@ An invisible stalker is an air elemental that has been summoned from its native 
 
 ![](Elemental-Invisible-Stalker.md)
 
-***Directed Hunter.*** When an invisible stalker is created, it stays at its summoner’s side until it is given a task to perform. If an assignment doesn’t involve hunting down and slaying a specific creature or recovering an object, the magic that created the invisible stalker ends and the elemental is released. Otherwise, it completes the task, then returns to its summoner for more commands, forced to serve until the magic that binds it expires. If its summoner dies in the interim, the invisible stalker vanishes after completing its task.
+***Directed Hunter.*** When an invisible stalker is created, it stays at its summoner's side until it is given a task to perform. If an assignment doesn't involve hunting down and slaying a specific creature or recovering an object, the magic that created the invisible stalker ends and the elemental is released. Otherwise, it completes the task, then returns to its summoner for more commands, forced to serve until the magic that binds it expires. If its summoner dies in the interim, the invisible stalker vanishes after completing its task.
 
 Most invisible stalkers are an unwilling servant at best, and resent any undertaking assigned. A mission that requires significant time might drive the invisible stalker to pervert the intent of a command unless it is worded carefully. Rumors persist of some invisible stalkers that enjoy the hunt, and choose to remain on the Prime Material Plane even after their task is finished, listening for additional calls (summoning spells) to answer. Such stalkers tend to develop an alignment other than neutral, depending on their feelings about the hunt.
 
-***Unseen Threat.*** Invisible stalkers are composed of air and are naturally invisible. A creature might hear and feel an invisible stalker in passing, but the elemental remains invisible even when it attacks. A spell that allows someone to see the invisible reveals only the invisible stalker’s vague outline.
+***Unseen Threat.*** Invisible stalkers are composed of air and are naturally invisible. A creature might hear and feel an invisible stalker in passing, but the elemental remains invisible even when it attacks. A spell that allows someone to see the invisible reveals only the invisible stalker's vague outline.
 
 >### Invisible Stalker
 >*Medium elemental, neutral*
@@ -84,7 +84,7 @@ Most invisible stalkers are an unwilling servant at best, and resent any underta
 >- **Condition Immunities** exhaustion, grappled, paralyzed, petrified, poisoned, prone, restrained, unconscious
 >- **Skills** Perception +8, Stealth +10
 >- **Senses** darkvision 60 ft., passive Perception 18
->- **Languages** Auran, understands Common but doesn’t speak it
+>- **Languages** Auran, understands Common but doesn't speak it
 >- **Challenge** 6
 >___
 >***Invisibility.*** The stalker is invisible.
@@ -99,13 +99,13 @@ Most invisible stalkers are an unwilling servant at best, and resent any underta
 ---
 
 ## Magmin
-A grinning, mischievous magmin resembles a stumpy humanoid sculpted from a black shell of magma. Even when it isn’t ablaze and radiating heat like a bonfire, small jets of flame erupt from its porous skin.
+A grinning, mischievous magmin resembles a stumpy humanoid sculpted from a black shell of magma. Even when it isn't ablaze and radiating heat like a bonfire, small jets of flame erupt from its porous skin.
 
 ![](Elemental-Magmin.png)
 
 ***Summoned Pyromaniacs.*** Magmins are fire elemental essence bound into physical form by magic, and they appear in the Material Plane only when summoned. It takes little time for them to develop personalities, and those personalities tend to be pyromaniacal. They view flammable objects as kindling for a grand conflagration, and only the magical control exerted by their summoners keeps them from setting everything they touch ablaze. Their propensity for fire and havoc makes them ideal for spreading chaos and destruction. A mob of magmins summoned inside a castle can reduce it to a burning shell within minutes.
 
-***Fiery Destruction.*** Although its flame is potent, the magmin’s hard magma shell prevents it from instantly igniting everything it comes into contact with. However, like the fires inside them, magmins are capricious and unpredictable. Moreover, as simple elemental creations, they are oblivious to the harm their native element causes creatures of the Material Plane.
+***Fiery Destruction.*** Although its flame is potent, the magmin's hard magma shell prevents it from instantly igniting everything it comes into contact with. However, like the fires inside them, magmins are capricious and unpredictable. Moreover, as simple elemental creations, they are oblivious to the harm their native element causes creatures of the Material Plane.
 
 If it has the opportunity while in service to its master, a magmin seeks out areas of great heat, such as forest fires or the bubbling magma of an active volcano. At other times, a magmin compulsively looses fire from its fingertips, delighting in setting objects ablaze.
 
@@ -132,7 +132,7 @@ If it has the opportunity while in service to its master, a magmin seeks out are
 >___
 >***Feature.***   
 >
->***Death Burst.*** When the magmin dies, it explodes in a burst of fire and magma. Each creature within 10 feet of it must make a DC 11 Dexterity saving throw, taking 7 (2d6) fire damage on a failed save, or half as much damage on a successful one. Flammable objects that aren’t being worn or carried in that area are ignited.
+>***Death Burst.*** When the magmin dies, it explodes in a burst of fire and magma. Each creature within 10 feet of it must make a DC 11 Dexterity saving throw, taking 7 (2d6) fire damage on a failed save, or half as much damage on a successful one. Flammable objects that aren't being worn or carried in that area are ignited.
 >
 >***Ignited Illumination.*** As a bonus action, the magmin can set itself ablaze or extinguish its flames. While ablaze, the magmin sheds bright light in a 10-foot radius and dim light for an additional 10 feet.
 >
@@ -197,7 +197,7 @@ A water weird is an elemental guardian bound to a specific water-filled location
 
 A neutral good water weird tries to frighten away interlopers rather than kill them, while a neutral evil water weird kills its victims for pleasure and might turn against its summoner. A water weird loses its evil alignment if its waters are cleansed with a purify food and drink spell.
 
-***Elemental Nature.*** A water weird doesn’t require air, food, drink, or sleep.
+***Elemental Nature.*** A water weird doesn't require air, food, drink, or sleep.
 
 >### Water Weird
 >*Large elemental, neutral*
@@ -219,7 +219,7 @@ A neutral good water weird tries to frighten away interlopers rather than kill t
 >- **Condition Immunities** exhaustion,grappled,paralyzed,poisoned,restrained,prone,unconscious
 >- **Skills** 
 >- **Senses** blindsight 30 ft.,passive Perception 10
->- **Languages** understands Aquan but doesn’t speak
+>- **Languages** understands Aquan but doesn't speak
 >- **Challenge** 3
 >___
 >***Invisible in Water.*** The water weird is invisible while fully immersed in water.
@@ -227,5 +227,5 @@ A neutral good water weird tries to frighten away interlopers rather than kill t
 >***Water Bound.*** The water weird dies if it leaves the water to which it is bound or if that water is destroyed.
 >
 >#### Actions
->***Constrict.*** Melee Weapon Attack: +5 to hit, reach 10 ft., one creature. Hit: 13 (3d6 + 3) bludgeoning damage. If the target is Medium or smaller, it is grappled (escape DC 13) and pulled 5 feet toward the water weird. Until this grapple ends, the target is restrained, the water weird tries to drown it, and the water weird can’t constrict another target.
+>***Constrict.*** Melee Weapon Attack: +5 to hit, reach 10 ft., one creature. Hit: 13 (3d6 + 3) bludgeoning damage. If the target is Medium or smaller, it is grappled (escape DC 13) and pulled 5 feet toward the water weird. Until this grapple ends, the target is restrained, the water weird tries to drown it, and the water weird can't constrict another target.
 >

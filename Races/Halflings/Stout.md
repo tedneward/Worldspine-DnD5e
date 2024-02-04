@@ -1,5 +1,5 @@
 ## Stout Halflings
-As a stout halfling, you’re hardier than average and have some resistance to poison. Some say that stouts have dwarven blood.
+As a stout halfling, you're hardier than average and have some resistance to poison. Some say that stouts have dwarven blood.
 
 **Ability Score Increase.** Your Constitution score increases by 1.
 

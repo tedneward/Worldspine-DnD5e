@@ -32,7 +32,7 @@ Most elves are intrinsically prejudiced against the races of the Hordes, owing t
 ### Elvish Names
 Among bright and high elves, elves are considered children until they declare themselves adults, some time after the twentieth birthday, and before this period they are called by child names.
 
-On declaring adulthood, an elf selects an adult name, although those who knew him or her as a youngster might continue to use the child name. Each elf’s adult name is a unique creation, though it might reflect the names of respected individuals or other family members. Little distinction exists between male names and female names; the groupings here reflect only general tendencies. In addition, every elf bears a family name, typically a combination of other Elvish words. Some elves traveling among humans translate their family names into Common, but others retain the Elvish version.
+On declaring adulthood, an elf selects an adult name, although those who knew him or her as a youngster might continue to use the child name. Each elf's adult name is a unique creation, though it might reflect the names of respected individuals or other family members. Little distinction exists between male names and female names; the groupings here reflect only general tendencies. In addition, every elf bears a family name, typically a combination of other Elvish words. Some elves traveling among humans translate their family names into Common, but others retain the Elvish version.
 
 **Child Names:** Ara, Bryn, Del, Eryn, Faen, Innil, Lael, Mella, Naill, Naeris, Phann, Rael, Rinn, Sai, Syllin, Thia, Vall
 
@@ -121,7 +121,7 @@ Most elves prefer to avoid fighting and will flee in most cases, though they may
 ## Wood Elf
 Wood elves are those elves who live in tribes among the forests, typically in small villages and hamlets. They have keen senses and intuition, and their fleet feet carry them quickly and stealthily through their native forests. They do not fear or distrust civilization, but simply choose to engage with it sparingly, preferring instead to focus on care of their forests, woodcraft and other natural artifice, and defending the woods against trespassers.
 
-Wood elves’ skin tends to be copperish in hue, sometimes with traces of green. Their hair tends toward browns and blacks, but it is occasionally blond or copper-colored. Their eyes are green, brown, or hazel.
+Wood elves' skin tends to be copperish in hue, sometimes with traces of green. Their hair tends toward browns and blacks, but it is occasionally blond or copper-colored. Their eyes are green, brown, or hazel.
 
 >### Wood Elf
 >*Medium humanoid  (Elf), Any Chaotic Alignment*

@@ -159,11 +159,11 @@ d100	Entry
 26	The caster develops severe claustrophobia for 1d4 hours.
 27	
 28	
-29	Any non-magical pouches or containers on the caster’s person tear open and spill their contents onto the ground.
+29	Any non-magical pouches or containers on the caster's person tear open and spill their contents onto the ground.
 30	Around the caster spawns 10 frogs, all of them are passive.
 31	Around the caster spawns 10 rats, all of them hostile.
 32	A lit birthday candle appears before the caster. In front of the candle is a note. The note reads “blow the candle out to make a wish.
-33	A tiny elemental of the caster’s choice appears as a familiar.
+33	A tiny elemental of the caster's choice appears as a familiar.
 34	
 35	
 36	The caster grows an extra finger on one of their hands. A remove curse spell or a successful DC20 medicine check can remove the finger.
@@ -179,8 +179,8 @@ d100	Entry
 46	Five Violet Fungus sprout up from the ground and begin attacking the party when the spell is cast.
 47	A Couatl, sensing a spell being cast, swoops within 10 feet of the party's heads, and flies away after examining the magic cast.
 48	The caster experienced extreme discomfort in their stomach for 1d4 turns before finally releasing a monstrous belch for another 1d4 turns. This belch functions as per the description of the spell Gust of Wind, with the direction of the wind being whichever direction the caster is facing.
-49	For the next 24 hours, the caster’s nose grows outwards by 1 inch every time they knowingly tell a lie. The nose returns to it’s previous size once the duration is up.
-50	For the next hour, the caster bursts into a fit of evil, maniacal laughter every time they open their mouth. Each time they do so, they must make a DC 13 Wisdom saving throw or be compelled to pull a minor prank of some kind. The nature of the prank is at the player’s discretion, so long as it is suitably mischevious and harmless.
+49	For the next 24 hours, the caster's nose grows outwards by 1 inch every time they knowingly tell a lie. The nose returns to it's previous size once the duration is up.
+50	For the next hour, the caster bursts into a fit of evil, maniacal laughter every time they open their mouth. Each time they do so, they must make a DC 13 Wisdom saving throw or be compelled to pull a minor prank of some kind. The nature of the prank is at the player's discretion, so long as it is suitably mischevious and harmless.
 51	Every writing in a 10-foot radius of the caster immediately transforms into incredibly petty criticism of the caster. If the caster reads any of it, they must make a DC 10 Wisdom saving throw or believe whatever minor putdown the writing describes.
 52	
 53	You immediately grow a bunch of body hair that falls off after a day.
@@ -251,12 +251,12 @@ d100 Effect
 17 - You grow a long beard made of feathers that remains until you sneeze, at which point the feathers explode out from your face.
 18 - Your body (none of your clothing or gear) teleports 10 feet in a random direction.
 19 - You cast grease centered on yourself.
-20 - You cast Tasha’s hideous laughter on the nearest creature to you. If there is no other creature within range, you target yourself.
+20 - You cast Tasha's hideous laughter on the nearest creature to you. If there is no other creature within range, you target yourself.
 21 - Creatures have disadvantage on saving throws against the next spell you cast in the next minute that involves a saving throw.
 22 - A deck of many things appears hovering in front of you expectantly, only visible and touchable by you. It disappears at the end of your next turn.
 23 - Your skin turns a vibrant shade of blue. A remove curse spell can end this effect.
 25 - An eye appears on your forehead for the next minute. During that time, you have advantage on Wisdom (Perception) checks that rely on sight.
-26 - You gain a random form of short-term madness (see the Dungeon Master’s Guide).
+26 - You gain a random form of short-term madness (see the Dungeon Master's Guide).
 27 - For the next minute, all your spells with a casting time of 1 action have a casting time of 1 bonus action.
 28 - You break your attunement with 1d3 of your magic items to which you are attuned.
 29 - You teleport up to 60 feet to an unoccupied space of your choice that you can see.
@@ -299,7 +299,7 @@ d100 Effect
 
 48 - You cast blur.
 
-49 - You can’t speak for the next minute. Whenever you try, pink bubbles float out of your mouth.
+49 - You can't speak for the next minute. Whenever you try, pink bubbles float out of your mouth.
 
 50 - You suddenly realize that you are nothing more than a fictional character in a game played by other creatures in another plane of existence, which causes you to be stunned. This existential crisis lasts until the start of your next turn, after which you shake it off as nonsense.
 51 - A spectral shield hovers near you for the next minute, granting you a +2 bonus to AC and immunity to the magic missile spell.
@@ -310,7 +310,7 @@ d100 Effect
 
 56 - You cast faerie fire centered on yourself.
 
-57 - For the next minute, any flammable object you touch that isn’t being worn or carried by another creature bursts into flame.
+57 - For the next minute, any flammable object you touch that isn't being worn or carried by another creature bursts into flame.
 
 58 - If you are in combat, you reroll your order in the initiative at the end of this round.
 
@@ -340,7 +340,7 @@ d100 Effect
 
 71 - You gain resistance to all damage for the next minute.
 
-72 - You cast fear in the direction you’re facing.
+72 - You cast fear in the direction you're facing.
 
 73 - A random creature within 60 feet of you becomes poisoned for 1d4 hours.
 
@@ -350,7 +350,7 @@ d100 Effect
 
 76 - You become colorblind until your next long rest.
 
-77 - You cast polymorph on yourself. If you fail the saving throw, you turn into a sheep for the spell’s duration.
+77 - You cast polymorph on yourself. If you fail the saving throw, you turn into a sheep for the spell's duration.
 
 78 - 
 
@@ -374,7 +374,7 @@ d100 Effect
 
 88 - A column 1d10 feet high and 5 feet in diameter rises beneath your feet. If this height causes it to collide with a ceiling or object above you, you are restrained and take 2d6 bludgeoning damage, pinned against the object, unless you use your reaction to succeed on a DC 11 Dexterity saving throw to jump off. The column slowly lowers into the ground 1 minute later, leaving no trace of it.
 
-89 - You become invisible for the next minute. During that time, other creatures can’t hear you. The invisibility ends if you attack or cast a spell.
+89 - You become invisible for the next minute. During that time, other creatures can't hear you. The invisibility ends if you attack or cast a spell.
 
 90 - A coil of 50 feet of hempen rope immediately appears and ties you up. You are restrained. A creature can break the ropes by dealing 5 slashing or fire damage to them or by succeeding on a DC 11 (Strength) Athletics check. You can also escape with a successful DC 11 Dexterity (Acrobatics) check.
 
@@ -392,7 +392,7 @@ d100 Effect
 
 97 - You are surrounded by faint, ethereal music for the next minute.
 
-98 - You take 2d10 psychic damage. This damage can’t reduce your hit points below 1.
+98 - You take 2d10 psychic damage. This damage can't reduce your hit points below 1.
 
 99 - You switch souls with a random creature within 30 feet of you. You control it on its next turn, and it controls you on your next turn. You go back to your regular bodies at the end of your next turn, if the body is still alive.
 

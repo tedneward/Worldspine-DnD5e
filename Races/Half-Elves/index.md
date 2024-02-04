@@ -79,7 +79,7 @@ def get_weight(npc):
 ```
 
 ## Half-Elf Names
-Half-elves use either human or elven naming conventions. As if to emphasize that they don’t really fit in to either society, half-elves raised among humans are often given elven names, and those raised among elves often take human names.
+Half-elves use either human or elven naming conventions. As if to emphasize that they don't really fit in to either society, half-elves raised among humans are often given elven names, and those raised among elves often take human names.
 
 ```
 def get_name(npc):

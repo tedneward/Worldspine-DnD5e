@@ -215,7 +215,7 @@ Extraplanar, Ruins
 >
 >***Screech (3/Day).*** The sphinx emits a magical screech. Each creature within 250 feet of the sphinx and able to hear it must make a saving throw. Each creature that fails a DC 14 Wisdom saving throw is deafened and frightened for 1 minute (10 rounds). A frightened creature is paralyzed and can repeat the saving throw at the end of each of its turns, ending the effect on itself on a success.
 >
->***Innate Spellcasting.*** The hieracosphinx’s innate spellcasting ability is Wisdom (spell save DC 13). It can innately cast the following spells, requiring no material components.
+>***Innate Spellcasting.*** The hieracosphinx's innate spellcasting ability is Wisdom (spell save DC 13). It can innately cast the following spells, requiring no material components.
 >* At will: bane, bestow curse
 >* 3/day each: darkness, mirror image, misty step, silent image
 >* 1/day: wall of force
