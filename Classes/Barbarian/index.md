@@ -102,10 +102,18 @@ You start with the following equipment, in addition to the equipment granted by 
 * An explorer's pack and four javelins
 
 ```
-    npc.addequipment("Greataxe OR any martial melee weapon")
-    npc.addequipment("Two handaxes OR any simple weapon")
-    npc.addequipment("Four javelins")
-    npc.addequipment("An explorer's pack")
+    (eqname, eq) = choose("Choose equipment: ", { 'Greataxe': Equipment.weapons['all']['Greataxe'] } | Equipment.weapons['martial-melee'])
+    npc.addequipment(eq)
+
+    aorb = choose("Choose equipment: ", ['Two handaxes', 'Any simple weapon'])
+    if aorb == 'Two handaxes':
+        npc.addequipment(Equipment.weapons['all']['Handaxe'], 2)
+    else:
+        (_, eq) = choose("Choose equipment: ", Equipment.weapons['simple'])
+        npc.addequipment(eq)
+
+    npc.addequipment(Equipment.weapons['ranged']['Javelin'], 4)
+    npc.addequipment("Explorer's pack")
 ```
 
 ## Rage

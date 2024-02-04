@@ -95,7 +95,7 @@ def get_name(npc):
 
     if randomint(0,1) == 0:
         log("Half-Orc took a human name")
-        return findmodule("Races", "Humans").get_name(npc)
+        return findmodule("Races", "Human").get_name(npc)
     else:
         # Go with something more orcish
         return "(No name yet)"

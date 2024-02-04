@@ -421,14 +421,17 @@ class InnateCasting(Casting):
         text  = f"***{self.title}.*** Uses {self.ability}. {self.spellattackanddctext()}\n"
         text +=  ">\n"
         if len(self.atwill) > 0:
-            text += f"> * *At will:* {','.join(self.atwill)}\n"
+            linkedspells = []
+            for spell in self.atwill:
+                linkedspells.append(spelllinkify(spell))
+            text += f">* *At will:* {','.join(linkedspells)}\n"
         if len(self.perday[3]) > 0:
-            text += f"> * *3/day:* {','.join(self.perday[3])}\n"
+            text += f">* *3/day:* {','.join(self.perday[3])}\n"
         if len(self.perday[1]) > 0:
-            text += f"> * *1/day:* {','.join(self.perday[1])}"
+            text += f">* *1/day:* {','.join(self.perday[1])}\n"
         # Make sure to leave off the \n on the last line, since it gets added
         # by the StatBlock's emitMD.
-        return text
+        return text.strip()
 
 class Spellcasting(Casting):
     """
@@ -661,7 +664,9 @@ class StatBlock:
     ##########################
     # Race-related methods
     def setrace(self, racemod):
-        if self.race != None: warn("Replacing",self.race.name,"with",racemod.name,"!")
+        if racemod == None: warn("Setting race to be None!")
+        if self.race != None: warn("Replacing " + self.race.name + " with " + racemod.name + " !")
+
         self.race = racemod
         litexec("racemod.apply(self)", { "racemod" : racemod, "self": self })
         self.description.append(self.race.description)
@@ -895,11 +900,11 @@ class StatBlock:
 
         return False
 
-    def addequipment(self, equip, number=1):
+    def addequipment(self, equip, number : int=1):
         if number == 1:
             self.equipment.append(equip)
         else:
-            self.equipment.append(f"{number} {equip.name}s ({equip.weight * number} lb)")
+            self.equipment.append(f"{number} {equip.name}s ({int(equip.weight) * number} lb)")
 
         # Let's pull actions out for convenience
         gaa = getattr(equip, "getactions", None)
@@ -936,6 +941,10 @@ class StatBlock:
     # to organize and/or optimize itself.
     def freeze(self):
         # Lint the StatBlock for any warnings
+        if self.name == None: 
+            warn("Name got set to None?!?")
+            self.name = "(Unnamed)"
+
         debug("StatBlock.armorclass=" + str(self.armorclass))
         debug("StatBlock.proficiencies=" + str(self.proficiencies))
         debug("StatBlock.expertises=" + str(self.expertises))
@@ -1455,7 +1464,7 @@ def generate(randomlist=[]):
         if which == 'Abilities':
             (_, abilityfn) = shell.choosefrommap(moduleglobals['roots']['Abilities'].methods)
             scores = abilityfn()
-            print("Scores: ", scores)
+            shell.output("Scores: ", scores)
             npc.addabilities(scores)
         elif which == 'Background':
             background = shell.choosefromlist(moduleglobals['roots']['Backgrounds'].childmods)

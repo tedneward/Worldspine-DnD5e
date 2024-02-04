@@ -83,27 +83,27 @@ def level1(npc):
 * (a) a dungeoneer's pack or (b) an explorer's pack
 
 ```
-    aorb = choose("Choose: ", ['Chain mail', 'Leather armor, longbow and 20 arrows'])
+    aorb = choose("Choose equipment: ", ['Chain mail', 'Leather armor, longbow and 20 arrows'])
     if aorb == 'Chain mail':
         npc.addequipment(Equipment.armor['all']['Chain mail'])
     else:
         npc.addequipment(Equipment.armor['all']['Leather armor'])
         npc.addequipment(Equipment.weapons['all']['Longbow'])
 
-    (_, chosen) = choose("Choose a weapon: ", Equipment.weapons['martial'])
+    (_, chosen) = choose("Choose equipment: ", Equipment.weapons['martial'])
     npc.addequipment(chosen)
 
     avail = Equipment.weapons['martial'] | Equipment.armor['shields']
-    (_, chosen) = choose("Choose a weapon or a shield: ", avail)
+    (_, chosen) = choose("Choose equipment: ", avail)
     npc.addequipment(chosen)
 
-    chosen = choose("Choose either: ", ['Light crossbow', 'Two handaxes'])
+    chosen = choose("Choose equipment: ", ['Light crossbow', 'Two handaxes'])
     if chosen == 'Light crossbow':
         npc.addequipment(Equipment.weapons['simple-ranged']['Light Crossbow'])
     else:
         npc.addequipment(Equipment.weapons['simple-melee']['Handaxe'], 2)
 
-    npc.addequipment(choose("Choose one: ", ["Dungeoneer's pack","Explorer's pack"]))
+    npc.addequipment(choose("Choose equipment: ", ["Dungeoneer's pack","Explorer's pack"]))
 ```
 
 ## Fighting Style

@@ -1,5 +1,9 @@
 # High Elf
-...
+As a high elf, you have a keen mind and a mastery of at least the basics of magic.
+
+In many of the worlds of D&D, there are two kinds of high elves. One type (which includes the gray elves and valley elves of Greyhawk, the Silvanesti of Dragonlance, and the sun elves of the Forgotten Realms) is haughty and reclusive, believing themselves to be superior to non-elves and even other elves. The other type (including the high elves of Greyhawk, the Qualinesti of Dragonlance, and the moon elves of the Forgotten Realms) are more common and more friendly, and often encountered among humans and other races.
+
+The sun elves of Faerûn (also called gold elves or sunrise elves) have bronze skin and hair of copper, black, or golden blond. Their eyes are golden, silver, or black. Moon elves (also called silver elves or gray elves) are much paler, with alabaster skin sometimes tinged with blue. They often have hair of silver-white, black, or blue, but various shades of blond, brown, and red are not uncommon. Their eyes are blue or green and flecked with gold.
 
 * **Ability Score Increase**. Your Intelligence score increases by 1.
 
@@ -11,29 +15,18 @@
 
 ```
 name = 'High'
-description = "***Subrace: High Elf.***"
-
-class HighElfCasting(Action):
-    def __init__(self, cantrip):
-        Action.__init__(self, "Cantrip", "")
-        self.cantrip = cantrip
-
-    def __str__(self):
-        text  = f"**Spell Save DC** {8 + self.npc.proficiencybonus() + self.npc.INTbonus()} "
-        text += f"**Spell Attack Bonus** +{self.npc.proficiencybonus() + self.npc.INTbonus()}. "
-        text += f"You know {spelllink(self.cantrip)} and can cast it at will."
-        return text
+description = "***Subrace: High Elf.*** As a high elf, you have a keen mind and a mastery of at least the basics of magic."
 
 def apply(npc):
     npc.INT += 1
 
+    innatecasting = InnateCasting("High Elf", "INT")
     availablecantrips = [
-        'acid splash', 'chill touch', 'dancing lights', 'fire bolt', 'light', 'mage hand',
-        'mending', 'message', 'minor illusion', 'poison spray', 'prestidigitation',
-        'ray of frost', 'shocking grasp', 'true strike'
+        'acid splash', 'chill touch', 'dancing lights', 'fire bolt', 'light', 
+        'mage hand', 'mending', 'message', 'minor illusion', 'poison spray', 'prestidigitation', 'ray of frost', 'shocking grasp', 'true strike'
     ]
-    chosen = choose("Choose a cantrip:", availablecantrips)
-    npc.append(HighElfCasting(chosen))
+    innatecasting.atwill.append(choose("Choose a cantrip:", availablecantrips))
+    npc.append(innatecasting)
 
     npc.addproficiency("Longsword")
     npc.addproficiency("Shortsword")

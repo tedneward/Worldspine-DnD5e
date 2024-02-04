@@ -56,21 +56,18 @@ def everylevel(npc): npc.hits('d8')
 
 ```
 def level1(npc):
-    npc.savingthrows.append("DEX")
-    npc.savingthrows.append("CHA")
+    npc.addproficiency("DEX")
+    npc.addproficiency("CHA")
 
-    for arm in armor['light']:
-        npc.addproficiency(arm)
-    for wpn in weapons['simple-melee'] | weapons['simple-ranged']:
-        npc.addproficiency(wpn)
-    npc.addproficiency('Hand crossbow')
-    npc.addproficiency('Longsword')
-    npc.addproficiency('Shortsword')
-    npc.addproficiency('Rapier')
+    for arm in Equipment.armor['light']: npc.addproficiency(arm)
+    for wpn in Equipment.weapons['simple']: npc.addproficiency(wpn)
+    npc.addproficiency(Equipment.weapons['ranged']['Hand crossbow'])
+    npc.addproficiency(Equipment.weapons['melee']['Longsword'])
+    npc.addproficiency(Equipment.weapons['melee']['Shortsword'])
+    npc.addproficiency(Equipment.weapons['melee']['Rapier'])
 
-    npc.addproficiency(choose("Choose an instrument: ", tools['musical']))
-    npc.addproficiency(choose("Choose an instrument: ", tools['musical']))
-    npc.addproficiency(choose("Choose an instrument: ", tools['musical']))
+    for _ in range(0,3):
+        npc.addproficiency(choose("Choose an instrument: ", Equipment.tools['musical']))
 
     chooseskill(npc)
     chooseskill(npc)

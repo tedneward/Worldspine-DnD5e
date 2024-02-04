@@ -77,7 +77,7 @@ def get_name(npc):
             'Premilan','Ulan','Xaris','Tayler','Lyn'
         ]
         if npc.gender=='Female': return generatemarkovname(female_names)
-        else: return generatemarkovnames(male_names)
+        else: return generatemarkovname(male_names)
     
     def lastname():
         if randomint(0,1) == 0:
@@ -102,7 +102,7 @@ def get_name(npc):
                 'forge','binder','punch','guts'
             ]
             part1 = prenouns[randomint(0, len(prenouns)-1)].capitalize()
-            part2 = verbs[randomint(0, len(verbs)-1)]
+            part2 = postnouns[randomint(0, len(postnouns)-1)]
             return f"{part1}{part2}"
 
     return f"{firstname()} {lastname()}" 
