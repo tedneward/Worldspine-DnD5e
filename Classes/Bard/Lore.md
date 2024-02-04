@@ -3,7 +3,7 @@ Bards of the College of Lore know something about most things, collecting bits o
 
 The loyalty of these bards lies in the pursuit of beauty and truth, not in fealty to a monarch or following the tenets of a deity. A noble who keeps such a bard as a herald or advisor knows that the bard would rather be honest than politic.
 
-The college's members gather in libraries and sometimes in actual colleges, complete with classrooms and dormitories, to share their lore with one another. They also meet at festivals or affairs of state, where they can expose corruption, unravel lies, and poke fun at self-important figures of authority. Many of these bards were trained at the Lore College one operated out of the Great Library of the [Brass Dragon](../../Organizations/MilitantOrders/DraconicOrder/Brass.md). These bards are often scholars and are paid by the Academy to discover new facts about Azgaarnoth. Numerous other universities also host a Lore College.
+The college’s members gather in libraries and sometimes in actual colleges, complete with classrooms and dormitories, to share their lore with one another. They also meet at festivals or affairs of state, where they can expose corruption, unravel lies, and poke fun at self-important figures of authority.
 
 ```
 name = 'College of Lore'
@@ -28,7 +28,7 @@ def level3(npc):
 You learn how to use your wit to distract, confuse, and otherwise sap the confidence and competence of others. When a creature that you can see within 60 feet of you makes an attack roll, an ability check, or a damage roll, you can use your reaction to expend one of your uses of Bardic Inspiration, rolling a Bardic Inspiration die and subtracting the number rolled from the creature's roll. You can choose to use this feature after the creature makes its roll, but before the DM determines whether the attack roll or ability check succeeds or fails, or before the creature deals its damage. The creature is immune if it can't hear you or if it's immune to being charmed.
 
 ```
-    npc.reactions.append("***Cutting Words.*** When a creature that you can see within 60 feet of you makes an attack roll, an ability check, or a damage roll, you can use your reaction to expend one of your uses of Bardic Inspiration, rolling a Bardic Inspiration die and subtracting the number rolled from the creature's roll. You can choose to use this feature after the creature makes its roll, but before the DM determines whether the attack roll or ability check succeeds or fails, or before the creature deals its damage. The creature is immune if it can't hear you or if it's immune to being charmed.")
+    npc.append(Reaction("Cutting Words", "When a creature that you can see within 60 feet of you makes an attack roll, an ability check, or a damage roll, you can use your reaction to expend one of your uses of Bardic Inspiration, rolling a Bardic Inspiration die and subtracting the number rolled from the creature's roll. You can choose to use this feature after the creature makes its roll, but before the DM determines whether the attack roll or ability check succeeds or fails, or before the creature deals its damage. The creature is immune if it can't hear you or if it's immune to being charmed.") )
 ```
 
 ## Additional Magical Secrets
@@ -38,8 +38,8 @@ You learn two spells of your choice from any class. A spell you choose must be o
 
 ```
 def level6(npc):
-    npc.spellcasting['Bard'].spellsknown.append("CHOOSE-any class")
-    npc.spellcasting['Bard'].spellsknown.append("CHOOSE-any class")
+    npc.find("Bard Spellcasting").spellsknown.append("CHOOSE-any class")
+    npc.find("Bard Spellcasting").spellsknown.append("CHOOSE-any class")
 ```
 
 ## Peerless Skill
@@ -49,11 +49,5 @@ When you make an ability check, you can expend one use of Bardic Inspiration. Ro
 
 ```
 def level14(npc):
-    npc.traits.append("***Peerless Skill.*** When you make an ability check, expend one use of Bardic Inspiration; roll a Bardic Inspiration die and add the number rolled to your ability check. You can choose to do so after you roll the die for the ability check, but before the DM tells you whether you succeed or fail.")
+    npc.append(Feature("Peerless Skill", "When you make an ability check, expend one use of Bardic Inspiration; roll a Bardic Inspiration die and add the number rolled to your ability check. You can choose to do so after you roll the die for the ability check, but before the DM tells you whether you succeed or fail.") )
 ```
-
----
-
-# Custom Bard Spells
-
-* 3rd: [appraiser's light]()

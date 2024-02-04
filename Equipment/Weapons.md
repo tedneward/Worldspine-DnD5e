@@ -187,8 +187,8 @@ Net | 1 gp | — | 3 lb. | Special, thrown (5/15) |
 ```
 weapons['martial-ranged'] = {
     'Blowgun': RangedWeapon("Blowgun", "1", '25/100', '1', 'piercing', ['ammunition', 'loading']),
-    'Hand Crossbow': RangedWeapon("Hand Crossbow", "3", '30/120', '1d6', 'piercing', ['ammunition', 'light', 'loading']),
-    'Heavy Crossbow': RangedWeapon("Heavy Crossbow", "18", '100/400', '1d10', 'piercing', ['ammunition', 'heavy', 'loading', 'two-handed']),
+    'Hand crossbow': RangedWeapon("Hand Crossbow", "3", '30/120', '1d6', 'piercing', ['ammunition', 'light', 'loading']),
+    'Heavy crossbow': RangedWeapon("Heavy Crossbow", "18", '100/400', '1d10', 'piercing', ['ammunition', 'heavy', 'loading', 'two-handed']),
     'Longbow': RangedWeapon("Longbow", "2", '150/600', '1d8', 'piercing', ['ammunition', 'heavy', 'two-handed']),
     'Net': RangedWeapon("Net", "3", '5/15', '0', 'special')
 }

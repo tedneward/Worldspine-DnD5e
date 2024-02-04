@@ -1,50 +1,91 @@
->### Landani Moonblossom
->*Medium Male humanoid (High Elf) Barbarian 1, any Evil*
+>### Alvynon "Nim" Raulko
+>*Small Female humanoid (Rock Gnome) Bard (College of Lore) 20, any Good*
 >___
->- **Armor Class** 12 (Natural Armor (12))
->- **Hit Points** 14 (1d12 + 2)
->- **Speed** 30 ft
+>- **Armor Class** 11 (Leather armor (11))
+>- **Hit Points** 214 (20d8 + 68)
+>- **Speed** 25 ft
 >___
 >|**STR**|**DEX**|**CON**|**INT**|**WIS**|**CHA**|
 >|:-:|:-:|:-:|:-:|:-:|:-:|
->|10 (+0)|10 (+0)|15 (+2)|15 (+2)|13 (+1)|12 (+1)|
+>|12 (+1)|10 (+0)|18 (+4)|19 (+4)|13 (+1)|10 (+0)|
 >___
->- **Proficiency Bonus** +2
->- **Saving Throws** STR +2,CON +4
+>- **Proficiency Bonus** +7
+>- **Saving Throws** CHA +7,DEX +7
 >- **Damage Vulnerabilities** 
 >- **Damage Resistances** 
 >- **Damage Immunities** 
->- **Condition Immunities** sleep
->- **Skills** History +4,Persuasion +3,Perception +3,Animal Handling +3,Survival +3
->- **Proficiencies** Gaming set,Longsword,Shortsword,Longbow,Shortbow,Leather armor,Padded armor,Studded leather armor,Hide armor,Chain shirt,Scale mail,Breastplate,Half-plate,Shield,Club,Dagger,Greatclub,Handaxe,Javelin,Light hammer,Mace,Quarterstaff,Sickle,Spear,Light Crossbow,Dart,Sling,Battleaxe,Flail,Glaive,Greataxe,Greatsword,Halberd,Lance,Maul,Morningstar,Pike,Rapier,Scimitar,Trident,War pick,Warhammer,Whip,Blowgun,Hand Crossbow,Heavy Crossbow,Net
->- **Senses** darkvision 60,passive Perception 13
->- **Languages** Common,Dwarvish,Elven,Halfling
+>- **Condition Immunities** 
+>- **Skills** Acrobatics +14,Investigation +18,Perception +15,Persuasion +14,Athletics +8,Deception +7,History +11,Survival +8
+>- **Proficiencies** Club,Dagger,Dart,Flute,Gaming set,Greatclub,Hand Crossbow,Handaxe,Javelin,Leather armor,Light Crossbow,Light hammer,Longsword,Lute,Mace,Padded armor,Quarterstaff,Rapier,Shortbow,Shortsword,Sickle,Sling,Spear,Studded leather armor,Tinker's tools,Viol
+>- **Senses** darkvision 60,passive Perception 25
+>- **Languages** Common,Gnomish,Goblin
 >___
->***Fey Ancestry.*** You have advantage on saving throws against being charmed, and magic can't put you to sleep.
+>***Artificer's Lore.*** Whenever you make an Intelligence (History) check related to magic items, alchemical objects, or technological devices, you can add twice your proficiency bonus, instead of any proficiency bonus you normally apply.
+>
+>***Bardic Inspiration (1/Recharges on short or long rest).*** You can inspire others through stirring words or music.
+>
+>***Durable.*** When you roll a Hit Die to regain hit points, the minimum number of hit points you regain from the roll equals twice your Constitution modifier (minimum of 2).
+>
+>***Fast Shield.*** If you aren't incapacitated, you can add your shield's AC bonus to any Dexterity saving throw you make against a spell or other harmful effect that targets only you.
+>
+>***Gnome Cunning.*** You have advantage on all Intelligence, Wisdom, and Charisma saving throws against magic.
+>
+>***Jack of All Trades.*** You can add 3 to any ability check you make that doesn't already include your proficiency bonus.
+>
+>***Magical Inspiration.*** If a creature has a Bardic Inspiration die from you and casts a spell that restores hit points or deals damage, the creature can roll that die (a d12) and choose a target affected by the spell. Add the number rolled as a bonus to the hit points regained or the damage dealt. The Bardic Inspiration die is then lost.
+>
+>***Magical Secrets.*** You have plundered magical knowledge from a wide spectrum of disciplines. Two of your known spells at 10th level, two more at 14th level, and two more at 18th level can be from any classes, including this one.
+>
+>***Peerless Skill.*** When you make an ability check, expend one use of Bardic Inspiration; roll a Bardic Inspiration die and add the number rolled to your ability check. You can choose to do so after you roll the die for the ability check, but before the DM tells you whether you succeed or fail.
 >
 >***Position of Privilege.*** Thanks to your noble birth, people are inclined to think the best of you. You are welcome in high society, and people assume you have the right to be wherever you are. The common folk make every effort to accommodate you and avoid your displeasure, and other people of high birth treat you as a member of the same social sphere. You can secure an audience with a local noble if you need to.
 >
->***Trance.*** Elves do not sleep. Instead they meditate deeply, remaining semi-conscious, for 4 hours a day. The Common word for this meditation is 'trance'. While meditating, you dream after a fashion; such dreams are actually mental exercises that have become reflexive after years of practice. After resting in this way, you gain the same benefit a human would from 8 hours of sleep.
+>***Song of Rest.*** If you or any friendly creatures who can hear your performance regain hit points at the end of the short rest by spending one or more Hit Dice, each of those creatures regains an extra 1d6 hit points.
 >
->***Unarmored Defense.*** While you are not wearing any armor, your armor class equals 12. You can use a shield and still gain this benefit.
+>***Superior Inspiration.*** When you roll initiative and have no uses of Bardic Inspiration left, you regain one use.
+>
+>***Tinker.*** You can spend 1 hour and 10 gp worth of materials to construct a Tiny clockwork device (AC 5, 1 hp). The device ceases to function after 24 hours (unless you spend 1 hour repairing it to keep the device functioning), or when you use your action to dismantle it; at that time, you can reclaim the materials used to create it. You can have up to three such devices active at a time.
+>When you create a device, choose one of the following options:
+>
+>* **Clockwork Toy.** This toy is a clockwork animal, monster, or person, such as a frog, mouse, bird, dragon, or soldier. When placed on the ground, the toy moves 5 feet across the ground on each of your turns in a random direction. It makes noises as appropriate to the creature it represents.
+>
+>* **Fire Starter.** The device produces a miniature flame, which you can use to light a candle, torch, or campfire. Using the device requires your action.
+>
+>* **Music Box.** When opened, this music box plays a single song at a moderate volume. The box stops playing when it reaches the song's end or when it is closed.
 >
 >#### Actions
->***Greataxe (Two-Handed).*** *Melee Weapon Attack:* +2 to hit, reach 5ft., one target. Hit: 1d12 + 0 slashing
+>***Bard Spellcasting.*** Uses CHA. **Spell Attack Bonus: +7** **Spell Save DC 15**  4 cantrips known. 22 spells known. 
 >
->***Handaxe.*** *Melee Weapon Attack:* +2 to hit, reach 5ft., one target. Hit: 1d6 + 0 slashing
+>* *1st-level (4 slots):* 
+>* *2nd-level (3 slots):* 
+>* *3rd-level (3 slots):* 
+>* *4th-level (3 slots):* 
+>* *5th-level (2 slots):* 
+>* *6th-level (2 slots):* 
+>* *7th-level (2 slots):* 
+>* *8th-level (1 slots):* 
+>* *9th-level (1 slots):* 
 >
->***Handaxe (Thrown).*** *Ranged Weapon Attack:* +2 to hit, range 20/60, one target. Hit: 1d6 + 0 slashing
 >
->***High Elf Casting.*** Uses INT. **Spell Attack Bonus: +4** **Spell Save DC 12** 
+>***Countercharm.*** You can start a performance that lasts until the end of your next turn. During that time, you and any friendly creatures within 30 feet of you have advantage on saving throws against being frightened or charmed. A creature must be able to hear you to gain this benefit. The performance ends early if you are incapacitated or silenced or if you voluntarily end it (no action required).
 >
->* *At will:* [acid splash](http://worldspine.tedneward.com/magic/spells/acid-splash/)
+>***Dagger.*** *Melee Weapon Attack:* +8 to hit, reach 5ft., one target. Hit: 1d4 + 1 piercing
 >
->***Javelin.*** *Melee Weapon Attack:* +2 to hit, reach 5ft., one target. Hit: 1d6 + 0 piercing
+>***Dagger (Thrown).*** *Ranged Weapon Attack:* +7 to hit, range 20/60, one target. Hit: 1d4 + 0 piercing
 >
->***Javelin (Thrown).*** *Ranged Weapon Attack:* +2 to hit, range 30/120, one target. Hit: 1d6 + 0 piercing
+>***Javelin.*** *Melee Weapon Attack:* +8 to hit, reach 5ft., one target. Hit: 1d6 + 1 piercing
+>
+>***Javelin (Thrown).*** *Ranged Weapon Attack:* +7 to hit, range 30/120, one target. Hit: 1d6 + 0 piercing
 >
 >#### Bonus Actions
->***Rage (2/Recharges on long rest).*** You enter into a rage. While raging, you have advantage on Strength checks and Strength saving throws; when you make a melee weapon attack using Strength, you gain a +2 bonus to damage; and you have resistance to bludgeoning, piercing, and slashing damage. Your rage lasts for 1 minute. If you are able to cast spells, you can't cast them or concentrate on them while raging. It ends early if you fall unconscious or if your turn ends and you have not attacked a hostile creature since your last turn or taken damage since then. You can end your rage on your turn as a bonus action.
+>***Bardic Inspiration: Inspiration.*** Choose one creature other than yourself within 60 feet of you who can hear you. That creature gains one Bardic Inspiration die (d12).
+>
+>***Shield Bash.*** When you take the Attack action on your turn, you can try to Shove a creature within 5 feet of you with your shield.
+>
+>#### Reactions
+>***Blast Shield.*** If you are subjected to an effect that allows you to make a Dexterity saving throw to take only half damage, you take no damage if you succeed on the saving throw, interposing your shield between yourself and the source of the effect.
+>
+>***Cutting Words.*** When a creature that you can see within 60 feet of you makes an attack roll, an ability check, or a damage roll, you can use your reaction to expend one of your uses of Bardic Inspiration, rolling a Bardic Inspiration die and subtracting the number rolled from the creature's roll. You can choose to use this feature after the creature makes its roll, but before the DM determines whether the attack roll or ability check succeeds or fails, or before the creature deals its damage. The creature is immune if it can't hear you or if it's immune to being charmed.
 >
 >#### Equipment
 >A set of fine clothes
@@ -53,29 +94,33 @@
 >
 >A scroll of pedigree
 >
->Greataxe (7 lb)
+>Leather armor (10lb)
 >
->2 Handaxes (4 lb)
+>Dagger (1 lb)
 >
->4 Javelins (8 lb)
+>Javelin (2 lb)
 >
->Explorer's pack
+>Diplomat's pack
+>
+>(musical instrument)
 >
 >___
 >#### Description
->***Personality Trait.*** The common folk love me for my kindness and generosity.
+>***Race: Gnome.*** Curious and impulsive, gnomes sometimes look for avenues away from home to see the world or for the love of exploring. As lovers of gems and other fine items, some gnomes take to adventuring as a quick, if dangerous, path to wealth. Regardless of what spurs them to adventure, gnomes who adopt this way of life eke as much enjoyment out of it as they do out of any other activity they undertake, sometimes to the great annoyance of their adventuring companions.
 >
->***Ideal: Power.*** If I can attain more power, no one will tell me what to do.
+>***Subrace: Rock Gnome.*** As a rock gnome, you have a natural inventiveness and hardiness beyond that of other gnomes.
 >
->***Bond.*** My loyalty to my sovereign is unwavering.
+>***Personality Trait.*** My favor, once lost, is lost forever.
 >
->***Flaw.*** I hide a truly scandalous secret that could ruin my family forever.
+>***Ideal: Noble Obligation.*** It is my duty to protect and care for the people beneath me.
+>
+>***Bond.*** I am in love with the heir of a family that my family despises.
+>
+>***Flaw.*** I secretly believe that everyone is beneath me.
 >
 >***Background: Noble.*** You understand wealth, power, and privilege. You carry a noble title, and your family owns land, collects taxes, and wields significant political influence. You might be a pampered aristocrat unfamiliar with work or discomfort, a former merchant just elevated to the nobility, or a disinherited scoundrel with a disproportionate sense of entitlement. Or you could be an honest, hard-working landowner who cares deeply about the people who live and work on your land, keenly aware of your responsibility to them.
 >
->***Race: Elf.*** Elves are a magical people of otherworldly grace, living in the world but not entirely part of it. They live in places of ethereal beauty, in the midst of ancient forests or in silvery spires glittering with faerie light, where soft music drifts through the air and gentle fragrances waft on the breeze. Elves love nature and magic, art and artistry, music and poetry, and the good things of the world.
+>***Class: Bard.*** Whether scholar, skald, or scoundrel, a bard weaves magic through words and music to inspire allies, demoralize foes, manipulate minds, create illusions, and even heal wounds. The bard is a master of song, speech, and the magic they contain.
 >
->***Subrace: High Elf.*** As a high elf, you have a keen mind and a mastery of at least the basics of magic.
->
->***Class: Barbarian.*** Barbarians are defined by their rage: unbridled, unquenchable, and unthinking fury. More than a mere emotion, their anger is the ferocity of a cornered predator, the unrelenting assault of a storm, the churning turmoil of the sea. For some, their rage springs from a communion with fierce animal spirits. Others draw from a roiling reservoir of anger at a world full of pain. For every barbarian, rage is a power that fuels not just a battle frenzy but also uncanny reflexes, resilience, and feats of strength.
+>***Bardic College: College of Lore.*** Bards of the College of Lore know something about most things, collecting bits of knowledge from sources as diverse as scholarly tomes and peasant tales. Whether singing folk ballads in taverns or elaborate compositions in royal courts, these bards use their gifts to hold audiences spellbound. When the applause dies down, the audience members might find themselves questioning everything they held to be true, from their faith in the priesthood of the local temple to their loyalty to the king.
 >

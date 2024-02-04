@@ -37,7 +37,7 @@ languages = {
                'Sylvan', 'Undercommon' ]
 }
 def languagelist(which = 'All'):
-    if which == 'All': return languages['Common'] | languages['Exotic']
+    if which == 'All': return languages['Common'] + languages['Exotic']
     else: return languages[which]
 
 def chooselanguage(npc, which='Common'):

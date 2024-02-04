@@ -439,12 +439,15 @@ class Spellcasting(Casting):
     difference between a full and half spellcaster appears solely to be
     the number of slots available at each experience level.
     """
-    def __init__(self, classmod, ability):
-        Casting.__init__(self, classmod.name + " Casting", ability)
-        self.classmod = classmod
+    def __init__(self, classname, ability, cantripstable={}, spellsknowntable={}):
+        Casting.__init__(self, classname + " Spellcasting", ability)
+        self.classname = classname
         self.maxcantripsknown = 0
+        self.cantripstable = cantripstable
         self.cantripsknown = []
         self.maxspellsknown = 0
+        self.spellsknowntable = spellsknowntable
+        self.spellsknown = []
         self.spellsprepared = {1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: [], 8: [], 9: []}
         self.spellsalwaysprepared = []
 
@@ -452,48 +455,60 @@ class Spellcasting(Casting):
     def slottable(self): return {}
 
     def __str__(self):
+        npclevels = self.npc.levels(self.classname)
+
         text = f"Uses {self.ability}. " + self.spellattackanddctext() + " "
         if self.maxcantripsknown > 0:
             text += f"{self.maxcantripsknown} cantrips known. "
+        elif len(self.cantripstable) > 0:
+            text += f"{self.cantripstable[npclevels]} cantrips known. "
+
         if self.maxspellsknown > 0:
             text += f"{self.maxspellsknown} spells known. "
+        elif len(self.spellsknowntable) > 0:
+            text += f"{self.spellsknowntable[npclevels]} spells known. "
         text += "\n>\n"
+
         if len(self.spellsalwaysprepared) > 0:
             text += f">Spells always prepared: {','.join(self.spellsalwaysprepared)}\n>\n"
+
         # Print out slot table
         if len(self.cantripsknown) > 0:
-            text += f">* *Cantrips*: {','.join(self.cantripsknown)}\n>\n"
-        slots = self.slottable()[self.npc.levels(self.classmod)]
-        for s in range(1,10):
+            text += f">* *Cantrips*: {','.join(self.cantripsknown)}\n"
+        slots = self.slottable()[self.npc.levels(self.classname)]
+        for s in range(0,len(slots)):
             if slots[s] > 0:
-                text += f">* *{cardinal(s)}-level ({slots[s]} slots):* \n"
+                text += f">* *{cardinal(s+1)}-level ({slots[s]} slots):* \n"
         text += ">"
 
         return f"***{self.title}.*** {text}"
 
 class FullSpellcasting(Spellcasting):
+    def __init__(self, classname, ability,cantripstable={}, spellsknowntable={}):
+        Spellcasting.__init__(self, classname, ability, cantripstable, spellsknowntable)
+
     def slottable(self):
         return {
             1: [2],
             2: [3],
             3: [4,2],
-            4: [],
-            5: [],
-            6: [],
-            7: [],
-            8: [],
-            9: [],
-            10: [],
-            11: [],
-            12: [],
-            13: [],
-            14: [],
-            15: [],
-            16: [],
-            17: [],
-            18: [],
-            19: [],
-            20: [],
+            4: [4,3],
+            5: [4,3,2],
+            6: [4,3,3],
+            7: [4,3,3,1],
+            8: [4,3,3,2],
+            9: [4,3,3,3,1],
+            10: [4,3,3,3,2],
+            11: [4,3,3,3,2,1],
+            12: [4,3,3,3,2,1],
+            13: [4,3,3,3,2,1,1],
+            14: [4,3,3,3,2,1,1],
+            15: [4,3,3,3,2,1,1,1],
+            16: [4,3,3,3,2,1,1,1],
+            17: [4,3,3,3,2,1,1,1,1],
+            18: [4,3,3,3,2,1,1,1,1],
+            19: [4,3,3,3,2,2,1,1,1],
+            20: [4,3,3,3,2,2,2,1,1],
         }
 
 class HalfSpellcasting(Spellcasting):
@@ -811,18 +826,22 @@ class StatBlock:
                 saves.append(f"{p} +{score}")
         return saves
 
-    def getskills(self):
+    def getskills(self, withscores=True):
         skills = []
+
         for p in self.expertises:
             if p not in moduleglobals['Abilities'].skills: continue
             score = (self.proficiencybonus() * 2) + self.abilitybonus(moduleglobals['Abilities'].abilityforskill(p))
-            skills.append(f"{p} +{score}")
+            if withscores: skills.append(f"{p} +{score}")
+            else: skills.append(p)
 
         for p in self.proficiencies:
             if p in self.expertises: continue
             if p not in moduleglobals['Abilities'].skills: continue
             score = self.proficiencybonus() + self.abilitybonus(moduleglobals['Abilities'].abilityforskill(p))
-            skills.append(f"{p} +{score}")
+            if withscores: skills.append(f"{p} +{score}")
+            else: skills.append(p)
+
         return skills
 
     def getproficiencies(self):
@@ -864,14 +883,18 @@ class StatBlock:
         feature.npc = self
 
     def find(self, featuretitle : str) -> Feature|None:
-        for f in self.traits | self.actions | self.bonusactions | self.reactions | self.lairactions:
+        log("find() Looking for " + featuretitle)
+        for f in self.traits + self.actions + self.bonusactions + self.reactions + self.lairactions:
+            debug("Looking at " + f.title)
             if f.title == featuretitle:
                 return f
         return None
     
     def findall(self, featuretitle : str) -> list:
+        log("findall() Looking for " + featuretitle)
         results = []
-        for f in self.traits | self.actions | self.bonusactions | self.reactions | self.lairactions:
+        for f in self.traits + self.actions + self.bonusactions + self.reactions + self.lairactions:
+            debug("Looking at " + f.title)
             if featuretitle in f.title:
                 results.append(f)
         return results
@@ -959,7 +982,10 @@ class StatBlock:
         for feature in self.lairactions: feature.apply()
 
         # Sort lists by alphabetical order
+        self.expertises.sort()
+        self.proficiencies.sort()
         self.languages.sort()
+
         self.traits.sort()
         self.actions.sort()
         self.bonusactions.sort()
@@ -968,7 +994,7 @@ class StatBlock:
         # equipment doesn't really need to be sorted
         # Do NOT sort description!
 
-        log("StatBlock" + self.name + "frozen in place.")
+        log("StatBlock " + self.name + " frozen in place.")
 
     def emitmd(self) -> str:
         linesep = ">___\n"
@@ -1493,27 +1519,24 @@ def generate(randomlist=[]):
             parts = cg.split('-')
             classmod = randompick(moduleglobals['roots']['Classes'].childmods)
             levels = random.randint(1, 20)
-            if len(parts) == 1:
-                print("Random number of levels in a random class/subclass")
-            elif len(parts) == 2:
-                print("Random number of levels in class/subclass", parts[1])
-                for cm in moduleglobals['roots']['Classes'].childmods:
-                    if cm.name == parts[1]:
-                        classmod = cm
-                        break
-            elif len(parts) == 3:
-                print(parts[2],"levels in",parts[1])
+            
+            if len(parts) >= 3:
                 levels = int(parts[2])
+
+            if len(parts) >= 2:
                 for cm in moduleglobals['roots']['Classes'].childmods:
                     if cm.name == parts[1]:
                         classmod = cm
                         break
+
+            # If there's only one part ("Class") then we stick with
+            # random levels in a random class
 
             for l in range(1, levels+1):
                 print(f"Level {l}: Adding a level of " + classmod.name)
                 npc.addclass(classmod)
 
-        # Now interactively gen some class levels
+        # Now (possibly) interactively gen some class levels
         shell.pop()
 
     choice = "Yes"

@@ -221,12 +221,20 @@ def abilityforskill(skillname):
     return skillability[skillname]
 
 def chooseskill(npc, availableskills = skills): 
-    srclist = availableskills
+    srclist = availableskills.copy()
     for skill in srclist:
         if skill in npc.proficiencies:
             srclist.remove(skill)
     chosen = choose("Choose a skill: ", srclist)
     npc.addproficiency(chosen)
+
+def chooseexpertise(npc, availableskills = skills): 
+    srclist = availableskills.copy()
+    for skill in srclist:
+        if skill in npc.expertises:
+            srclist.remove(skill)
+    chosen = choose("Choose a skill: ", srclist)
+    npc.addexpertise(chosen)
 ```
 
 ```
@@ -241,5 +249,8 @@ def random(npc):
 ```
 
 ```
-exports = [ chooseability, abilityscoreincrease, skilllist, abilityforskill, chooseskill ]
+exports = [ 
+    chooseability, abilityscoreincrease, skilllist, abilityforskill, 
+    chooseskill, chooseexpertise
+]
 ```

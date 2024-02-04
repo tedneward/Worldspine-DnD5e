@@ -9,5 +9,5 @@ description = "***Feat: Elemental Adept.*** You have affinity for spells of elem
 def prereq(npc): return iscaster(npc)
 def apply(npc):
     element = choose("Choose one: ", ['acid', 'cold', 'fire', 'lightning', 'thunder'])
-    npc.append(Feature("Elemental Adept", "Spells you cast ignore resistance to {element}. In addition, when you roll damage for a spell you cast that deals {element} damage, you can treat any 1 on a damage die as a 2.") )
+    npc.append(Feature("Elemental Adept", f"Spells you cast ignore resistance to {element}. In addition, when you roll damage for a spell you cast that deals {element} damage, you can treat any 1 on a damage die as a 2.") )
 ```

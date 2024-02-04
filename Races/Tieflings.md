@@ -77,7 +77,7 @@ def get_name(npc):
     choice = randomint(0, 2)
     if choice == 0:
         # Some other name; let's assume human for simplicity
-        return findmodule("Races", "Humans").get_name(npc)
+        return findmodule("Races", "Human").get_name(npc)
     elif choice == 1:
         # Infernal heritage
         male_names = [

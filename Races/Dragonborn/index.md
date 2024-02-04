@@ -118,7 +118,7 @@ Dragonborn have personal names given at birth, but they put their clan names fir
 **Clan Names:** Clethtinthiallor, Daardendrian, Delmirev, Drachedandion, Fenkenkabradon, Kepeshkmolik, Kerrhylon, Kimbatuul, Linxakasendalor, Myastan, Nemmonis, Norixius, Ophinshtalajiir, Prexijandilin, Shestendeliath, Turnuroth, Verthisathurgiesh, Yarjerit
 
 ```
-def get_name(npc, gender):
+def get_name(npc):
     def firstname():
         male_names = [
             'Arjhan', 'Balasar', 'Bharash', 'Donaar', 'Ghesh', 'Heskan', 

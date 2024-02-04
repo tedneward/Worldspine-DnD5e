@@ -98,9 +98,25 @@ A halfling has a given name, a family name, and possibly a nickname. Family name
 
 ```
 def get_name(npc):
-    male_names = [ "Alton", "Ander", "Cade", "Corrin", "Eldon", "Errich", "Finnan", "Garret", "Lindal", "Lyle", "Merric", "Milo", "Osborn", "Perrin", "Reed", "Roscoe", "Wellby" ]
+    def firstname():
+        if npc.gender == 'Male':
+            male_names = [ 
+                "Alton", "Ander", "Cade", "Corrin", "Eldon", "Errich", "Finnan", 
+                "Garret", "Lindal", "Lyle", "Merric", "Milo", "Osborn", "Perrin", 
+                "Reed", "Roscoe", "Wellby" 
+            ]
+            return randomfrom(male_names)
+        else:
+            female_names = [
+                "Andry", "Bree", "Callie", "Cora", "Euphemia", "Jillian", "Kithri",
+                "Lavinia", "Lidda", "Merla", "Nedda", "Paela", "Portia", "Seraphina", 
+                "Shaena", "Trym", "Vani", "Verna"
+            ]
+            return randomfrom(female_names)
 
-    female_names = ["Andry", "Bree", "Callie", "Cora", "Euphemia", "Jillian", "Kithri", "Lavinia", "Lidda", "Merla", "Nedda", "Paela", "Portia", "Seraphina", "Shaena", "Trym", "Vani", "Verna"]
+    def lastname():
+        family_names = ["Brushgather", "Goodbarrel", "Greenbottle", "Highhill", "Hilltopple", "Leagallow", "Lightleaf", "Lightgage", "Goodleaf", "Tealeaf", "Thorngage", "Tosscobble", "Tossleaf", "Underbough", "Underhill"]
+        return randomfrom(family_names)
 
-    family_names = ["Brushgather", "Goodbarrel", "Greenbottle", "Highhill", "Hilltopple", "Leagallow", "Lightleaf", "Lightgage", "Goodleaf", "Tealeaf", "Thorngage", "Tosscobble", "Tossleaf", "Underbough", "Underhill"]
+    return f"{firstname()} {lastname()}"
 ```

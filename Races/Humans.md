@@ -67,17 +67,19 @@ The material culture and physical characteristics of humans can change wildly fr
 # From https://www.roll4.net/generators/dd-name-generators/dnd-human-name-generator
 def get_name(npc):
     def firstname():
-        female_names = [
-            'Ustice','Ey','Pari','Cora','Ulia','Lla','La','Hali','Zoe','Jeanor','Ypri',
-            'Charle','Zie','Ker','Xaris','Ta','Premila'
-        ]
-        male_names = [
-            'Pert','Quincy','Son','Junter','Jonald','Ver','Xan','Eonald','Oinn','Hannon',
-            'Isdel','Del','Yer','Ylis','Yaelan','Arker','Wan','Adler','Camen','Caseer',
-            'Premilan','Ulan','Xaris','Tayler','Lyn'
-        ]
-        if npc.gender=='Female': return generatemarkovname(female_names)
-        else: return generatemarkovname(male_names)
+        if npc.gender=='Female': 
+            female_names = [
+                'Ustice','Ey','Pari','Cora','Ulia','Lla','La','Hali','Zoe','Jeanor','Ypri',
+                'Charle','Zie','Ker','Xaris','Ta','Premila'
+            ]
+            return generatemarkovname(female_names)
+        else:
+            male_names = [
+                'Pert','Quincy','Son','Junter','Jonald','Ver','Xan','Eonald','Oinn','Hannon',
+                'Isdel','Del','Yer','Ylis','Yaelan','Arker','Wan','Adler','Camen','Caseer',
+                'Premilan','Ulan','Xaris','Tayler','Lyn'
+            ]
+            return generatemarkovname(male_names)
     
     def lastname():
         if randomint(0,1) == 0:
