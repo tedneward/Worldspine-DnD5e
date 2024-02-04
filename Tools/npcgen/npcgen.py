@@ -996,13 +996,11 @@ class StatBlock:
         debug("StatBlock.expertises=" + str(self.expertises))
 
         # apply() all the Features we have
-        for feature in self.traits:
-            if isinstance(feature, str): warn("Feature is a string!" + feature)
+        for feature in self.traits + self.actions + self.bonusactions + self.reactions + self.lairactions:
+            if isinstance(feature, str): 
+                warn("Feature is a string!" + feature)
+            debug("Applying feature " + feature.title)
             feature.apply()
-        for feature in self.actions: feature.apply()
-        for feature in self.bonusactions: feature.apply()
-        for feature in self.reactions: feature.apply()
-        for feature in self.lairactions: feature.apply()
 
         # Sort lists by alphabetical order
         self.expertises.sort()

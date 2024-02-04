@@ -209,7 +209,7 @@ class ChannelDivinity(Feature):
         if npclevels < 18: self.uses = 2
         else: self.uses = 3
 
-        self.text += " Creatures that must save against any of your Channel Divinity features do so at DC " + self.savedc()
+        self.text += " Creatures that must save against any of your Channel Divinity features do so at DC " + str(self.savedc())
 
     def savedc(self):
         return 8 + self.npc.proficiencybonus() + self.npc.WISbonus()
@@ -271,7 +271,7 @@ Cleric Level | Destroys Undead of CR ...
 
 ```
 def level5(npc):
-    npc.replace("Channel Divinity: Turn Undead", Action("Channel Divinity: Turn Undead", "You can use one of your uses of Channel Divinity to turn undead. Each undead that can see or hear you within 30 feet of you must make a Wisdom saving throw. If the creature fails its saving throw, if it is a CR of {'1/2' if npc.levels('Cleric') < 8 else '1' if npc.levels('Cleric') < 11 else '2' if npc.levels('Cleric') < 14 else '3' if npc.levels('Cleric') < 17 else '4'} or lower it is destroyed; otherwise it is turned for 1 minute or until it takes any damage. A turned creature must spend its turns trying to move as far away from you as it can, and it can't willingly move to a space within 30 feet of you. It also can't take reactions. For its action, it can use only the Dash action or try to escape from an effect that prevents it from moving. If there's nowhere to move, the creature can use the Dodge action.") )
+    npc.replace(Action("Channel Divinity: Turn Undead", "You can use one of your uses of Channel Divinity to turn undead. Each undead that can see or hear you within 30 feet of you must make a Wisdom saving throw. If the creature fails its saving throw, if it is a CR of {'1/2' if npc.levels('Cleric') < 8 else '1' if npc.levels('Cleric') < 11 else '2' if npc.levels('Cleric') < 14 else '3' if npc.levels('Cleric') < 17 else '4'} or lower it is destroyed; otherwise it is turned for 1 minute or until it takes any damage. A turned creature must spend its turns trying to move as far away from you as it can, and it can't willingly move to a space within 30 feet of you. It also can't take reactions. For its action, it can use only the Dash action or try to escape from an effect that prevents it from moving. If there's nowhere to move, the creature can use the Dodge action.") )
 ```
 
 ## Divine Intervention
@@ -288,5 +288,5 @@ def level10(npc):
     npc.append(Action("Divine Intervention", "Describe the assistance you seek, and roll percentile dice. If you roll a number equal to or lower than your cleric level, your deity intervenes. The DM chooses the nature of the intervention; the effect of any cleric spell or cleric domain spell would be appropriate. If your deity intervenes, you can't use this feature again for 7 days. Otherwise, you can use it again after you finish a long rest.", "long rest or 7 days") )
 
 def level20(npc):
-    npc.replace("Divine Intervention", Action("Divine Intervention", "Describe the assistance you seek, and your deity intervenes. The DM chooses the nature of the intervention; the effect of any cleric spell or cleric domain spell would be appropriate. Afterwards, you can't use this feature again for 7 days.", "7 days") )
+    npc.replace(Action("Divine Intervention", "Describe the assistance you seek, and your deity intervenes. The DM chooses the nature of the intervention; the effect of any cleric spell or cleric domain spell would be appropriate. Afterwards, you can't use this feature again for 7 days.", "7 days") )
 ```
