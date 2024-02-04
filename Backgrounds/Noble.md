@@ -58,40 +58,92 @@ Thanks to your noble birth, people are inclined to think the best of you. You ar
 ## Suggested Characteristics
 Nobles are born and raised to a very different lifestyle than most people ever experience, and their personalities reflect that upbringing. A noble title comes with a plethora of bonds — responsibilities to family, to other nobles (including the sovereign), to the people entrusted to the family’s care, or even to the title itself. But this responsibility is often a good way to undermine a noble.
 
-d8|Personality Trait
---|-----------------
-1|My eloquent flattery makes everyone I talk to feel like the most wonderful and important person in the world.
-2|The common folk love me for my kindness and generosity.
-3|No one could doubt by looking at my regal bearing that I am a cut above the unwashed masses.
-4|I take great pains to always look my best and follow the latest fashions.
-5|I don’t like to get my hands dirty, and I won’t be caught dead in unsuitable accommodations.
-6|Despite my noble birth, I do not place myself above other folk. We all have the same blood.
-7|My favor, once lost, is lost forever.
-8|If you do me an injury, I will crush you, ruin your name, and salt your fields.
+d8| Personality Trait
+--| -----------------
+1 | My eloquent flattery makes everyone I talk to feel like the most wonderful and important person in the world.
+2 | The common folk love me for my kindness and generosity.
+3 | No one could doubt by looking at my regal bearing that I am a cut above the unwashed masses.
+4 | I take great pains to always look my best and follow the latest fashions.
+5 | I don’t like to get my hands dirty, and I won’t be caught dead in unsuitable accommodations.
+6 | Despite my noble birth, I do not place myself above other folk. We all have the same blood.
+7 | My favor, once lost, is lost forever.
+8 | If you do me an injury, I will crush you, ruin your name, and salt your fields.
 
-d6|Ideal
---|-----------------
-1|Respect. Respect is due to me because of my position, but all people regardless of station deserve to be treated with dignity. (Good)
-2|Responsibility. It is my duty to respect the authority of those above me, just as those below me must respect mine. (Lawful)
-3|Independence. I must prove that I can handle myself without the coddling of my family. (Chaotic)
-4|Power. If I can attain more power, no one will tell me what to do. (Evil)
-5|Family. Blood runs thicker than water. (Any)
-6|Noble Obligation. It is my duty to protect and care for the people beneath me. (Good)
+```
+    traits = [
+        "My eloquent flattery makes everyone I talk to feel like the most wonderful and important person in the world.",
+        "The common folk love me for my kindness and generosity.",
+        "No one could doubt by looking at my regal bearing that I am a cut above the unwashed masses.",
+        "I take great pains to always look my best and follow the latest fashions.",
+        "I don’t like to get my hands dirty, and I won’t be caught dead in unsuitable accommodations.",
+        "Despite my noble birth, I do not place myself above other folk. We all have the same blood.",
+        "My favor, once lost, is lost forever.",
+        "If you do me an injury, I will crush you, ruin your name, and salt your fields.",
+    ]
+    npc.description.append(f"***Personality Trait.*** {randomfrom(traits)}")
+```
 
-d6|Bond
---|-----------------
-1|I will face any challenge to win the approval of my family.
-2|My house’s alliance with another noble family must be sustained at all costs.
-3|Nothing is more important than the other members of my family.
-4|I am in love with the heir of a family that my family despises.
-5|My loyalty to my sovereign is unwavering.
-6|The common folk must see me as a hero of the people.
+d6| Ideal
+--| -----------------
+1 | **Respect.** Respect is due to me because of my position, but all people regardless of station deserve to be treated with dignity. (Good)
+2 | **Responsibility.** It is my duty to respect the authority of those above me, just as those below me must respect mine. (Lawful)
+3 | **Independence.** I must prove that I can handle myself without the coddling of my family. (Chaotic)
+4 | **Power.** If I can attain more power, no one will tell me what to do. (Evil)
+5 | **Family.** Blood runs thicker than water. (Any)
+6 | **Noble Obligation.** It is my duty to protect and care for the people beneath me. (Good)
 
-d6|Flaw
---|-----------------
-1|I secretly believe that everyone is beneath me.
-2|I hide a truly scandalous secret that could ruin my family forever.
-3|I too often hear veiled insults and threats in every word addressed to me, and I’m quick to anger.
-4|I have an insatiable desire for carnal pleasures.
-5|In fact, the world does revolve around me.
-6|By my words and actions, I often bring shame to my family.
+```
+    ideals = [
+        ["Respect","Respect is due to me because of my position, but all people regardless of station deserve to be treated with dignity.","Good"],
+        ["Responsibility","It is my duty to respect the authority of those above me, just as those below me must respect mine.","Lawful"],
+        ["Independence","I must prove that I can handle myself without the coddling of my family.","Chaotic"],
+        ["Power","If I can attain more power, no one will tell me what to do.","Evil"],
+        ["Family","Blood runs thicker than water.","Any"],
+        ["Noble Obligation", "It is my duty to protect and care for the people beneath me.","Good"],
+    ]
+    ideal = ideals[randomint(0, len(ideals) - 1)]
+    npc.description.append(f"***Ideal: {ideal[0]}.*** {ideal[1]}")
+    if ideal[2] != "Any": npc.alignment = "any " + ideal[2]
+```
+
+d6| Bond
+--| -----------------
+1 | I will face any challenge to win the approval of my family.
+2 | My house’s alliance with another noble family must be sustained at all costs.
+3 | Nothing is more important than the other members of my family.
+4 | I am in love with the heir of a family that my family despises.
+5 | My loyalty to my sovereign is unwavering.
+6 | The common folk must see me as a hero of the people.
+
+```
+    bonds = [
+        "I will face any challenge to win the approval of my family.",
+        "My house’s alliance with another noble family must be sustained at all costs.",
+        "Nothing is more important than the other members of my family.",
+        "I am in love with the heir of a family that my family despises.",
+        "My loyalty to my sovereign is unwavering.",
+        "The common folk must see me as a hero of the people.",
+    ]
+    npc.description.append(f"***Bond.*** {randomfrom(bonds)}")
+```
+
+d6| Flaw
+--| -----------------
+1 | I secretly believe that everyone is beneath me.
+2 | I hide a truly scandalous secret that could ruin my family forever.
+3 | I too often hear veiled insults and threats in every word addressed to me, and I’m quick to anger.
+4 | I have an insatiable desire for carnal pleasures.
+5 | In fact, the world does revolve around me.
+6 | By my words and actions, I often bring shame to my family.
+
+```
+    flaws = [
+        "I secretly believe that everyone is beneath me.",
+        "I hide a truly scandalous secret that could ruin my family forever.",
+        "I too often hear veiled insults and threats in every word addressed to me, and I’m quick to anger.",
+        "I have an insatiable desire for carnal pleasures.",
+        "In fact, the world does revolve around me.",
+        "By my words and actions, I often bring shame to my family.",
+    ]
+    npc.description.append(f"***Flaw.*** {randomfrom(flaws)}")
+```

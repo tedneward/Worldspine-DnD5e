@@ -133,19 +133,6 @@ def npcstandard():
         stats.remove(stat)
 
     return abilities
-
-def randomnpcstandard():
-    abilities = {}
-
-    scores = [16, 15, 12, 12, 12, 8]
-    stats = ['STR', 'DEX', 'CON', 'INT', 'WIS', 'CHA']
-    while len(stats) > 0:
-        stat = randomfrom(stats)
-        abilities[stat] = scores[0]
-        scores.pop(0)
-        stats.remove(stat)
-
-    return abilities
 ```
 
 ```
@@ -180,24 +167,24 @@ def abilityscoreincrease(npc, abilities=['STR', 'DEX', 'CON', 'INT', 'WIS', 'CHA
 ## Skills
 Skills are proficiencies that add to a character's ability check or save.
 
-* Acrobatics' : 'DEX', 
-* Animal Handling' : 'WIS', 
-* Arcana' : 'INT', 
-* Athletics' : 'STR',
-* Deception' : 'CHA', 
-* History' : 'INT', 
-* Insight' : 'WIS', 
-* Intimidation' : 'CHA', 
-* Investigation' : 'INT',
-* Medicine' : 'WIS', 
-* Nature' : 'INT', 
-* Perception' : 'WIS', 
-* Performance' : 'CHA', 
-* Persuasion' : 'CHA',
-* Religion' : 'INT', 
-* Sleight of Hand' : 'DEX', 
-* Stealth' : 'DEX', 
-* Survival' : 'WIS'
+* Acrobatics (DEX): 
+* Animal Handling (WIS): 
+* Arcana (INT): 
+* Athletics (STR):
+* Deception (CHA): 
+* History (INT): 
+* Insight (WIS): 
+* Intimidation (CHA): 
+* Investigation (INT):
+* Medicine (WIS): 
+* Nature (INT): 
+* Perception (WIS): 
+* Performance (CHA): 
+* Persuasion (CHA):
+* Religion (INT): 
+* Sleight of Hand (DEX): 
+* Stealth (DEX): 
+* Survival (WIS):
 
 ```
 # All the skills that players may use to affect their ability checks
@@ -211,24 +198,24 @@ def skilllist():
     return skills
 
 skillability = { 
-    'Acrobatics' : 'DEX', 
-    'Animal Handling' : 'WIS', 
-    'Arcana' : 'INT', 
-    'Athletics' : 'STR',
-    'Deception' : 'CHA', 
-    'History' : 'INT', 
-    'Insight' : 'WIS', 
-    'Intimidation' : 'CHA', 
-    'Investigation' : 'INT',
-    'Medicine' : 'WIS', 
-    'Nature' : 'INT', 
-    'Perception' : 'WIS', 
-    'Performance' : 'CHA', 
-    'Persuasion' : 'CHA',
-    'Religion' : 'INT', 
-    'Sleight of Hand' : 'DEX', 
-    'Stealth' : 'DEX', 
-    'Survival' : 'WIS'
+    'Acrobatics':'DEX',
+    'Animal Handling':'WIS', 
+    'Arcana':'INT',
+    'Athletics':'STR',
+    'Deception':'CHA',
+    'History':'INT',
+    'Insight':'WIS',
+    'Intimidation':'CHA', 
+    'Investigation':'INT',
+    'Medicine':'WIS',
+    'Nature':'INT',
+    'Perception':'WIS', 
+    'Performance':'CHA', 
+    'Persuasion':'CHA',
+    'Religion':'INT',
+    'Sleight of Hand':'DEX', 
+    'Stealth':'DEX',
+    'Survival':'WIS'
 }
 def abilityforskill(skillname): 
     return skillability[skillname]
@@ -244,10 +231,11 @@ def chooseskill(npc, availableskills = skills):
 
 ```
 def random(npc):
-    #abilities = randomgen()
-    #abilities = randomnpcstandard()
-    abilities = average()
-    print("I rolled",abilities," as stats for you, boss!")
+    (fnname, fn) = randomfrom(methods)
+    while fnname == 'Hand':
+        (fnname, fn) = randomfrom(methods)
+    abilities = fn()
+    print("I rolled",abilities," as stats using", fnname, "for you, boss!")
 
     npc.addabilities(abilities)
 ```

@@ -258,6 +258,21 @@ class RandomInput(Input):
         self.output("I chose " + str((responsekey, choicemap[responsekey])))
         return (responsekey, choicemap[responsekey])
 
+class CaptureInput(Input):
+    def __init__(self, filename):
+        Input.__init__(self)
+        self.file = open(filename, 'w')
+
+    def output(self, *values): print(*values)
+
+    def input(self, prompt : str = "") -> str: 
+        incoming = input(prompt + " >>> ")
+        self.file.write(incoming + "\n")
+        return incoming
+
+    def inputavailable(self) -> bool: return True
+
+
 # We need a constant object in place since this gets passed into each of the loaded
 # modules to use as an I/O facility; so we "wrap" the Input object, thus allowing us
 # to replace it without anyone being the wiser.
@@ -572,6 +587,7 @@ class StatBlock:
         self.size = 'Medium'
         self.type = ''
         self.gender = ''
+        self.alignment = "any alignment"
 
         self.race = None        # module reference
         self.subrace = None     # optional module reference
@@ -727,7 +743,6 @@ class StatBlock:
 
         classlvls = self.levels(classmod)
         applylevelup(classmod, classlvls)
-        print("SUBCLASSES: ", self.subclasses)
         if classmod in self.subclasses:
             subclassmod = self.subclasses[classmod]
             applylevelup(subclassmod, classlvls)
@@ -789,20 +804,19 @@ class StatBlock:
         skills = []
         for p in self.expertises:
             if p not in moduleglobals['Abilities'].skills: continue
-            score = (self.proficiencybonus() * 2) + self.abilitybonus(moduleglobals['Abilities'].skillability[p])
+            score = (self.proficiencybonus() * 2) + self.abilitybonus(moduleglobals['Abilities'].abilityforskill(p))
             skills.append(f"{p} +{score}")
 
         for p in self.proficiencies:
             if p in self.expertises: continue
             if p not in moduleglobals['Abilities'].skills: continue
-            score = self.proficiencybonus() + self.abilitybonus(moduleglobals['Abilities'].skillability[p])
+            score = self.proficiencybonus() + self.abilitybonus(moduleglobals['Abilities'].abilityforskill(p))
             skills.append(f"{p} +{score}")
         return skills
 
     def getproficiencies(self):
         profs = []
         for p in self.proficiencies:
-            debug("Examining proficiency " + p)
             if p in ['STR','DEX','CON','INT','WIS','CHA']: continue
             if p in moduleglobals['Abilities'].skills: continue
             profs.append(p)
@@ -922,17 +936,12 @@ class StatBlock:
 
         # apply() all the Features we have
         for feature in self.traits:
-            if isinstance(feature, str):
-                warn("Feature is a string!" + feature)
+            if isinstance(feature, str): warn("Feature is a string!" + feature)
             feature.apply()
-        for feature in self.actions:
-            feature.apply()
-        for feature in self.bonusactions:
-            feature.apply()
-        for feature in self.reactions:
-            feature.apply()
-        for feature in self.lairactions:
-            feature.apply()
+        for feature in self.actions: feature.apply()
+        for feature in self.bonusactions: feature.apply()
+        for feature in self.reactions: feature.apply()
+        for feature in self.lairactions: feature.apply()
 
         # Sort lists by alphabetical order
         self.languages.sort()
@@ -953,7 +962,7 @@ class StatBlock:
 
         def emitheaderblock():
             text =  f">### {self.name}\n"
-            text += f'>*{self.size} {self.gender} {self.getracesubstring()} {self.getclasssubstring()}, any alignment*\n'
+            text += f'>*{self.size} {self.gender} {self.getracesubstring()} {self.getclasssubstring()}, {self.alignment}*\n'
             text += linesep
             return text
         
@@ -1069,6 +1078,84 @@ class StatBlock:
 
 ##########################
 # Some utility methods for use within the literate modules
+def generatemarkovname(exemplars):
+    def markov_name(chain):
+        parts = select_link(chain, 'parts')
+        names = []
+        for _ in range(parts):
+            name_len = select_link(chain, 'name_len')
+            c = select_link(chain, 'initial')
+            name = c
+            last_c = c
+            while len(name) < name_len:
+                c = select_link(chain, last_c)
+                if not c:
+                    break
+                name += c
+                last_c = c
+            names.append(name)
+        return ' '.join(names)
+
+    def construct_chain(lst):
+        chain = {}
+        for item in lst:
+            names = item.split()
+            chain = incr_chain(chain, 'parts', len(names))
+            for name in names:
+                chain = incr_chain(chain, 'name_len', len(name))
+                c = name[0]
+                chain = incr_chain(chain, 'initial', c)
+                string = name[1:]
+                last_c = c
+                while len(string) > 0:
+                    c = string[0]
+                    chain = incr_chain(chain, last_c, c)
+                    string = string[1:]
+                    last_c = c
+        return scale_chain(chain)
+
+    def incr_chain(chain, key, token):
+        if key in chain:
+            if token in chain[key]:
+                chain[key][token] += 1
+            else:
+                chain[key][token] = 1
+        else:
+            chain[key] = {}
+            chain[key][token] = 1
+        return chain
+
+    def scale_chain(chain):
+        table_len = {}
+        for key in chain:
+            table_len[key] = 0
+            for token in chain[key]:
+                count = chain[key][token]
+                weighted = int(count ** 1.3)
+                chain[key][token] = weighted
+                table_len[key] += weighted
+        chain['table_len'] = table_len
+        return chain
+
+    import random
+
+    def select_link(chain, key):
+        length = chain['table_len'][key]
+        if not length:
+            return False
+        idx = random.randint(0, length-1)
+        tokens = list(chain[key].keys())
+        acc = 0
+        for i in range(len(tokens)):
+            token = tokens[i]
+            acc += chain[key][token]
+            if acc > idx:
+                return token
+        return False
+
+    chain = construct_chain(exemplars)
+    return markov_name(chain)    
+
 def cardinal(number):
     if number == 1: return "1st"
     elif number == 2: return "2nd"
@@ -1151,8 +1238,8 @@ def parsemd(mdfilename : str) -> str:
 # A root namespace of symbols, into which modules will
 # also be placed.
 moduleglobals = {
-    # A reference to moduleglobals itself, for breaking
-    # order-dependency issues
+    # A circular reference to modules loaded so we have them inside of
+    # moduleglobals itself, for breaking order-dependency issues
     "roots": {},
 
     # Access to a few useful Python packages and builtins
@@ -1160,6 +1247,7 @@ moduleglobals = {
     #"random": random,
 
     # Our I/O facilities
+    "debug": debug,
     "log": log,
     "warn": warn,
     "error": error,
@@ -1167,6 +1255,7 @@ moduleglobals = {
     "choose": shell.choose,
 
     # Some helper methods
+    "generatemarkovname": generatemarkovname,
     "iscaster": iscaster,
     "creaturelink": creaturelinkify,
     "itemlink": itemlinkify,
@@ -1319,7 +1408,7 @@ def generate(randomlist=[]):
 
     classgen = [] # The classes to generate randomly
     for r in randomlist:
-        if r.find("Class-") > -1:
+        if r.find("Class") > -1:
             # We're going to generate some class levels
             classgen.append(r)
         elif r == 'Abilities':
@@ -1431,6 +1520,7 @@ def main():
     parser.add_argument('--randomize', help="List of things to generate randomly ahead of time (interactive only)")
     parser.add_argument('--savepy', help="Which modules to save literate-parsed Python code (into ./Python)")
     parser.add_argument('--scripts', nargs='*', help="A list of files to use as scripted input")
+    parser.add_argument('--incap', nargs=1, help="Capture input to a file")
     parser.add_argument('--verbosity', choices=['quiet', 'verbose', 'loud'])
     parser.add_argument('--version', action='version', version='%(prog)s 0.1')
     args = parser.parse_args()
@@ -1471,7 +1561,10 @@ def main():
             # Write to "{script}.md" file
             print(npc.emitmd())
     else:
-        shell.io = TerminalInput()
+        if args.incap != None:
+            shell.push(CaptureInput(args.incap[0]))
+        else:
+            shell.push(TerminalInput())
         npc = None
         if args.randomize != None:
             npc = generate(args.randomize.split(','))

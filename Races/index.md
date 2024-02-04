@@ -37,26 +37,17 @@ languages = {
                'Sylvan', 'Undercommon' ]
 }
 def languagelist(which = 'All'):
-    if which == 'All':
-        return languages['Common'] | languages['Exotic']
-    else:
-        return languages[which]
+    if which == 'All': return languages['Common'] | languages['Exotic']
+    else: return languages[which]
 
 def chooselanguage(npc, which='Common'):
-    srclist = []
-    if which == 'All':
-        srclist = languages['Common'] + languages['Exotic']
-    else:
-        srclist = languages[which]
-
+    srclist = languagelist(which).copy()
     for lang in npc.languages:
         if lang in srclist:
             srclist.remove(lang)
 
     chosen = choose("Choose a language: ", srclist)
     npc.languages.append(chosen)
-
-exports = { "chooselanguage" : chooselanguage }
 
 def random(npc):
     racemod = randomfrom(childmods)
