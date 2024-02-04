@@ -448,6 +448,7 @@ class Spellcasting(Casting):
         self.maxspellsknown = 0
         self.spellsknowntable = spellsknowntable
         self.spellsknown = []
+        self.maxspellsprepared = 0
         self.spellsprepared = {1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: [], 8: [], 9: []}
         self.spellsalwaysprepared = []
 
@@ -467,13 +468,17 @@ class Spellcasting(Casting):
             text += f"{self.maxspellsknown} spells known. "
         elif len(self.spellsknowntable) > 0:
             text += f"{self.spellsknowntable[npclevels]} spells known. "
+
+        if self.maxspellsprepared > 0:
+            text += f"{self.maxspellsprepared} spells prepared. "
+
         text += "\n>\n"
 
         if len(self.spellsalwaysprepared) > 0:
             text += f">Spells always prepared: {','.join(self.spellsalwaysprepared)}\n>\n"
 
         # Print out slot table
-        if len(self.cantripsknown) > 0:
+        if len(self.cantripsknown) > 0 or len(self.cantripstable) > 0:
             text += f">* *Cantrips*: {','.join(self.cantripsknown)}\n"
         slots = self.slottable()[self.npc.levels(self.classname)]
         for s in range(0,len(slots)):
@@ -484,7 +489,7 @@ class Spellcasting(Casting):
         return f"***{self.title}.*** {text}"
 
 class FullSpellcasting(Spellcasting):
-    def __init__(self, classname, ability,cantripstable={}, spellsknowntable={}):
+    def __init__(self, classname, ability, cantripstable={}, spellsknowntable={}):
         Spellcasting.__init__(self, classname, ability, cantripstable, spellsknowntable)
 
     def slottable(self):
@@ -510,6 +515,24 @@ class FullSpellcasting(Spellcasting):
             19: [4,3,3,3,2,2,1,1,1],
             20: [4,3,3,3,2,2,2,1,1],
         }
+
+class DivineSpellcasting(FullSpellcasting):
+    """This is used for both Cleric and Druid classes. WIS-based."""
+    def __init__(self, classname, cantriptable):
+        FullSpellcasting.__init__(self, classname, "WIS", cantriptable)
+
+    def addspellspreparedtable(self, domaintable):
+        self.domaintable = domaintable
+
+    def apply(self):
+        npclevels = self.npc.levels(self.classname)
+
+        self.maxspellsprepared = npclevels + self.npc.WISbonus()
+
+        # Set up always-prepared spells
+        for level in self.domaintable:
+            if level <= npclevels:
+                self.spellsalwaysprepared += self.domaintable[level]
 
 class HalfSpellcasting(Spellcasting):
     def slottable(self):
@@ -1076,24 +1099,28 @@ class StatBlock:
 
         if len(self.traits):
             for trait in self.traits:
+                log("Emitting " + trait.title)
                 result += f">{trait}\n"
                 result +=  ">\n"
 
         if len(self.actions):
             result +=  ">#### Actions\n"
             for action in self.actions:
+                log("Emitting " + action.title)
                 result += f">{action}\n"
                 result +=  ">\n"
 
         if len(self.bonusactions):
             result +=  ">#### Bonus Actions\n"
             for action in self.bonusactions:
+                log("Emitting " + action.title)
                 result += f">{action}\n"
                 result +=  ">\n"
 
         if len(self.reactions):
             result +=  ">#### Reactions\n"
             for reaction in self.reactions:
+                log("Emitting " + reaction.title)
                 result += f">{reaction}\n"
                 result +=  ">\n"
 
@@ -1328,6 +1355,7 @@ moduleglobals = {
     "Casting": Casting,
     "InnateCasting": InnateCasting,
     "FullSpellcasting": FullSpellcasting,
+    "DivineSpellcasting": DivineSpellcasting,
     "HalfSpellcasting": HalfSpellcasting,
 }
 

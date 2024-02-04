@@ -49,20 +49,18 @@ class BreathWeapon(Action):
         self.save = save
         self.dmgtiers = damagetiers
     
-    def __str__(self):
-        uses = self.npc.proficiencybonus()
-        damage = ''
+    def apply(self):
+        self.uses = self.npc.proficiencybonus()
+
         if self.npc.levels() < 6: damage = self.dmgtiers[0]
         elif self.npc.levels() < 11: damage = self.dmgtiers[1]
         elif npc.levels() < 16: damage = self.dmgtiers[2]
         else: damage = self.dmgtiers[3]
 
-        text += f"***{self.title} (Recharges on long rest).*** "
-        text += f"You exhale destructive {self.dmgtype} in a {self.shape}. "
-        text += f"All creatures in the area must make a {self.save} saving throw "
-        text += f"(DC {8 + self.npc.CONbonus() + self.npc.proficiencybonus()}). "
-        text += f"A creature takes {damage} {self.dmgtype} damage on a failed save, or half on a successful one."
-        return text
+        self.text  = f"You exhale destructive {self.dmgtype} in a {self.shape}. "
+        self.text += f"All creatures in the area must make a {self.save} saving throw "
+        self.text += f"(DC {8 + self.npc.CONbonus() + self.npc.proficiencybonus()}). "
+        self.text += f"A creature takes {damage} {self.dmgtype} damage on a failed save, half on a successful one."
 
 class MetallicBreathWeapon(Action):
     def __init__(self):

@@ -166,7 +166,7 @@ Sling | 1 sp | 1d4 piercing | — | Ammunition, range (30/120) |
 
 ```
 weapons['simple-ranged'] = {
-    'Light Crossbow': RangedWeapon("Light Crossbow", "5", '80/320', '1d8', 'piercing', ['ammunition', 'loading', 'two-handed']),
+    'Light crossbow': RangedWeapon("Light Crossbow", "5", '80/320', '1d8', 'piercing', ['ammunition', 'loading', 'two-handed']),
     'Dart': RangedWeapon("Dart", "1/4", '20/60', '1d4', 'piercing', ['finesse', 'thrown']),
     'Javelin': ThrowableWeapon("Javelin", "2", '30/120', '1d6', 'piercing', ['thrown']),
     'Shortbow': RangedWeapon("Shortbow", "2", '80/320', '1d6', 'piercing', ['ammunition', 'two-handed']),

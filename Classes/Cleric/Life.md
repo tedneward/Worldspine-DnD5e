@@ -1,7 +1,5 @@
 # Divine Domain: Life
-The Life domain focuses on the vibrant positive energy – one of the fundamental forces of the universe – that sustains all life. The gods of life promote vitality and health through healing the sick and wounded, caring for those in need, and driving away the forces of death and undeath
-
-This is a domain granted by the [Alalihatian tradition](../../Religions/AlUma.md#alalihatian-cleric), the [Almalzish tradition](../../Religions/AlUma.md#almalzish-cleric), the [Zabalasan tradition](../../Religions/AlUma.md#zabalasan-cleric), the [Kaevarian Church](../../Religions/KaevarianChurch.md), [Trinitarians who worship Dara](../../Religions/Trinitarian.md#dara), [Arawn](../../Religions/Pantheon/Arawn.md), [Daghda](../../Religions/Pantheon/Daghda.md), [Diancecht](../../Religions/Pantheon/Diancecht.md), [Lugh](../../Religions/Pantheon/Lugh.md), [Pelor](../../Religions/Pantheon/Pelor.md), ...
+The Life domain focuses on the vibrant positive energy – one of the fundamental forces of the universe – that sustains all life. The gods of life promote vitality and health through healing the sick and wounded, caring for those in need, and driving away the forces of death and undeath.
 
 ```
 name = 'Life'
@@ -29,18 +27,6 @@ domainspells = {
     7: ['death ward', 'guardian of faith'],
     9: ['mass cure wounds', 'raise dead']
 }
-
-def level1(npc):
-    def domainspellsforlevel(npc):
-        results = []
-        if npc.levels(spellcasting.casterclass) >= 1: results += domainspells[1]
-        if npc.levels(spellcasting.casterclass) >= 3: results += domainspells[3]
-        if npc.levels(spellcasting.casterclass) >= 5: results += domainspells[5]
-        if npc.levels(spellcasting.casterclass) >= 7: results += domainspells[7]
-        if npc.levels(spellcasting.casterclass) >= 9: results += domainspells[9]
-        spellcasting.spellsalwaysprepared += results
-
-    npc.defer(lambda npc: domainspellsforlevel(npc))
 ```
 
 ## Bonus Proficiency
@@ -49,8 +35,8 @@ def level1(npc):
 When you choose this domain at 1st level, you gain proficiency with heavy armor.
 
 ```
-    for arm in armor['heavy']:
-        npc.addproficiency(arm)
+def level1(npc):
+    for arm in Equipment.armor['heavy']: npc.addproficiency(arm)
 ```
 
 ## Disciple of Life
@@ -59,7 +45,7 @@ When you choose this domain at 1st level, you gain proficiency with heavy armor.
 Also starting at 1st level, your healing spells are more effective. Whenever you use a spell of 1st level or higher to restore hit points to a creature, the creature regains additional hit points equal to 2 + the spell's level.
 
 ```
-    npc.traits.append("***Disciple of Life.*** Whenever you use a spell of 1st level or higher to restore hit points to a creature, the creature regains additional hit points equal to 2 + the spell's level.")
+    npc.append(Feature("Disciple of Life", "Whenever you use a spell of 1st level or higher to restore hit points to a creature, the creature regains additional hit points equal to 2 + the spell's level.") )
 ```
 
 ## Channel Divinity: Preserve Life
@@ -71,7 +57,7 @@ As an action, you present your holy symbol and evoke healing energy that can res
 
 ```
 def level2(npc):
-    npc.defer(lambda npc: npc.actions.append(f"***Channel Divinity: Preserve Life.*** You present your holy symbol and evoke healing energy that can restore {5 * npc.levels('Cleric')} hit points equal to five times your cleric level. Choose any creatures within 30 feet of you, and divide those hit points among them. This feature can restore a creature to no more than half of its hit point maximum. You can't use this feature on an undead or a construct.") )
+    npc.append(Action("Channel Divinity: Preserve Life", "You present your holy symbol and evoke healing energy that can restore {5 * npc.levels('Cleric')} hit points equal to five times your cleric level. Choose any creatures within 30 feet of you, and divide those hit points among them. This feature can restore a creature to no more than half of its hit point maximum. You can't use this feature on an undead or a construct.") )
 ```
 
 ## Blessed Healer
@@ -81,7 +67,7 @@ The healing spells you cast on others heal you as well. When you cast a spell of
 
 ```
 def level6(npc):
-    npc.traits.append("***Blessed Healer.*** hen you cast a spell of 1st level or higher that restores hit points to a creature other than you, you regain hit points equal to 2 + the spell's level.")
+    npc.append(Feature("Blessed Healer", "When you cast a spell of 1st level or higher that restores hit points to a creature other than you, you regain hit points equal to 2 + the spell's level.") )
 ```
 
 ## Divine Strike
@@ -91,7 +77,7 @@ You gain the ability to infuse your weapon strikes with divine energy. Once on e
 
 ```
 def level8(npc):
-    npc.defer(lambda npc: npc.actions.append(f"***Divine Strike.*** Once on each of your turns when you hit a creature with a weapon attack, you can cause the attack to deal an extra {1 if npc.levels('Cleric') < 14 else 2}d8 radiant damage to the target.") )
+    npc.append(Action("Divine Strike", "Once on each of your turns when you hit a creature with a weapon attack, you can cause the attack to deal an extra {1 if npc.levels('Cleric') < 14 else 2}d8 radiant damage to the target.") )
 ```
 
 ## Supreme Healing
@@ -101,5 +87,5 @@ When you would normally roll one or more dice to restore hit points with a spell
 
 ```
 def level17(npc):
-    npc.traits.append("***Supreme Healing.*** When you would normally roll one or more dice to restore hit points with a spell, you instead use the highest number possible for each die.")
+    npc.append(Feature("Supreme Healing", "When you would normally roll one or more dice to restore hit points with a spell, you instead use the highest number possible for each die.") )
 ```
