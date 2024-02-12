@@ -1,7 +1,22 @@
 # Ranger
 Far from the bustle of cities and towns, past the hedges that shelter the most distant farms from the terrors of the wild, amid the dense-packed trees of trackless forests and across wide and empty plains, rangers keep their unending watch.
 
+## Deadly Hunters
+Warriors of the wilderness, rangers specialize in hunting the monsters that threaten the edges of civilization — humanoid raiders, rampaging beasts and monstrosities, terrible giants, and deadly dragons. They learn to track their quarry as a predator does, moving stealthily through the wilds and hiding themselves in brush and rubble. Rangers focus their combat training on techniques that are particularly useful against their specific favored foes.
+
+Thanks to their familiarity with the wilds, rangers acquire the ability to cast spells that harness nature’s power, much as a druid does. Their spells, like their combat abilities, emphasize speed, stealth, and the hunt. A ranger’s talents and abilities are honed with deadly focus on the grim task of protecting the borderlands.
+
+## Independent Adventurers
+Though a ranger might make a living as a hunter, a guide, or a tracker, a ranger’s true calling is to defend the outskirts of civilization from the ravages of monsters and humanoid hordes that press in from the wild. In some places, rangers gather in secretive orders or join forces with druidic circles. Many rangers, though, are independent almost to a fault, knowing that, when a dragon or a band of orcs attacks, a ranger might be the first — and possibly the last — line of defense.
+
+This fierce independence makes rangers well suited to adventuring, since they are accustomed to life far from the comforts of a dry bed and a hot bath. Faced with city-bred adventurers who grouse and whine about the hardships of the wild, rangers respond with some mixture of amusement, frustration, and compassion. But they quickly learn that other adventurers who can carry their own weight in a fight against civilization’s foes are worth any extra burden. Coddled city folk might not know how to feed themselves or find fresh water in the wild, but they make up for it in other ways.
+
 *You must have a Dexterity score and a Wisdom score of 13 or higher in order to multiclass in or out of this class.*
+
+```
+name = 'Ranger'
+description = "***Class: Ranger.*** Far from the bustle of cities and towns, past the hedges that shelter the most distant farms from the terrors of the wild, amid the dense-packed trees of trackless forests and across wide and empty plains, rangers keep their unending watch."
+```
 
 Level|Proficiency Bonus|Spells Known|1st|2nd|3rd|4th|5th|Features
 -----|-----------------|------------|---|---|---|---|---|--------
@@ -26,6 +41,13 @@ Level|Proficiency Bonus|Spells Known|1st|2nd|3rd|4th|5th|Features
 19th |+6 | 11|4|3|3|3|2|Ability Score Improvement
 20th |+6 | 11|4|3|3|3|2|[Foe Slayer](#foe-slayer)
 
+```
+spellsknowntable = {
+    1: 0, 2: 2, 3: 3, 4: 3, 5: 4, 6: 4, 7: 5, 8: 5, 9: 6, 10: 6,
+    11: 7, 12: 7, 13: 8, 14: 8, 15: 9, 16: 9, 17: 10, 18:10, 19: 11, 20: 11,
+}
+```
+
 As a ranger, you gain the following class features.
 
 ## Hit Points
@@ -34,6 +56,10 @@ As a ranger, you gain the following class features.
 **Hit Points at 1st Level**: 10 + your Constitution modifier
 
 **Hit Points at Higher Levels**: 1d10 (or 6) + your Constitution modifier per ranger level after 1st
+
+```
+def everylevel(npc): npc.hits('d10')
+```
 
 ## Proficiencies
 **Armor**: Light armor, medium armor, shields
@@ -46,6 +72,21 @@ As a ranger, you gain the following class features.
 
 **Skills**: Choose three from Animal Handling, Athletics, Insight, Investigation, Nature, Perception, Stealth, and Survival
 
+```
+def level1(npc):
+    for arm in Equipment.armor['light'] + Equipment.armor['medium'] + Equipment.armor['shields']:
+        npc.addproficiency(arm)
+    for wpn in Equipment.weapons['simple'] + Equipment.weapons['martial']:
+        npc.addproficiency(wpn)
+
+    npc.addproficiency('STR')
+    npc.addproficiency('DEX')
+
+    chooseskill(npc, ['Animal Handling', 'Athletics', 'Insight', 'Investigation', 'Nature', 'Perception', 'Stealth', 'Survival'])
+    chooseskill(npc, ['Animal Handling', 'Athletics', 'Insight', 'Investigation', 'Nature', 'Perception', 'Stealth', 'Survival'])
+    chooseskill(npc, ['Animal Handling', 'Athletics', 'Insight', 'Investigation', 'Nature', 'Perception', 'Stealth', 'Survival'])
+```
+
 ## Equipment
 You start with the following equipment, in addition to the equipment granted by your background:
 
@@ -54,40 +95,84 @@ You start with the following equipment, in addition to the equipment granted by 
 * (a) a dungeoneer's pack or (b) an explorer's pack
 * A longbow and a quiver of 20 arrows
 
-## Favored Foe
+```
+    # Equipment
+```
+
+## Favored Enemy
 *1st-level ranger feature*
 
-When you hit a creature with an attack roll, you can call on your mystical bond with nature to mark the target as your favored enemy for 1 minute or until you lose your concentration (as if you were concentrating on a spell).
+You have significant experience studying, tracking, hunting, and even talking to a certain type of enemy.
 
-The first time on each of your turns that you hit the favored enemy and deal damage to it, including when you mark it, you can increase that damage by 1d4.
+Choose a type of favored enemy: aberrations, beasts, celestials, constructs, dragons, elementals, fey, fiends, giants, monstrosities, oozes, plants, or undead. Alternatively, you can select two races of humanoid (such as gnolls and orcs) as favored enemies.
 
-You can use this feature to mark a favored enemy a number of times equal to your proficiency bonus, and you regain all expended uses when you finish a long rest.
+You have advantage on Wisdom (Survival) checks to track your favored enemies, as well as on Intelligence checks to recall information about them.
 
-This feature's extra damage increases when you reach certain levels in this class: to 1d6 at 6th level and to 1d8 at 14th level. 
+When you gain this feature, you also learn one language of your choice that is spoken by your favored enemies, if they speak one at all.
 
-## Deft Explorer
-*1st-level ranger feature; cannot be taken with Natural Explorer*
+You choose one additional favored enemy, as well as an associated language, at 6th and 14th level. As you gain levels, your choices should reflect the types of monsters you have encountered on your adventures.
 
-You are an unsurpassed explorer and survivor, both in the wilderness and in dealing with others on your travels. You gain the Canny benefit below, and you gain an additional benefit below when you reach 6th level and 10th level in this class.
+```
+    npc.favoredenemies = []
+    favoredenemy = choose("Choose a favored enemy: ", ['Aberration', 'Beast', 'Celestial', 'Construct', 'Dragon', 'Elemental', 'Fey', 'Fiend', 'Giant', 'Monstrosity', 'Ooze', 'Plant', 'Undead', 'Two humanoid races'])
+    if favoredenemy = 'Two humanoid races':
+        npc.favoredenemies.append(choose("Choose a favored enemy: ", ['Goblin', 'Hobgoblin', 'Orc', 'Troll']))
+        npc.favoredenemies.append(choose("Choose a favored enemy: ", ['Goblin', 'Hobgoblin', 'Orc', 'Troll']))
+    else:
+        npc.favoredenemies.append(favoredenemy)
 
-### Canny
-*1st-level Deft Explorer ranger feature*
+    chooselanguage(npc, 'All')
 
-Choose one of your skill proficiencies. Your proficiency bonus is doubled for any ability check you make that uses the chosen skill. 
+    class FavoredEnemy(Feature):
+        def __init__(self):
+            Feature.__init__(self, "Favored Enemy", "")
 
-You can also speak, read, and write two additional languages of your choice.
+        def apply(self):
+            self.text = f"You have significant experience studying, tracking, hunting, and even talking to certain types of enemies: {",".join(self.npc.favoredenemies)}. You have advantage on Wisdom (Survival) checks to track your favored enemies, as well as on Intelligence checks to recall information about them."
 
-### Roving
-*6th-level Deft Explorer ranger feature*
+    npc.append(FavoredEnemy())
 
-Your walking speed increases by 5, and you gain a climbing speed and a swimming speed equal to your walking speed.
+def level6(npc):
+    favoredenemy = choose("Choose a favored enemy: ", ['Aberration', 'Beast', 'Celestial', 'Construct', 'Dragon', 'Elemental', 'Fey', 'Fiend', 'Giant', 'Monstrosity', 'Ooze', 'Plant', 'Undead', 'Two humanoid races'])
+    if favoredenemy = 'Two humanoid races':
+        npc.favoredenemies.append(choose("Choose a favored enemy: ", ['Goblin', 'Hobgoblin', 'Orc', 'Troll']))
+        npc.favoredenemies.append(choose("Choose a favored enemy: ", ['Goblin', 'Hobgoblin', 'Orc', 'Troll']))
+    else:
+        npc.favoredenemies.append(favoredenemy)
 
-### Tireless
-*10th-level Deft Explorer ranger feature*
+    chooselanguage(npc, 'All')
 
-As an action, you can give yourself a number of temporary hit points equal to 1d8 + your Wisdom modifier (minimum of 1 temporary hit point). You can use this action a number of times equal to your proficiency bonus, and you regain all expended uses when you finish a long rest.
+def level14(npc):
+    favoredenemy = choose("Choose a favored enemy: ", ['Aberration', 'Beast', 'Celestial', 'Construct', 'Dragon', 'Elemental', 'Fey', 'Fiend', 'Giant', 'Monstrosity', 'Ooze', 'Plant', 'Undead', 'Two humanoid races'])
+    if favoredenemy = 'Two humanoid races':
+        npc.favoredenemies.append(choose("Choose a favored enemy: ", ['Goblin', 'Hobgoblin', 'Orc', 'Troll']))
+        npc.favoredenemies.append(choose("Choose a favored enemy: ", ['Goblin', 'Hobgoblin', 'Orc', 'Troll']))
+    else:
+        npc.favoredenemies.append(favoredenemy)
 
-In addition, whenever you finish a short rest, your exhaustion level, if any, is decreased by 1. 
+    chooselanguage(npc, 'All')
+```
+
+
+## Natural Explorer
+*1st-level ranger feature*
+
+You are particularly familiar with one type of natural environment and are adept at traveling and surviving in such regions. Choose one type of favored terrain: arctic, coast, desert, forest, grassland, mountain, swamp, or the Underdark. When you make an Intelligence or Wisdom check related to your favored terrain, your proficiency bonus is doubled if you are using a skill that you’re proficient in.
+
+While traveling for an hour or more in your favored terrain, you gain the following benefits:
+
+* Difficult terrain doesn’t slow your group’s travel.
+* Your group can’t become lost except by magical means.
+* Even when you are engaged in another activity while traveling (such as foraging, navigating, or tracking), you remain alert to danger.
+* If you are traveling alone, you can move stealthily at a normal pace.
+* When you forage, you find twice as much food as you normally would.
+* While tracking other creatures, you also learn their exact number, their sizes, and how long ago they passed through the area.
+
+You choose additional favored terrain types at 6th and 10th level.
+
+```
+
+```
 
 ## Fighting Style
 *2nd-level ranger feature*
@@ -96,11 +181,27 @@ You adopt a particular style of fighting as your specialty. Choose one of the [s
 
 In addition, you have access to the following fighting style:
 
-* **Druidic Warrior**
-  You learn two cantrips of your choice from the druid spell list. They count as ranger spells for you, and Wisdom is your spellcasting ability for them. Whenever you gain a level in this class, you can replace one of these cantrips with another cantrip from the druid spell list.
+* **Druidic Warrior**: You learn two cantrips of your choice from the druid spell list. They count as ranger spells for you, and Wisdom is your spellcasting ability for them. Whenever you gain a level in this class, you can replace one of these cantrips with another cantrip from the druid spell list.
 
 ### Martial Versatility
 Whenever you gain a level, you can replace a fighting style you know with another style available to your class. This change represents a shift of focus in your martial training and practice, causing you to lose the benefits of one style and gain the benefits of another style.
+
+```
+def druidicwarrior(npc):
+    innatecasting = InnateCasting("Druidic Warrior", "WIS")
+    availablecantrips = [
+        'druidcraft', 'guidance', 'mending', 'poison spray', 
+        'produce flame', 'resistance', 'shillelagh'
+    ]
+    innatecasting.atwill.append(choose("Choose a cantrip:", availablecantrips))
+    innatecasting.atwill.append(choose("Choose a cantrip:", availablecantrips))
+    npc.append(innatecasting)
+
+def level2(npc):
+    styles = findmodule("Fighter").getfightingstyles()
+    styles['Druidic Warrior'] = druidicwarrior
+    findmodule("Fighter").choosestyle(npc, styles)
+```
 
 ## Spellcasting
 *2nd-level ranger feature*
@@ -113,8 +214,7 @@ The Ranger table shows how many spell slots you have to cast your spells of 1st 
 For example, if you know the 1st-level spell Animal Friendship and have a 1st-level and a 2nd-level spell slot available, you can cast Animal Friendship using either slot.
 
 ### Spells Known of 1st Level and Higher
-You know two 1st-level spells of your choice from the ranger spell list.
-The Spells Known column of the Ranger table shows when you learn more ranger spells of your choice. Each of these spells must be of a level for which you have spell slots. For instance, when you reach 5th level in this class, you can learn one new spell of 1st or 2nd level.
+You know two 1st-level spells of your choice from the ranger spell list. The Spells Known column of the Ranger table shows when you learn more ranger spells of your choice. Each of these spells must be of a level for which you have spell slots. For instance, when you reach 5th level in this class, you can learn one new spell of 1st or 2nd level.
 
 Additionally, when you gain a level in this class, you can choose one of the ranger spells you know and replace it with another spell from the ranger spell list, which also must be of a level for which you have spell slots.
 
@@ -131,84 +231,19 @@ Whenever you finish a long rest, you can replace one spell you learned from this
 ### Spellcasting Focus
 You can use a druidic focus as a spellcasting focus for your ranger spells.
 
-## Animal Companion
-*3rd-level ranger feature*
+```
+    rangerspellcasting = HalfSpellcasting("Ranger", "WIS", {}, spellsknowntable)
+    npc.append(rangerspellcasting)
+```
 
-You learn to use your magic to create a powerful bond with a creature of the natural world.
-
-With 8 hours of work and the expenditure of 50 gp worth of rare herbs and fine food, you call forth an animal from the wilderness to serve as your faithful companion. You normally select you companion from among the following animals: an ape, a black bear, a boar, a giant badger, a giant weasel, a mule, a panther, or a wolf. However, your DM might pick one of these animals for you, based on the surrounding terrain and on what types of creatures would logically be present in the area.
-
-At the end of the 8 hours, your animal companion appears and gains all the benefits of your Companion's Bond ability. You can have only one animal companion at a time.
-
-If your animal companion is ever slain, the magical bond you share allows you to return it to life. With 8 hours of work and the expenditure of 25 gp worth of rare herbs and fine food, you call forth your companion's spirit and use your magic to create a new body for it. You can return an animal companion to life in this manner even if you do not possess any part of its body.
-
-If you use this ability to return a former animal companion to life while you have a current animal companion, your current companion leaves you and is replaced by the restored companion.
-
-## Companion's Bond
-Your animal companion gains a variety of benefits while it is linked to you.
-
-The animal companion loses its Multiattack action, if it has one.
-
-The companion obeys your commands as best it can. It rolls for initiative like any other creature, but you determine its actions, decisions, attitudes, and so on. If you are incapacitated or absent, your companion acts on its own.
-
-When using your Natural Explorer feature, you and your animal companion can both move stealthily at a normal pace.
-
-Your animal companion has abilities and game statistics determined in part by your level. Your companion uses your proficiency bonus rather than its own. In addition to the areas where it normally uses its proficiency bonus, an animal companion also adds its proficiency bonus to its AC and to its damage rolls.
-
-Your animal companion gains proficiency in two skills of your choice. It also becomes proficient with all saving throws.
-
-For each level you gain after 3rd, your animal companion gains an additional hit die and increases its hit points accordingly.
-
-Whenever you gain the Ability Score Improvement class feature, your companion's abilities also improve. Your companion can increase one ability score of your choice by 2, or it can increase two ability scores of your choice by 1. As normal, your companion can't increase an ability score above 20 using this feature unless its description specifies otherwise.
-
-Your companion shares your alignment, and has a personality trait and a flaw that you can roll for or select from the tables below. Your companion shares your ideal, and its bond is always, "The ranger who travels with me is a beloved companion for whom I
-Your animal companion gains the benefits of your Favored Enemy feature, and of your Greater Favored Enemy feature when you gain that feature at 6th level. It uses the favored enemies you selected for those features.
-
-d6|Trait
---|------
-1|I'm dauntless in the face of adversity.
-2|Threaten my friends, threaten me.
-3|I stay on alert so others can rest.
-4|People see an animal and underestimate me. I use that to my advantage.
-5|I have a knack for showing up in the nick of time.
-6|I put my friends' needs before my own in all things.
-
-d6|Flaw
---|----
-1|If there's food left unattended, I'll eat it.
-2|I growl at strangers, and all people except my ranger are strangers to me.
-3|Any time is a good time for a belly rub.
-4|I'm deathly afraid of water.
-5|My idea of hello is a flurry of licks to the face.
-6|I jump on creatures to tell them how much I love them.
-
-
-## Primeval Awareness
-*3rd-level ranger feature*
-
-Your mastery of ranger lore allows you to establish a powerful link to beasts and to the land around you.
-
-You have an innate ability to communicate with beasts, and they recognize you as a kindred spirit. Through sounds and gestures, you can communicate simple ideas to a beast as an action, and can read its basic mood and intent. You learn its emotional state, whether it is affected by magic of any sort, its short-term needs (such as food or safety), and actions you can take (if any) to persuade it to not attack. You cannot use this ability against a creature that you have attacked within the past 10 minutes.
-
-Additionally, you can attune your senses to determine if any of your favored enemies lurk nearby. By spending 1 uninterrupted minute in concentration (as if you were concentrating on a spell), you can sense whether any of your favored enemies are present within 5 miles of you. This feature reveals which of your favored enemies are present, their numbers, and the creatures' general direction and distance (in miles) from you. If there are multiple groups of your favored enemies within range, you learn this information for each group.
 
 ## Ranger Conclave
 *3rd level ranger feature*
 
 You choose to emulate the ideals and training of a ranger conclave:
-* [Beast Master](Ranger/BeastMaster.md)
-* [Deep Stalker](Ranger/DeepStalker.md)
-* [Dragonstalker](Ranger/Dragonstalker.md)
-* [Drakewarden](Ranger/Drakewarden.md)
-* [Fey Wanderer](Ranger/FeyWanderer.md)
-* [Gloom Stalker](Ranger/GloomStalker.md)
-* [Horizon Walker](Ranger/HorizonWalker.md)
-* [Hunter](Ranger/Hunter.md)
-* [Justicar](Ranger/Justicar.md)
-* [Monster Slayer](Ranger/MonsterSlayer.md)
-* [Primeval Guardian](Ranger/PrimevalGuardian.md)
-* [Swarmkeeper](Ranger/Swarmkeeper.md)
-* [Wrangler](Ranger/Wrangler.md)
+
+* [Beast Master](BeastMaster.md)
+* [Hunter](Hunter.md)
 
 Your choice grants you features at 3rd level and again at 7th, 11th, and 15th level.
 

@@ -140,14 +140,21 @@ styles = {
     'Two-Weapon': twoweapon,
     'Unarmed': unarmedfighting
 }
-def choosestyle(npc):
+def getfightingstyles(): return styles
+def choosestyle(npc, availablestyles = styles):
+    choices = availablestyles.copy()
+    if getattr(npc, "fightingstyles", None) != None:
+        for alreadyhas in npc.fightingstyles:
+            choices.remove(alreadyhas)
+
     (stylename, stylefn) = choose("Choose a Fighting Style: ", styles)
+
     if getattr(npc, "fightingstyles", None) == None:
         npc.fightingstyles = []
     npc.fightingstyles.append(stylename)
     stylefn(npc)
 
-exports = { choosestyle }
+exports = [ getfightingstyles, choosestyle ]
 
 def init():
     parent.choosestyle = choosestyle
