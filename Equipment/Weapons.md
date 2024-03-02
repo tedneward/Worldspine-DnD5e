@@ -53,8 +53,7 @@ class MeleeWeapon(Weapon):
             actions.append(MeleeAttack(self.name + " (Two-Handed)", dmg, self.dmgtype, self.properties))
 
         # If the weapon has 'reach', it's reach is doubled
-        reach = self.findproperty('reach')
-        if reach != None:
+        if self.findproperty('reach') != None:
             actions[0].reach = "10ft"
 
         return actions

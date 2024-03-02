@@ -1,13 +1,14 @@
 # Equipment
 
+```
+# Placeholder
+name = 'Equipment'
+```
+
 [Armor](Armor.md) | [Tools](Tools.md) | [Weapons](Weapons.md) | [Magic](Magic/index.md)
 
 ## Wealth and Goods
 Most wealth is not in coins. It is measured in livestock, grain, land, rights to collect taxes, or rights to resources (such as a mine or a forest).
-
-Merchant Guilds are, without question or challenge, the mercantile force of the continent. While many smaller villages and towns have their own localized economy (wherein farmers trade foodstuffs with each other and local smiths and tanners), the guilds supply, regulate, and promote inter-city economic activity. Nobles and royalty often look for ways to regulate trade, but are often stymied by the strength of the various merchant guilds, which in turn leads the nobility to make and break alliances between themselves and the guilds in furtherance of plans that benefit either or both sides. Guilds often charter with smaller or partner guilds to create companies that are granted rights to conduct trade along certain routes, to send merchant ships to various ports, or to buy or sell specific goods. Guilds set prices for the goods or services that they control, and determine who may or may not offer those goods and services. 
-
-While some guilds will accept an exchange of goods, without using currency, it is becoming far more common to exchange "letters of credit", promissary notes of accessible cash from the issuing guild, as a means of exchanging larger sums without having to carry around sacks of gold. Some letters may even have arcane work in their creation, in order to prevent counterfeit or tampering.
 
 The Trade Goods table shows the value of commonly exchanged goods.
 
@@ -70,7 +71,7 @@ Choosing a wealthy lifestyle means living a life of luxury, though you might not
 You live a life of plenty and comfort. You move in circles populated by the most powerful people in the community. You have excellent lodgings, perhaps a townhouse in the nicest part of town or rooms in the finest inn. You dine at the best restaurants, retain the most skilled and fashionable tailor, and have servants attending to your every need. You receive invitations to the social gatherings of the rich and powerful, and spend evenings in the company of politicians, guild leaders, high priests, and nobility. You must also contend with the highest levels of deceit and treachery. The wealthier you are, the greater the chance you will be drawn into political intrigue as a pawn or participant.
 
 ## Food, Drink
-Common prices across the continent.
+Common prices across the world.
 
 Item | Cost
 ---- | ----
@@ -111,7 +112,3 @@ Comfortable | 8 sp
 Wealthy | 2 gp
 Aristocratic | 4 gp
 
-```
-# Placeholder
-name = 'Equipment'
-```
