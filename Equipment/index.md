@@ -1,6 +1,6 @@
 # Equipment
 
-[Armor](Armor.md) | [Tools](Tools.md) | [Weapons](Weapons.md)
+[Armor](Armor.md) | [Tools](Tools.md) | [Weapons](Weapons.md) | [Magic](Magic/index.md)
 
 ## Wealth and Goods
 Most wealth is not in coins. It is measured in livestock, grain, land, rights to collect taxes, or rights to resources (such as a mine or a forest).
